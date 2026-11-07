@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 0,
+  "caseId": "CASE-005",
+  "product": "im_short_term",
+  "applicant": {
+    "name": "Unknown Applicant",
+    "businessName": null,
+    "email": "noreply@example.test",
+    "phone": null,
+    "address": { "line1": null, "city": null, "state": null, "postalCode": null, "country": null },
+    "websites": [],
+    "socialLinks": [],
+    "hasPriorAthosPolicy": false
+  },
+  "rentedEquipmentLimit": 220000,
+  "underwritingGates": {
+    "ofac": false, "mexico": false, "rcvOver150k": false,
+    "claims": false, "trailers": false, "tib": false
+  },
+  "seon": {
+    "state": "decline",
+    "fraudScore": 98.0,
+    "blackboxScore": 95.0,
+    "fraudReasons": ["Known fraudulent email", "Confirmed fraud list match"],
+    "confirmedFraud": true,
+    "signals": {
+      "emailAccountCount": 0, "phoneAccountCount": 0,
+      "ipCountry": "NG", "ipRegion": null, "ipCity": null,
+      "ipDistanceMilesFromAddress": null
+    }
+  },
+  "rentalHouses": [],
+  "correspondence": [],
+  "now": "2026-11-04T17:00:00Z"
+}

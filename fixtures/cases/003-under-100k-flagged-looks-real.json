@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 0,
+  "caseId": "CASE-003",
+  "product": "im_annual",
+  "applicant": {
+    "name": "Alicia Brennan",
+    "businessName": "Brennan Camera Co",
+    "email": "alicia@brennancamera.example",
+    "phone": "+1-555-0133",
+    "address": {
+      "line1": "410 Example St",
+      "city": "Atlanta",
+      "state": "GA",
+      "postalCode": "30303",
+      "country": "US"
+    },
+    "websites": ["https://brennancamera.example"],
+    "socialLinks": [],
+    "hasPriorAthosPolicy": true
+  },
+  "rentedEquipmentLimit": 62000,
+  "underwritingGates": {
+    "ofac": false, "mexico": false, "rcvOver150k": false,
+    "claims": false, "trailers": false, "tib": false
+  },
+  "seon": {
+    "state": "review",
+    "fraudScore": 12.0,
+    "blackboxScore": 6.0,
+    "fraudReasons": ["New device"],
+    "confirmedFraud": false,
+    "signals": {
+      "emailAccountCount": 9,
+      "phoneAccountCount": 5,
+      "ipCountry": "US",
+      "ipRegion": "GA",
+      "ipCity": "Atlanta",
+      "ipDistanceMilesFromAddress": 6
+    }
+  },
+  "rentalHouses": [
+    {
+      "id": "rh-1",
+      "name": "Peachtree Example Rentals",
+      "type": "business",
+      "contacts": [{ "name": "Dee Walker", "email": "dee@peachtreeexample.test", "phone": null }],
+      "statedEquipmentValue": 62000
+    }
+  ],
+  "correspondence": [],
+  "now": "2026-11-04T17:00:00Z"
+}

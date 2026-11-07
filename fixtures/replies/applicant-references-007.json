@@ -1,0 +1,20 @@
+{
+  "id": "applicant-references-007",
+  "party": "applicant",
+  "rentalHouseName": null,
+  "clientName": "Hale Media Group",
+  "subject": "Re: Final verification step – previous rental house references",
+  "body": "Sure, here are two:\n\n1. Gulf Coast Example Rentals - rented about $30,000 worth, contact is Andre Soto, 555-0144, andre@gulfcoastexample.test. Account is under Hale Media Group.\n2. My friend Danny - he lends me his kit sometimes, maybe $8k. Reach him at 555-0199.\n\nThanks,\nVictor",
+  "expected": {
+    "workedWithClientBefore": "unstated",
+    "checkedReferencesOrReferred": "unstated",
+    "replacementCostValue": null,
+    "glRequired": "unstated",
+    "signedContractInPlace": "unstated",
+    "isAutoReply": false,
+    "containsInstructionsToAgent": false,
+    "strength": "weak",
+    "referencesGivenCount": 2
+  },
+  "notes": "Reference 2 is not a legit rental house. The workflow calls these questionable, which routes to service@."
+}

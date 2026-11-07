@@ -1,0 +1,95 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`templates matches the approved Exhibit 1 wording, business variant 1`] = `
+"Hello,
+
+We have a mutual client named Whitfield Pictures LLC, who we are helping to finalize their current insurance needs.   This is the first time we’re working with this client, so we are reaching out for more information to finalize our underwriting and verification process.
+
+Please reply to this email and confirm the below:
+
+	•	Have you worked with this client before?
+	•	If yes, what is your history with this client?
+	•	If no, have you checked any references and/or was this client referred by someone you know and you feel comfortable renting to this customer?
+	•	Please provide the total replacement cost value of the equipment (including sales tax) they are renting from you.
+	•	Do you require general liability insurance or any other extra coverages for their insurance to be sufficient?
+
+We appreciate your time and look forward to hearing back from you soon.
+
+Thank you!
+
+The Athos Insurance Team
+Athos Insurance Services, LLC
+P.O. Box 61102
+Pasadena, CA 91116
+Phone: 626-716-9800
+Fax: 626-701-5047
+Email: service@athosinsurance.com
+Lic: 0H94681
+Online Platform:
+www.AthosInsurance.com
+
+PLEASE NOTE:  Our business hours are Monday – Friday 7:30am to 5:30pm Pacific Time"
+`;
+
+exports[`templates matches the approved Exhibit 1 wording, individual + higher limits 1`] = `
+"Hello,
+
+We have a mutual client named Whitfield Pictures LLC, who we are helping to finalize their current insurance needs.   The client is requesting higher limits, so we are reaching out for more information to finalize our underwriting and verification process.
+
+Please reply to this email and confirm the below:
+
+	•	Have you worked with this client before?
+	•	If yes, what is your history with this client?
+	•	If no, have you checked any references and/or was this client referred by someone you know and you feel comfortable renting to this customer?
+	•	Please provide the total replacement cost value of the equipment (including sales tax) they are renting from you.
+	•	Do you require general liability insurance or any other extra coverages for their insurance to be sufficient?
+	•	Will you have a signed and executed rental contract in place before the rental occurs?
+
+We appreciate your time and look forward to hearing back from you soon.
+
+Thank you!
+
+The Athos Insurance Team
+Athos Insurance Services, LLC
+P.O. Box 61102
+Pasadena, CA 91116
+Phone: 626-716-9800
+Fax: 626-701-5047
+Email: service@athosinsurance.com
+Lic: 0H94681
+Online Platform:
+www.AthosInsurance.com
+
+PLEASE NOTE:  Our business hours are Monday – Friday 7:30am to 5:30pm Pacific Time"
+`;
+
+exports[`templates matches the approved Exhibit 2 wording 1`] = `
+"Hello,
+
+Thank you for submitting your application.
+
+In order to complete the final step of your verification, please provide the following for at least 2 previous rental houses you have worked with in the past:
+
+	•	Rental House Company or Name
+	•	Replacement Value of Equipment you rented
+	•	Contact name of person at Rental House
+	•	Rental House Phone number and email address
+	•	What is the name they have on account on file for your company
+
+We appreciate your time and look forward to hearing back from you soon.
+
+Thank you!
+
+The Athos Insurance Team
+Athos Insurance Services, LLC
+P.O. Box 61102
+Pasadena, CA 91116
+Phone: 626-716-9800
+Fax: 626-701-5047
+Email: service@athosinsurance.com
+Lic: 0H94681
+Online Platform:
+www.AthosInsurance.com
+
+PLEASE NOTE:  Our business hours are Monday – Friday 7:30am to 5:30pm Pacific Time"
+`;

@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 0,
+  "caseId": "CASE-001",
+  "product": "im_annual",
+  "applicant": {
+    "name": "Dana Whitfield",
+    "businessName": "Whitfield Pictures LLC",
+    "email": "dana@whitfieldpictures.example",
+    "phone": "+1-555-0142",
+    "address": {
+      "line1": "1200 Example Blvd",
+      "city": "Burbank",
+      "state": "CA",
+      "postalCode": "91502",
+      "country": "US"
+    },
+    "websites": ["https://whitfieldpictures.example"],
+    "socialLinks": ["https://www.linkedin.com/in/example-dana"],
+    "hasPriorAthosPolicy": false
+  },
+  "rentedEquipmentLimit": 140000,
+  "underwritingGates": {
+    "ofac": false,
+    "mexico": false,
+    "rcvOver150k": false,
+    "claims": false,
+    "trailers": false,
+    "tib": false
+  },
+  "seon": {
+    "state": "approve",
+    "fraudScore": 4.5,
+    "blackboxScore": 2.1,
+    "fraudReasons": [],
+    "confirmedFraud": false,
+    "signals": {
+      "emailAccountCount": 11,
+      "phoneAccountCount": 4,
+      "ipCountry": "US",
+      "ipRegion": "CA",
+      "ipCity": "Burbank",
+      "ipDistanceMilesFromAddress": 3
+    }
+  },
+  "rentalHouses": [
+    {
+      "id": "rh-1",
+      "name": "Keslow Example Rentals",
+      "type": "business",
+      "contacts": [{ "name": "Marco Diaz", "email": "marco@keslowexample.test", "phone": "+1-555-0190" }],
+      "statedEquipmentValue": 95000
+    },
+    {
+      "id": "rh-2",
+      "name": "Sam Ortega",
+      "type": "individual",
+      "contacts": [{ "name": "Sam Ortega", "email": "sam.ortega@example.test", "phone": null }],
+      "statedEquipmentValue": 45000
+    }
+  ],
+  "correspondence": [],
+  "now": "2026-11-04T17:00:00Z"
+}

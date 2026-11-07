@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 0,
+  "caseId": "CASE-002",
+  "product": "im_short_term",
+  "applicant": {
+    "name": "Tomas Reyes",
+    "businessName": null,
+    "email": "t.reyes@example.test",
+    "phone": "+1-555-0177",
+    "address": {
+      "line1": "88 Example Ave",
+      "city": "Austin",
+      "state": "TX",
+      "postalCode": "78701",
+      "country": "US"
+    },
+    "websites": [],
+    "socialLinks": [],
+    "hasPriorAthosPolicy": false
+  },
+  "rentedEquipmentLimit": 180000,
+  "underwritingGates": {
+    "ofac": false,
+    "mexico": false,
+    "rcvOver150k": false,
+    "claims": false,
+    "trailers": false,
+    "tib": false
+  },
+  "seon": {
+    "state": "review",
+    "fraudScore": 31.0,
+    "blackboxScore": 18.4,
+    "fraudReasons": ["IP country mismatch", "Disposable email domain"],
+    "confirmedFraud": false,
+    "signals": {
+      "emailAccountCount": 2,
+      "phoneAccountCount": 1,
+      "ipCountry": "PT",
+      "ipRegion": "Lisboa",
+      "ipCity": "Lisbon",
+      "ipDistanceMilesFromAddress": 4900
+    }
+  },
+  "rentalHouses": [
+    {
+      "id": "rh-1",
+      "name": "Lone Star Example Grip",
+      "type": "business",
+      "contacts": [{ "name": "Priya Nair", "email": "priya@lonestarexample.test", "phone": null }],
+      "statedEquipmentValue": 180000
+    }
+  ],
+  "correspondence": [],
+  "now": "2026-11-04T17:00:00Z"
+}

@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 0,
+  "caseId": "CASE-006",
+  "product": "im_annual",
+  "applicant": {
+    "name": "Renata Villalobos",
+    "businessName": "RV Produccciones",
+    "email": "renata@rvproducciones.example",
+    "phone": "+1-555-0121",
+    "address": {
+      "line1": "22 Example Way", "city": "San Diego", "state": "CA",
+      "postalCode": "92101", "country": "US"
+    },
+    "websites": [],
+    "socialLinks": [],
+    "hasPriorAthosPolicy": true
+  },
+  "rentedEquipmentLimit": 165000,
+  "underwritingGates": {
+    "ofac": false, "mexico": true, "rcvOver150k": true,
+    "claims": false, "trailers": false, "tib": false
+  },
+  "seon": {
+    "state": "approve",
+    "fraudScore": 6.0,
+    "blackboxScore": 3.0,
+    "fraudReasons": [],
+    "confirmedFraud": false,
+    "signals": {
+      "emailAccountCount": 14, "phoneAccountCount": 6,
+      "ipCountry": "US", "ipRegion": "CA", "ipCity": "San Diego",
+      "ipDistanceMilesFromAddress": 2
+    }
+  },
+  "rentalHouses": [
+    {
+      "id": "rh-1", "name": "Border Example Rentals", "type": "business",
+      "contacts": [{ "name": "Luis Ferrer", "email": "luis@borderexample.test", "phone": null }],
+      "statedEquipmentValue": 165000
+    }
+  ],
+  "correspondence": [],
+  "now": "2026-11-04T17:00:00Z"
+}

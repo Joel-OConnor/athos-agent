@@ -1,0 +1,12 @@
+{
+  "caseId": "CASE-006",
+  "labelledBy": "underwriting",
+  "labelledAt": "2026-11-04T00:00:00Z",
+  "expected": {
+    "stage": "done",
+    "recommendation": "route_to_underwriting",
+    "outboundTemplates": [],
+    "mustNotApprove": true
+  },
+  "notes": "Mexico and RCV-over-$150K gates are set. The agent passes these through untouched and never decides a gate."
+}

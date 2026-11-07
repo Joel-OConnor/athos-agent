@@ -1,0 +1,442 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "type": "integer",
+      "minimum": -9007199254740991,
+      "maximum": 9007199254740991
+    },
+    "caseId": {
+      "type": "string"
+    },
+    "product": {
+      "type": "string",
+      "enum": [
+        "im_annual",
+        "im_short_term"
+      ]
+    },
+    "applicant": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "businessName": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "pattern": "^(?:[A-Za-z0-9_'+\\-]+\\.)*[A-Za-z0-9_'+\\-]*[A-Za-z0-9_+-]@(?:[A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
+        },
+        "phone": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "address": {
+          "type": "object",
+          "properties": {
+            "line1": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "city": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "state": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "postalCode": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "country": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "line1",
+            "city",
+            "state",
+            "postalCode",
+            "country"
+          ],
+          "additionalProperties": false
+        },
+        "websites": {
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "socialLinks": {
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "hasPriorAthosPolicy": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "name",
+        "businessName",
+        "email",
+        "phone",
+        "address",
+        "websites",
+        "socialLinks",
+        "hasPriorAthosPolicy"
+      ],
+      "additionalProperties": false
+    },
+    "rentedEquipmentLimit": {
+      "type": "number",
+      "minimum": 0
+    },
+    "underwritingGates": {
+      "type": "object",
+      "properties": {
+        "ofac": {
+          "type": "boolean"
+        },
+        "mexico": {
+          "type": "boolean"
+        },
+        "rcvOver150k": {
+          "type": "boolean"
+        },
+        "claims": {
+          "type": "boolean"
+        },
+        "trailers": {
+          "type": "boolean"
+        },
+        "tib": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "ofac",
+        "mexico",
+        "rcvOver150k",
+        "claims",
+        "trailers",
+        "tib"
+      ],
+      "additionalProperties": false
+    },
+    "seon": {
+      "type": "object",
+      "properties": {
+        "state": {
+          "type": "string",
+          "enum": [
+            "approve",
+            "review",
+            "decline"
+          ]
+        },
+        "fraudScore": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "blackboxScore": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "fraudReasons": {
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "confirmedFraud": {
+          "default": false,
+          "type": "boolean"
+        },
+        "signals": {
+          "type": "object",
+          "properties": {
+            "emailAccountCount": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "phoneAccountCount": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "ipCountry": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "ipRegion": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "ipCity": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "ipDistanceMilesFromAddress": {
+              "anyOf": [
+                {
+                  "type": "number",
+                  "minimum": 0
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "emailAccountCount",
+            "phoneAccountCount",
+            "ipCountry",
+            "ipRegion",
+            "ipCity",
+            "ipDistanceMilesFromAddress"
+          ],
+          "additionalProperties": false
+        },
+        "raw": {}
+      },
+      "required": [
+        "state",
+        "fraudScore",
+        "blackboxScore",
+        "fraudReasons",
+        "confirmedFraud",
+        "signals"
+      ],
+      "additionalProperties": false
+    },
+    "rentalHouses": {
+      "default": [],
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "individual",
+              "business"
+            ]
+          },
+          "contacts": {
+            "default": [],
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "email": {
+                  "type": "string",
+                  "format": "email",
+                  "pattern": "^(?:[A-Za-z0-9_'+\\-]+\\.)*[A-Za-z0-9_'+\\-]*[A-Za-z0-9_+-]@(?:[A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
+                },
+                "phone": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "name",
+                "email",
+                "phone"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "statedEquipmentValue": {
+            "anyOf": [
+              {
+                "type": "number",
+                "minimum": 0
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "type",
+          "contacts",
+          "statedEquipmentValue"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "correspondence": {
+      "default": [],
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "direction": {
+            "type": "string",
+            "enum": [
+              "outbound",
+              "inbound"
+            ]
+          },
+          "party": {
+            "type": "string",
+            "enum": [
+              "athos",
+              "applicant",
+              "rental_house"
+            ]
+          },
+          "rentalHouseId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "template": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "exhibit1_rental_house_vetting",
+                  "exhibit2_applicant_references",
+                  "exhibit3_us_residency"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "from": {
+            "type": "string"
+          },
+          "to": {
+            "default": [],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "subject": {
+            "type": "string"
+          },
+          "body": {
+            "type": "string"
+          },
+          "sentAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+          }
+        },
+        "required": [
+          "id",
+          "direction",
+          "party",
+          "rentalHouseId",
+          "template",
+          "from",
+          "to",
+          "subject",
+          "body",
+          "sentAt"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "now": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "caseId",
+    "product",
+    "applicant",
+    "rentedEquipmentLimit",
+    "underwritingGates",
+    "seon",
+    "rentalHouses",
+    "correspondence",
+    "now"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,402 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "type": "integer",
+      "minimum": -9007199254740991,
+      "maximum": 9007199254740991
+    },
+    "caseId": {
+      "type": "string"
+    },
+    "stage": {
+      "type": "string",
+      "enum": [
+        "triage",
+        "awaiting_rental_houses",
+        "awaiting_applicant",
+        "verified",
+        "escalated",
+        "done"
+      ]
+    },
+    "recommendation": {
+      "type": "string",
+      "enum": [
+        "continue",
+        "route_to_underwriting",
+        "send_emails",
+        "wait",
+        "approve",
+        "escalate_to_service",
+        "recommend_decline"
+      ]
+    },
+    "reasons": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "evidence": {
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "field": {
+                  "type": "string"
+                },
+                "sourceUrl": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "quote": {
+                  "type": "string",
+                  "maxLength": 500
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "code",
+          "message",
+          "evidence"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "outbound": {
+      "default": [],
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "draftId": {
+            "type": "string"
+          },
+          "template": {
+            "type": "string",
+            "enum": [
+              "exhibit1_rental_house_vetting",
+              "exhibit2_applicant_references",
+              "exhibit3_us_residency"
+            ]
+          },
+          "rentalHouseId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "to": {
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "email",
+              "pattern": "^(?:[A-Za-z0-9_'+\\-]+\\.)*[A-Za-z0-9_'+\\-]*[A-Za-z0-9_+-]@(?:[A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
+            }
+          },
+          "subject": {
+            "type": "string"
+          },
+          "body": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "draftId",
+          "template",
+          "rentalHouseId",
+          "to",
+          "subject",
+          "body"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "extracted": {
+      "default": [],
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "correspondenceId": {
+            "type": "string"
+          },
+          "rentalHouseId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "workedWithClientBefore": {
+            "type": "string",
+            "enum": [
+              "yes",
+              "no",
+              "unstated"
+            ]
+          },
+          "history": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "checkedReferencesOrReferred": {
+            "type": "string",
+            "enum": [
+              "yes",
+              "no",
+              "unstated"
+            ]
+          },
+          "replacementCostValue": {
+            "anyOf": [
+              {
+                "type": "number",
+                "minimum": 0
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "glRequired": {
+            "type": "string",
+            "enum": [
+              "yes",
+              "no",
+              "unstated"
+            ]
+          },
+          "signedContractInPlace": {
+            "type": "string",
+            "enum": [
+              "yes",
+              "no",
+              "unstated"
+            ]
+          },
+          "referencesGiven": {
+            "default": [],
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "rentalHouseName": {
+                  "type": "string"
+                },
+                "contactName": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "email": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "phone": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "equipmentValue": {
+                  "anyOf": [
+                    {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "nameOnAccount": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "rentalHouseName",
+                "contactName",
+                "email",
+                "phone",
+                "equipmentValue",
+                "nameOnAccount"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "isAutoReply": {
+            "default": false,
+            "type": "boolean"
+          },
+          "containsInstructionsToAgent": {
+            "default": false,
+            "type": "boolean"
+          },
+          "strength": {
+            "type": "string",
+            "enum": [
+              "strong",
+              "weak",
+              "none",
+              "negative"
+            ]
+          },
+          "evidenceQuote": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 500
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "correspondenceId",
+          "rentalHouseId",
+          "workedWithClientBefore",
+          "history",
+          "checkedReferencesOrReferred",
+          "replacementCostValue",
+          "glRequired",
+          "signedContractInPlace",
+          "referencesGiven",
+          "isAutoReply",
+          "containsInstructionsToAgent",
+          "strength",
+          "evidenceQuote"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "verifiedEquipmentTotal": {
+      "type": "number",
+      "minimum": 0
+    },
+    "researchPacket": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "findings": {
+              "default": [],
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "enum": [
+                      "web_search",
+                      "domain_age",
+                      "imdb",
+                      "applicant_supplied_link",
+                      "other"
+                    ]
+                  },
+                  "claim": {
+                    "type": "string"
+                  },
+                  "sourceUrl": {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  "observedAt": {
+                    "type": "string",
+                    "format": "date-time",
+                    "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                  },
+                  "whatToCheck": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "required": [
+                  "kind",
+                  "claim",
+                  "sourceUrl",
+                  "observedAt",
+                  "whatToCheck"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "notFound": {
+              "default": [],
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "findings",
+            "notFound"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "followUpAt": {
+      "anyOf": [
+        {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "warnings": {
+      "default": [],
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "caseId",
+    "stage",
+    "recommendation",
+    "reasons",
+    "outbound",
+    "extracted",
+    "verifiedEquipmentTotal",
+    "researchPacket",
+    "followUpAt",
+    "warnings"
+  ],
+  "additionalProperties": false
+}

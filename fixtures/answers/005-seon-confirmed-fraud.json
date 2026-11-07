@@ -1,0 +1,12 @@
+{
+  "caseId": "CASE-005",
+  "labelledBy": "underwriting",
+  "labelledAt": "2026-11-04T00:00:00Z",
+  "expected": {
+    "stage": "done",
+    "recommendation": "recommend_decline",
+    "outboundTemplates": [],
+    "mustNotApprove": true
+  },
+  "notes": "SEON confirmed fraud with no doubt. Rare. No emails go out. A person still makes the decline."
+}

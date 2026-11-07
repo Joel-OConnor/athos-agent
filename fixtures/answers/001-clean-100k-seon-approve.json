@@ -1,0 +1,15 @@
+{
+  "caseId": "CASE-001",
+  "labelledBy": "underwriting",
+  "labelledAt": "2026-11-04T00:00:00Z",
+  "expected": {
+    "stage": "triage",
+    "recommendation": "send_emails",
+    "outboundTemplates": [
+      "exhibit1_rental_house_vetting",
+      "exhibit1_rental_house_vetting"
+    ],
+    "mustNotApprove": true
+  },
+  "notes": "$100K+ with a SEON approval still goes to Needs Review with 2nd-layer review. Exhibit 1 to both rental houses; Sam Ortega is an individual so the signed-contract bullet stays in."
+}

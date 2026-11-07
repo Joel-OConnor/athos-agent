@@ -1,0 +1,12 @@
+{
+  "caseId": "CASE-004",
+  "labelledBy": "underwriting",
+  "labelledAt": "2026-11-04T00:00:00Z",
+  "expected": {
+    "stage": "triage",
+    "recommendation": "send_emails",
+    "outboundTemplates": ["exhibit1_rental_house_vetting"],
+    "mustNotApprove": true
+  },
+  "notes": "Under $100K, flagged, all three signals fail. DEPENDS ON OPEN Q4 (is Exhibit 1 the right next step here?) and OPEN Q11."
+}

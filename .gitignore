@@ -1,0 +1,17 @@
+node_modules/
+dist/
+coverage/
+*.log
+
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Eval output
+eval/out/
+
+# Real (unscrubbed) case data must never be committed.
+fixtures/**/*.real.json
+scratch/
+.DS_Store

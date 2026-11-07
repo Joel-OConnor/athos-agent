@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 0,
+  "caseId": "CASE-004",
+  "product": "im_annual",
+  "applicant": {
+    "name": "Victor Hale",
+    "businessName": "Hale Media Group",
+    "email": "vhale@halemediagroup.example",
+    "phone": "+1-555-0188",
+    "address": {
+      "line1": "7 Example Row",
+      "city": "Miami",
+      "state": "FL",
+      "postalCode": "33101",
+      "country": "US"
+    },
+    "websites": ["https://halemediagroup.example"],
+    "socialLinks": ["https://www.instagram.com/example_halemedia"],
+    "hasPriorAthosPolicy": false
+  },
+  "rentedEquipmentLimit": 48000,
+  "underwritingGates": {
+    "ofac": false, "mexico": false, "rcvOver150k": false,
+    "claims": false, "trailers": false, "tib": false
+  },
+  "seon": {
+    "state": "review",
+    "fraudScore": 44.0,
+    "blackboxScore": 29.0,
+    "fraudReasons": ["Email not found on social networks", "Recently registered domain"],
+    "confirmedFraud": false,
+    "signals": {
+      "emailAccountCount": 1,
+      "phoneAccountCount": 0,
+      "ipCountry": "US",
+      "ipRegion": "NV",
+      "ipCity": "Las Vegas",
+      "ipDistanceMilesFromAddress": 2180
+    }
+  },
+  "rentalHouses": [
+    {
+      "id": "rh-1",
+      "name": "Biscayne Example Grip & Lighting",
+      "type": "business",
+      "contacts": [{ "name": "Rosa Lim", "email": "rosa@biscayneexample.test", "phone": null }],
+      "statedEquipmentValue": 48000
+    }
+  ],
+  "correspondence": [],
+  "now": "2026-11-04T17:00:00Z"
+}

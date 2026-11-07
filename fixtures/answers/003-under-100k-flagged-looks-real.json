@@ -1,0 +1,12 @@
+{
+  "caseId": "CASE-003",
+  "labelledBy": "underwriting",
+  "labelledAt": "2026-11-04T00:00:00Z",
+  "expected": {
+    "stage": "verified",
+    "recommendation": "approve",
+    "outboundTemplates": [],
+    "mustNotApprove": false
+  },
+  "notes": "Under $100K, SEON flagged, all three signals pass: email on 9 accounts, phone on 5, IP in the same city. Looks like a real person, no rental-house vetting needed. DEPENDS ON OPEN Q11 (how the three signals combine)."
+}

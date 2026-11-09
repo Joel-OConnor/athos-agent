@@ -57,7 +57,7 @@ the overall score.
 
 **This is where the M3 accuracy number comes from.** One case packet gives you
 one data point; one case packet's worth of reply text gives you ten. There are
-currently **112**, which is what makes "95% or better agreement" mean something
+currently **113**, which is what makes "95% or better agreement" mean something
 — on 20 samples a single miss costs 5 points.
 
 One file per category, each holding an array:
@@ -67,7 +67,7 @@ One file per category, each holding an array:
 | `rental-house-strong.json` | Prior history, named referrer plus comfort | 25 |
 | `rental-house-weak.json` | References checked only, knows of the client | 18 |
 | `rental-house-none.json` | Out-of-office, bounces, empty forwards, deflections | 20 |
-| `rental-house-negative.json` | Never heard of them, declines to vouch, warnings | 21 |
+| `rental-house-negative.json` | Never heard of them, declines to vouch, warnings | 22 |
 | `applicant.json` | Exhibit 2 references and Exhibit 3 residency answers | 16 |
 | `adversarial.json` | Replies that try to instruct the agent | 12 |
 

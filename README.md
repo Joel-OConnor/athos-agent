@@ -16,7 +16,7 @@ person acts.
 npm install
 npm test          # unit tests, no API key needed
 npm run eval      # grades the agent against fixtures/answers, no API key needed
-npm run eval:replies  # grades the extractor against 112 reply fixtures
+npm run eval:replies  # grades the extractor against 113 reply fixtures
 npm run case -- fixtures/cases/001-clean-100k-seon-approve.json
 npm run serve     # POST /v0/case
 ```
@@ -49,8 +49,7 @@ The local path shells out to `claude -p` with `--tools ""`, `--json-schema`
 (the contract itself), `--strict-mcp-config`, `--disable-slash-commands` and a
 cwd in an empty temp directory, so it reads an email and nothing else and does
 not pick up this project's `CLAUDE.md`. Reckon on roughly 15 seconds and a few
-cents a call, so a full 112-fixture run is a handful of minutes and a few
-dollars.
+cents a call, so a full run is about five minutes and a couple of dollars.
 
 Adding a fourth backend means one class with one method: see
 `src/extract/providers/`.
@@ -84,7 +83,7 @@ src/
   server.ts     POST /v0/case
   cli.ts        npm run case -- <file>
 eval/           grades the agent against the answer key
-fixtures/       scrubbed case packets, the answer key, and 112 single-email fixtures
+fixtures/       scrubbed case packets, the answer key, and 113 single-email fixtures
 docs/           ARCHITECTURE, VERIFICATION-RULES, CONTRACT, OPEN-QUESTIONS,
                 and the two source documents
 ```
@@ -96,7 +95,7 @@ docs/           ARCHITECTURE, VERIFICATION-RULES, CONTRACT, OPEN-QUESTIONS,
 | M0 | Repo, contract, fixture loader, eval runner | `npm run eval` runs and reports |
 | M1 | Routing rules, no AI | Every triage case routes correctly |
 | M2 | Email drafts from approved templates | Every variant matches its snapshot |
-| M3 | Reading replies + deciding | 95%+ agreement across 112 reply fixtures, **zero false strongs**. Standing at 98.2%, see `docs/EVAL-BASELINE.md` |
+| M3 | Reading replies + deciding | 95%+ agreement across 113 reply fixtures, **zero false strongs**. Standing at 98.2% across three runs, see `docs/EVAL-BASELINE.md` |
 | M4 | Research packet | Every escalation gets a packet; every finding has a source URL |
 | M5 | Hardening, Docker, HTTP + CLI | Injection case passes; runs in Docker |
 

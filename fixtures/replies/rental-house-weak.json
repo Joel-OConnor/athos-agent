@@ -23,7 +23,7 @@
     "party": "rental_house",
     "rentalHouseName": "Mile High Example Rentals",
     "clientName": "Alvarez Grip Services",
-    "subject": "RE: Client verification request – Athos Insurance",
+    "subject": "RE: Client verification request \u2013 Athos Insurance",
     "body": "First time with this client. We ran our usual credit and reference check and nothing came back adverse. Order is $74,000.\n\nOwen",
     "expected": {
       "workedWithClientBefore": "no",
@@ -38,7 +38,7 @@
     "party": "rental_house",
     "rentalHouseName": "Desert Example Camera",
     "clientName": "Vance Digital",
-    "subject": "Re: Client verification request – Athos Insurance",
+    "subject": "Re: Client verification request \u2013 Athos Insurance",
     "body": "Haven't worked with them. I know the name though - they've been around the Phoenix scene a couple of years, I've seen their trucks on jobs. That's all I've got.\n\nJo",
     "expected": {
       "workedWithClientBefore": "no",
@@ -53,7 +53,7 @@
     "party": "rental_house",
     "rentalHouseName": "Gulf Coast Example Rentals",
     "clientName": "Hale Media Group",
-    "subject": "RE: Client verification request – Athos Insurance",
+    "subject": "RE: Client verification request \u2013 Athos Insurance",
     "body": "No history with them directly. They were referred by someone but I don't have the name in front of me - it came through our sales side. We did verify their references before quoting.\n\n$30,000 replacement. GL required.\n\nAndre",
     "expected": {
       "workedWithClientBefore": "no",
@@ -71,7 +71,7 @@
     "party": "rental_house",
     "rentalHouseName": "Biscayne Example Grip & Lighting",
     "clientName": "Hale Media Group",
-    "subject": "Re: Client verification request – Athos Insurance",
+    "subject": "Re: Client verification request \u2013 Athos Insurance",
     "body": "New client for us. Checked two trade references, both fine. We're comfortable renting.\n\nRosa",
     "expected": {
       "workedWithClientBefore": "no",
@@ -87,7 +87,7 @@
     "party": "rental_house",
     "rentalHouseName": "Sunshine Example Camera",
     "clientName": "Raman Motion",
-    "subject": "RE: Client verification request – Athos Insurance",
+    "subject": "RE: Client verification request \u2013 Athos Insurance",
     "body": "I recognise the company name from industry listings but we have no account with them and have never done business. Nothing more I can tell you.\n\nMia Chen",
     "expected": {
       "workedWithClientBefore": "no",
@@ -118,7 +118,7 @@
     "party": "rental_house",
     "rentalHouseName": "Keslow Example Rentals",
     "clientName": "Whitfield Pictures LLC",
-    "subject": "RE: Client verification request – Athos Insurance",
+    "subject": "RE: Client verification request \u2013 Athos Insurance",
     "body": "Hi,\n\nI've met Dana at trade events and know who she is, but we've never had an order from her. The current quote is $94,500 if that helps.\n\nMarco",
     "expected": {
       "workedWithClientBefore": "no",
@@ -133,7 +133,7 @@
     "party": "rental_house",
     "rentalHouseName": "Border Example Rentals",
     "clientName": "RV Producciones",
-    "subject": "Re: Client verification request – Athos Insurance",
+    "subject": "Re: Client verification request \u2013 Athos Insurance",
     "body": "No previous rentals. Referencias verificadas, todo bien. Valor de reemplazo $165,000.\n\nLuis",
     "expected": {
       "workedWithClientBefore": "no",
@@ -149,7 +149,7 @@
     "party": "rental_house",
     "rentalHouseName": "Peachtree Example Rentals",
     "clientName": "Brennan Camera Co",
-    "subject": "RE: Client verification request – Athos Insurance",
+    "subject": "RE: Client verification request \u2013 Athos Insurance",
     "body": "> Have you worked with this client before?\nNo.\n\n> If no, have you checked any references and/or was this client referred by someone you know and you feel comfortable renting to this customer?\nWe checked references. Comfortable, yes.\n\n> Please provide the total replacement cost value of the equipment (including sales tax) they are renting from you.\nStill being finalised.\n\n> Do you require general liability insurance or any other extra coverages for their insurance to be sufficient?\nYes.",
     "expected": {
       "workedWithClientBefore": "no",
@@ -166,7 +166,7 @@
     "party": "rental_house",
     "rentalHouseName": "Mile High Example Rentals",
     "clientName": "Alvarez Grip Services",
-    "subject": "Re: Client verification request – Athos Insurance",
+    "subject": "Re: Client verification request \u2013 Athos Insurance",
     "body": "We don't have a rental history with this client. I asked around the shop and one of our techs worked a job they were on last year and said they seemed professional. Not much, but that's what I have.\n\nOwen Pratt",
     "expected": {
       "workedWithClientBefore": "no",
@@ -181,7 +181,7 @@
     "party": "rental_house",
     "rentalHouseName": "Desert Example Camera",
     "clientName": "Vance Digital",
-    "subject": "RE: Client verification request – Athos Insurance",
+    "subject": "RE: Client verification request \u2013 Athos Insurance",
     "body": "New account. They provided three references, we called all three, all positive. We've approved them for up to $150,000 of gear. This order is $108,000.\n\nJo Park",
     "expected": {
       "workedWithClientBefore": "no",
@@ -197,7 +197,7 @@
     "party": "rental_house",
     "rentalHouseName": "Sunshine Example Camera",
     "clientName": "Hale Media Group",
-    "subject": "Re: Client verification request – Athos Insurance",
+    "subject": "Re: Client verification request \u2013 Athos Insurance",
     "body": "Hi,\n\nFirst order for them with us. References were fine. I'll be honest, we only checked one of the two they listed - the other never called back. We went ahead anyway because the job is small.\n\n$22,000.\n\nMia",
     "expected": {
       "workedWithClientBefore": "no",
@@ -213,24 +213,23 @@
     "party": "rental_house",
     "rentalHouseName": "Gulf Coast Example Rentals",
     "clientName": "Raman Motion",
-    "subject": "RE: Client verification request – Athos Insurance",
+    "subject": "RE: Client verification request \u2013 Athos Insurance",
     "body": "Priya was referred to us by Owen at Mile High. We haven't rented to her yet and I haven't spoken to Owen directly to confirm, so I can't say more than that at this stage.\n\nAndre",
     "expected": {
       "workedWithClientBefore": "no",
-      "checkedReferencesOrReferred": "yes",
       "referrerNamed": "yes",
       "comfortableRenting": "unstated",
       "strength": "weak",
-      "strengthRuleId": "references-checked-only"
+      "strengthRuleId": "referrer-named-unconfirmed"
     },
-    "notes": "A named referrer but no stated comfort. The strong rule needs both halves, so this falls to weak."
+    "notes": "Names the referrer but has confirmed nothing with them. Found by the reply eval: without a rule of its own this fell through to never-worked-with-client and graded NEGATIVE, which reads a rental house pointing us at a referral as a rental house who has never heard of the client."
   },
   {
     "id": "rh-weak-015",
     "party": "rental_house",
     "rentalHouseName": "Keslow Example Rentals",
     "clientName": "Raman Motion",
-    "subject": "Re: Client verification request – Athos Insurance",
+    "subject": "Re: Client verification request \u2013 Athos Insurance",
     "body": "no history w them. ran references, came back ok. 120k package. gl req.",
     "expected": {
       "workedWithClientBefore": "no",
@@ -246,7 +245,7 @@
     "party": "rental_house",
     "rentalHouseName": "Biscayne Example Grip & Lighting",
     "clientName": "Vance Digital",
-    "subject": "RE: Client verification request – Athos Insurance",
+    "subject": "RE: Client verification request \u2013 Athos Insurance",
     "body": "Good afternoon,\n\nThis client is not in our rental history. We did complete a reference verification as part of account setup, which was satisfactory, however I would note we have not yet released any equipment to them.\n\nKind regards,\nRosa Lim\nRental Manager | Biscayne Example Grip & Lighting\n555-0166\n\nPlease consider the environment before printing this email.",
     "expected": {
       "workedWithClientBefore": "no",
@@ -260,7 +259,7 @@
     "party": "rental_house",
     "rentalHouseName": "Lone Star Example Grip",
     "clientName": "Brennan Camera Co",
-    "subject": "Re: Client verification request – Athos Insurance",
+    "subject": "Re: Client verification request \u2013 Athos Insurance",
     "body": "I know of Brennan Camera, they're well known in Atlanta. We've never done business together. I can't vouch for them beyond reputation.\n\nPriya Nair",
     "expected": {
       "workedWithClientBefore": "no",
@@ -275,7 +274,7 @@
     "party": "rental_house",
     "rentalHouseName": "Border Example Rentals",
     "clientName": "Alvarez Grip Services",
-    "subject": "RE: Client verification request – Athos Insurance",
+    "subject": "RE: Client verification request \u2013 Athos Insurance",
     "body": "Hello,\n\nWe ran the standard checks and they came back clean, so we are proceeding with the rental. I don't have a record of prior business with them.\n\nThe package comes to $74,000 with tax. We require GL and an additional insured endorsement.\n\nLuis Ferrer",
     "expected": {
       "workedWithClientBefore": "no",

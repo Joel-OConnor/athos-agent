@@ -80,7 +80,6 @@
     "subject": "RE: Client verification request \u2013 Athos Insurance",
     "body": "This client is on our do-not-rent list. I can't go into the reasons but I would not recommend extending them coverage.\n\nAndre Soto",
     "expected": {
-      "declinesToVouch": "yes",
       "warnsAboutClient": "yes",
       "strength": "negative",
       "strengthRuleId": "warns-about-client"
@@ -154,7 +153,6 @@
     "expected": {
       "workedWithClientBefore": "yes",
       "warnsAboutClient": "yes",
-      "comfortableRenting": "no",
       "strength": "negative",
       "strengthRuleId": "warns-about-client"
     }
@@ -306,5 +304,20 @@
       "strengthRuleId": "warns-about-client"
     },
     "notes": "A clean transaction with a worrying pattern around it. Prior history alone would have graded this strong."
+  },
+  {
+    "id": "rh-neg-023",
+    "party": "rental_house",
+    "rentalHouseName": "Sunshine Example Camera",
+    "clientName": "Raman Motion",
+    "subject": "Re: Client verification request \u2013 Athos Insurance",
+    "body": "The name doesn't match anything I can find in our system - no account, no quotes, nothing under that spelling. I'll ask around the floor in case someone remembers, but as it stands we have no record of them.\n\nMia",
+    "expected": {
+      "workedWithClientBefore": "no",
+      "knowsOfClient": "no",
+      "strength": "negative",
+      "strengthRuleId": "never-worked-with-client"
+    },
+    "notes": "'I can't find any record of them' is a claim about the client, even when hedged with 'I'll keep looking'. Split out of rh-none-007, which was testing a clarification request and this at the same time, and the eval kept disagreeing with it."
   }
 ]

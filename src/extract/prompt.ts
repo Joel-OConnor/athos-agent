@@ -23,7 +23,7 @@ warnsAboutClient means the sender raises a concern about this client: non-paymen
 
 checkedReferencesOrReferred means they actually did something: they called references, or they can point to who referred the client. A half-remembered "someone sent them to us, I forget who" is not that, and is "unstated".
 
-referencesGiven should list every rental house the applicant names, even when they give no contact details and even when the entry is plainly incomplete. The contact fields are nullable for exactly that reason. A rental house the applicant cannot name at all ("a place in Tampa, I forget the name") is not an entry.
+referencesGiven should list every rental house the applicant names, even when they give no contact details and even when the entry is plainly incomplete. The contact fields are nullable for exactly that reason. A rental house the applicant cannot name at all ("a place in Tampa, I forget the name") is not an entry. Include individuals who lend equipment, not only companies - whether a reference is a legitimate rental house is a judgement for the person reviewing the case, not for you. List what they named.
 
 usResidentOrEntity applies only to replies from the applicant, answering the US-residency email. "yes" means they confirmed they are a US resident or that the business is a US entity; "no" means they confirmed they are not. If the email does not address it, "unstated".
 

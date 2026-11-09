@@ -50,7 +50,8 @@ export const verificationRules: VerificationRule[] = [
       fromRentalHouse(f) &&
       f.workedWithClientBefore === 'no' &&
       f.knowsOfClient !== 'yes' &&
-      f.checkedReferencesOrReferred !== 'yes',
+      f.checkedReferencesOrReferred !== 'yes' &&
+      f.referrerNamed !== 'yes',
   },
   {
     id: 'declines-to-vouch',
@@ -102,6 +103,15 @@ export const verificationRules: VerificationRule[] = [
     source: 'Q1, confirmed 2026-11-08',
     addedOn: '2026-11-08',
     when: (f) => fromRentalHouse(f) && f.checkedReferencesOrReferred === 'yes',
+  },
+  {
+    id: 'referrer-named-unconfirmed',
+    strength: 'weak',
+    description:
+      'The rental house can name who referred this client, but has not confirmed it with that person or has not said whether they are comfortable renting. There is a referral chain, just an unverified one.',
+    source: 'Found by the reply eval, 2026-11-08',
+    addedOn: '2026-11-08',
+    when: (f) => fromRentalHouse(f) && f.referrerNamed === 'yes',
   },
   {
     id: 'knows-of-client',

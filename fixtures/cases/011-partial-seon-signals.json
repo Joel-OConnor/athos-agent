@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 0,
+  "caseId": "CASE-011",
+  "product": "im_annual",
+  "applicant": {
+    "name": "Nina Alvarez",
+    "businessName": "Alvarez Grip Services",
+    "email": "nina@alvarezgrip.example",
+    "phone": "+1-555-0171",
+    "address": {
+      "line1": "300 Example Pkwy", "city": "Denver", "state": "CO",
+      "postalCode": "80202", "country": "US"
+    },
+    "websites": [],
+    "socialLinks": [],
+    "hasPriorAthosPolicy": false
+  },
+  "rentedEquipmentLimit": 74000,
+  "underwritingGates": {
+    "ofac": false, "mexico": false, "rcvOver150k": false,
+    "claims": false, "trailers": false, "tib": false
+  },
+  "seon": {
+    "state": "review",
+    "fraudScore": 19.0,
+    "blackboxScore": 9.0,
+    "fraudReasons": ["New device"],
+    "confirmedFraud": false,
+    "signals": {
+      "emailAccountCount": 8,
+      "phoneAccountCount": null,
+      "ipCountry": "US",
+      "ipRegion": "CO",
+      "ipCity": "Denver",
+      "ipDistanceMilesFromAddress": 2
+    }
+  },
+  "rentalHouses": [
+    {
+      "id": "rh-1", "name": "Mile High Example Rentals", "type": "business",
+      "contacts": [{ "name": "Owen Pratt", "email": "owen@milehighexample.test", "phone": null }],
+      "statedEquipmentValue": 74000
+    }
+  ],
+  "correspondence": [],
+  "now": "2026-11-04T17:00:00Z"
+}

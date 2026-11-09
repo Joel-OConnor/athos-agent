@@ -9,9 +9,9 @@
       "exhibit1_rental_house_vetting",
       "exhibit3_us_residency"
     ],
-    "expectedWarningsInclude": ["placeholder wording pending business approval"],
+    "expectedWarningsInclude": ["draft wording pending business approval"],
     "actorRole": "any_staff",
     "mustNotApprove": true
   },
-  "notes": "Foreign IP: Exhibit 1 to the rental house AND the US-residency email. Exhibit 3 uses placeholder wording (Q2), so every draft of it carries a warning."
+  "notes": "Foreign IP: Exhibit 1 to the rental house AND the US-residency email. Exhibit 3 uses draft wording (Q2), so every draft of it carries a warning."
 }

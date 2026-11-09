@@ -1,0 +1,14 @@
+{
+  "caseId": "CASE-011",
+  "labelledBy": "underwriting",
+  "labelledAt": "2026-11-08T00:00:00Z",
+  "expected": {
+    "stage": "verified",
+    "recommendation": "approve",
+    "outboundTemplates": [],
+    "needsFurtherReview": false,
+    "actorRole": "underwriter",
+    "mustNotApprove": false
+  },
+  "notes": "Q11 as revised: the phone count was not available, but the email appears on 8 accounts and the IP is in the US. The workflow doc says the email count on its own means 'this appears to be a real person', so one positive with no red flag resolves the case. Under the earlier all-three-must-pass reading this would have gone to rental-house vetting."
+}

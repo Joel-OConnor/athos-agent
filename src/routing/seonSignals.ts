@@ -95,10 +95,17 @@ export function assessSeonSignals(packet: CasePacket): SignalAssessment {
     });
   }
 
-  const verdicts = [emailAccounts, phoneAccounts, ipLocation];
-  const flags = verdicts.filter((v) => v === 'flag').length;
-  const passes = verdicts.filter((v) => v === 'pass').length;
-  const knowns = flags + passes;
+  // The doc treats the account counts as positive evidence ("this appears to
+  // be a real person") and the IP location as a red flag. They are not three
+  // equal votes.
+  const positives = [emailAccounts, phoneAccounts].filter((v) => v === 'pass').length;
+  const redFlag = ipLocation === 'flag';
+  const accountSignalsKnown = [emailAccounts, phoneAccounts].filter(
+    (v) => v !== 'unknown'
+  ).length;
+  const knowns = [emailAccounts, phoneAccounts, ipLocation].filter(
+    (v) => v !== 'unknown'
+  ).length;
 
   let overall: SignalAssessment['overall'];
   if (knowns === 0) {
@@ -106,21 +113,30 @@ export function assessSeonSignals(packet: CasePacket): SignalAssessment {
   } else {
     switch (thresholds.seon.combineRule) {
       case 'all_must_pass':
-        overall = flags === 0 && knowns === 3 ? 'looks_real' : 'looks_fake';
+        overall =
+          knowns === 3 && positives === 2 && !redFlag ? 'looks_real' : 'looks_fake';
         break;
-      case 'majority':
-        overall = passes > flags ? 'looks_real' : 'looks_fake';
+      case 'majority': {
+        const flags = [emailAccounts, phoneAccounts, ipLocation].filter(
+          (v) => v === 'flag'
+        ).length;
+        overall = knowns - flags > flags ? 'looks_real' : 'looks_fake';
         break;
-      case 'any_flag_fails':
+      }
+      case 'positive_unless_flagged':
       default:
-        overall = flags > 0 ? 'looks_fake' : 'looks_real';
+        overall = positives > 0 && !redFlag ? 'looks_real' : 'looks_fake';
         break;
     }
   }
 
-  if (knowns < 3 && thresholds.seon.combineRule === 'all_must_pass') {
+  if (
+    overall === 'looks_fake' &&
+    accountSignalsKnown === 0 &&
+    thresholds.seon.combineRule === 'positive_unless_flagged'
+  ) {
     warnings.push(
-      `Only ${knowns} of 3 SEON signals were available. All three must pass (Q11), so this case cannot resolve on signals alone.`
+      'Neither SEON account count was available, so there is no positive evidence either way. Falling back to rental-house vetting.'
     );
   }
 

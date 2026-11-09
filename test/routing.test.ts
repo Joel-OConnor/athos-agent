@@ -76,3 +76,34 @@ describe('route', () => {
     }
   });
 });
+
+describe('SEON signal combination (Q11, revised)', () => {
+  it('resolves on one account signal when the other is unavailable', () => {
+    const d = route(loadCase('011-partial-seon-signals.json'));
+    expect(d.signals?.phoneAccounts).toBe('unknown');
+    expect(d.signals?.overall).toBe('looks_real');
+    expect(d.path).toBe('signals_look_real');
+  });
+
+  it('treats an out-of-US IP as a red flag that overrides a positive', () => {
+    const packet = loadCase('011-partial-seon-signals.json');
+    packet.seon.signals.ipCountry = 'PT';
+    expect(route(packet).signals?.overall).toBe('looks_fake');
+  });
+
+  it('needs at least one positive, not merely the absence of a flag', () => {
+    const packet = loadCase('011-partial-seon-signals.json');
+    packet.seon.signals.emailAccountCount = 2;
+    const d = route(packet);
+    expect(d.signals?.overall).toBe('looks_fake');
+    expect(d.path).toBe('vet_rental_houses');
+  });
+
+  it('says so when neither account count was available', () => {
+    const packet = loadCase('011-partial-seon-signals.json');
+    packet.seon.signals.emailAccountCount = null;
+    const d = route(packet);
+    expect(d.signals?.overall).toBe('looks_fake');
+    expect(d.warnings.join(' ')).toMatch(/no positive evidence either way/);
+  });
+});

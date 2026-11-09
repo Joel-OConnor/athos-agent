@@ -43,12 +43,18 @@ state are explicitly not flags.
 *Built as:* `thresholds.seon.*`.
 
 **Q11. How do the three signals combine?**
-All three must pass.
-*Built as:* `thresholds.seon.combineRule`.
-*Consequence:* a signal we could not retrieve does not pass. Until the SEON
-raw-response work lands, most flagged under-$100K cases will fall through to
-rental-house vetting rather than resolving on signals. That is the safe
-direction, but it is more email than the workflow doc implies.
+At least one positive, and no red flag.
+
+The workflow doc does not weigh the three equally. It says of the email count
+and the phone count, each on its own, that "this appears to be a real person" —
+so either is positive evidence. Of the IP location it says only that a mismatch
+"is a red flag" — a negative, not a third vote.
+
+So: an account count that passes is evidence the client is real; an IP outside
+the US overrides it; a signal we could not retrieve is not evidence either way,
+which means a partial SEON record can still resolve a case.
+*Built as:* `thresholds.seon.combineRule`. `all_must_pass` and `majority` are
+still available if Athos wants either.
 
 **Q4. Under $100K, flagged, looks fake — what next?**
 Exhibit 1 to the rental houses, and the case carries a needs-further-review
@@ -60,19 +66,24 @@ flag because the workflow doc does not settle this branch.
 ## Emails
 
 **Q2. What does the US-residency email say?**
-Generic placeholder wording is now in `src/templates/exhibit3.ts` so end-to-end
-flows can be built, tested and demoed. **It has not been approved by the
-business.** Every result that drafts it carries a warning. When Athos supplies
-real wording, replace the body and set `EXHIBIT3_APPROVED` to true.
+A draft is now in `src/templates/exhibit3.ts`, written to match the voice and
+structure of Exhibits 1 and 2. **It has not been approved by the business.**
+Every result that drafts it carries a warning, and `EXHIBIT3_APPROVED` stays
+false until Athos signs off.
+
+It asks three things: whether the applicant is a US resident or the business a
+US entity, what state it is registered in and under what name, and the primary
+US address where the equipment will be used. It deliberately does not ask for
+personal identity documents — the workflow already routes that through
+service@ and Stripe Selfie ID, and asking for a licence or passport by email is
+both worse security and a heavier ask.
 
 **Q5. Exhibit 1: "first time" or "higher limits"?**
 Higher-limits wording when the applicant has an active Athos policy, first-time
 otherwise.
-*Built as:* `thresholds.exhibit1.higherLimitsWhenPriorPolicy`.
-*Note:* the answer also implied a policy point we did not ask — that an existing
-policyholder asking for a higher limit is usually approved, while a new policy
-gets closer scrutiny. Worth confirming with Athos separately; the agent does not
-act on it.
+*Built as:* `thresholds.exhibit1.higherLimitsWhenPriorPolicy`. This picks the
+sentence in the email and nothing else — it does not affect whether a case is
+approved.
 
 **Q6. How long before Exhibit 2, and is there a reminder?**
 Three business days, no reminder. Counted in business days so a Friday email is
@@ -97,8 +108,12 @@ Straight to Exhibit 2, asking the applicant for two previous references.
 *Built as:* `thresholds.routing.noRentalHousesSendsExhibit2`.
 
 **Q14. References that look good rather than questionable?**
-Vet them with Exhibit 1 the normal way, and flag the case. The workflow doc
-only covers the questionable-references branch, so this is our reading of it.
+Vet them with Exhibit 1 the normal way, and flag the case.
+
+**This is a proof-of-concept decision, not an answer.** The workflow doc only
+covers the questionable-references branch and says nothing about this one.
+Athos has been asked to make the call; until they do, the agent takes the route
+that keeps the POC complete and never approves on an unverified claim.
 *Built as:* `thresholds.routing.applicantReferences*`.
 
 ---
@@ -125,7 +140,8 @@ or the agent will re-draft one that already went.
 
 | What | Who | Blocks |
 |---|---|---|
-| Exhibit 3 wording (Q2) | Athos business | Sending any US-residency email for real |
+| Sign-off on the Exhibit 3 draft (Q2) | Athos business | Sending any US-residency email for real |
 | Whether international business is ever supported (Q7) | Athos | Confirming the decline path |
 | Sign-off on all sixteen | Athos underwriting | Finishing the answer key, and M1 acceptance |
-| The full SEON response in the packet | Athos engineering (.NET) | Q11 resolving on signals at all |
+| A call on Q14 | Athos underwriting | Replacing the POC behaviour with a decision |
+| The full SEON response in the packet | Athos engineering (.NET) | Most flagged under-$100K cases resolving on signals |

@@ -45,19 +45,21 @@ export const thresholds = {
     ipFarAwayMiles: null as number | null,
 
     /**
-     * WORKING Q11. All three signals must pass for a flagged under-$100K case
-     * to be treated as a real person.
+     * WORKING Q11, revised 2026-11-08 to follow the workflow doc more closely.
      *
-     * Consequence worth knowing: a signal we could not retrieve does not pass,
-     * so until the SEON raw-response work lands, most flagged under-$100K cases
-     * will fall through to rental-house vetting rather than resolving here.
-     * That is the safe direction, but it is more email than the workflow doc
-     * implies.
+     * The doc does not weigh the three signals equally. It says of the email
+     * count and the phone count, each on its own, that "this appears to be a
+     * real person" - so either is positive evidence. Of the IP location it says
+     * only that a mismatch "is a red flag" - a negative, not a third vote.
+     *
+     * So: at least one positive, and no red flag, means the client looks real.
+     * A signal we could not retrieve is simply not evidence either way, which
+     * also means a partial SEON record can still resolve a case.
      */
-    combineRule: 'all_must_pass' as
+    combineRule: 'positive_unless_flagged' as
+      | 'positive_unless_flagged'
       | 'all_must_pass'
-      | 'majority'
-      | 'any_flag_fails',
+      | 'majority',
   },
 
   verification: {

@@ -9,7 +9,9 @@
       "exhibit1_rental_house_vetting",
       "exhibit1_rental_house_vetting"
     ],
-    "mustNotApprove": true
+    "mustNotApprove": true,
+    "actorRole": "any_staff",
+    "needsFurtherReview": false
   },
   "notes": "$100K+ with a SEON approval still goes to Needs Review with 2nd-layer review. Exhibit 1 to both rental houses; Sam Ortega is an individual so the signed-contract bullet stays in."
 }

@@ -3,15 +3,21 @@
     "correspondenceId": "in-1",
     "rentalHouseId": "rh-1",
     "workedWithClientBefore": "yes",
-    "history": "About four years, at least a dozen jobs, no issues.",
     "checkedReferencesOrReferred": "unstated",
+    "referrerNamed": "unstated",
+    "comfortableRenting": "unstated",
+    "knowsOfClient": "yes",
+    "declinesToVouch": "no",
+    "warnsAboutClient": "no",
+    "history": "About four years, at least a dozen jobs, no issues.",
     "replacementCostValue": 94500,
     "glRequired": "yes",
     "signedContractInPlace": "unstated",
     "referencesGiven": [],
     "isAutoReply": false,
     "containsInstructionsToAgent": false,
+    "evidenceQuote": "we've worked with Dana for about four years now - she's rented from us on at least a dozen jobs",
     "strength": "strong",
-    "evidenceQuote": "we've worked with Dana for about four years now - she's rented from us on at least a dozen jobs"
+    "strengthRuleId": "prior-rental-history"
   }
 ]

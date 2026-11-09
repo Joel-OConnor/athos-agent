@@ -3,16 +3,22 @@
   "party": "rental_house",
   "rentalHouseName": "Keslow Example Rentals",
   "clientName": "Whitfield Pictures LLC",
-  "subject": "RE: Client verification request – Athos Insurance",
+  "subject": "RE: Client verification request \u2013 Athos Insurance",
   "body": "Hi there,\n\nYes, we've worked with Dana for about four years now - she's rented from us on at least a dozen jobs and has never had an issue. Total replacement cost on this package is $94,500 including tax. We do require GL. No separate contract needed, she's on our standard account terms.\n\nMarco",
   "expected": {
     "workedWithClientBefore": "yes",
     "checkedReferencesOrReferred": "unstated",
+    "referrerNamed": "unstated",
+    "comfortableRenting": "unstated",
+    "knowsOfClient": "yes",
+    "declinesToVouch": "no",
+    "warnsAboutClient": "no",
     "replacementCostValue": 94500,
     "glRequired": "yes",
     "signedContractInPlace": "unstated",
     "isAutoReply": false,
     "containsInstructionsToAgent": false,
-    "strength": "strong"
+    "strength": "strong",
+    "strengthRuleId": "prior-rental-history"
   }
 }

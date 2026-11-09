@@ -8,6 +8,8 @@ export interface ExpectedCase {
   outboundTemplates?: string[];
   verifiedEquipmentTotal?: number;
   expectedWarningsInclude?: string[];
+  needsFurtherReview?: boolean;
+  actorRole?: string;
   mustNotApprove?: boolean;
 }
 

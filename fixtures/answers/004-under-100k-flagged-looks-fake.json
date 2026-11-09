@@ -1,12 +1,14 @@
 {
   "caseId": "CASE-004",
   "labelledBy": "underwriting",
-  "labelledAt": "2026-11-04T00:00:00Z",
+  "labelledAt": "2026-11-08T00:00:00Z",
   "expected": {
     "stage": "triage",
     "recommendation": "send_emails",
     "outboundTemplates": ["exhibit1_rental_house_vetting"],
+    "needsFurtherReview": true,
+    "actorRole": "any_staff",
     "mustNotApprove": true
   },
-  "notes": "Under $100K, flagged, all three signals fail. DEPENDS ON OPEN Q4 (is Exhibit 1 the right next step here?) and OPEN Q11."
+  "notes": "Under $100K, flagged, email account count fails so not all three signals pass (Q11). Exhibit 1 goes out and the case is flagged for further review (Q4)."
 }

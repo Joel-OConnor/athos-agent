@@ -6,7 +6,8 @@
     "stage": "done",
     "recommendation": "route_to_underwriting",
     "outboundTemplates": [],
-    "mustNotApprove": true
+    "mustNotApprove": true,
+    "actorRole": "underwriter"
   },
   "notes": "Mexico and RCV-over-$150K gates are set. The agent passes these through untouched and never decides a gate."
 }

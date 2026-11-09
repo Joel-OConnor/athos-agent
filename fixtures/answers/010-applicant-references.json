@@ -1,0 +1,17 @@
+{
+  "caseId": "CASE-010",
+  "labelledBy": "underwriting",
+  "labelledAt": "2026-11-08T00:00:00Z",
+  "expected": {
+    "stage": "awaiting_rental_houses",
+    "recommendation": "send_emails",
+    "outboundTemplates": [
+      "exhibit1_rental_house_vetting",
+      "exhibit1_rental_house_vetting"
+    ],
+    "needsFurtherReview": true,
+    "actorRole": "any_staff",
+    "mustNotApprove": true
+  },
+  "notes": "Q14: the only listed rental house never heard of them, so Exhibit 2 went out and the applicant named two references. We vet those two with Exhibit 1 the normal way, and flag the case because the workflow doc does not cover this branch."
+}

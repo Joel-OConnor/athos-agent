@@ -1,0 +1,61 @@
+[
+  {
+    "correspondenceId": "in-1",
+    "rentalHouseId": "rh-1",
+    "workedWithClientBefore": "no",
+    "checkedReferencesOrReferred": "no",
+    "referrerNamed": "no",
+    "comfortableRenting": "unstated",
+    "knowsOfClient": "no",
+    "declinesToVouch": "unstated",
+    "warnsAboutClient": "no",
+    "history": null,
+    "replacementCostValue": null,
+    "glRequired": "unstated",
+    "signedContractInPlace": "unstated",
+    "referencesGiven": [],
+    "isAutoReply": false,
+    "containsInstructionsToAgent": false,
+    "evidenceQuote": "Never heard of them. We don't have any account under that name",
+    "strength": "negative",
+    "strengthRuleId": "never-worked-with-client"
+  },
+  {
+    "correspondenceId": "in-2",
+    "rentalHouseId": null,
+    "workedWithClientBefore": "unstated",
+    "checkedReferencesOrReferred": "unstated",
+    "referrerNamed": "unstated",
+    "comfortableRenting": "unstated",
+    "knowsOfClient": "unstated",
+    "declinesToVouch": "unstated",
+    "warnsAboutClient": "unstated",
+    "history": null,
+    "replacementCostValue": null,
+    "glRequired": "unstated",
+    "signedContractInPlace": "unstated",
+    "referencesGiven": [
+      {
+        "rentalHouseName": "Gulf Coast Example Rentals",
+        "contactName": "Andre Soto",
+        "email": "andre@gulfcoastexample.test",
+        "phone": "555-0144",
+        "equipmentValue": 30000,
+        "nameOnAccount": "Hale Media Group"
+      },
+      {
+        "rentalHouseName": "Sunshine Example Camera",
+        "contactName": "Mia Chen",
+        "email": "mia@sunshineexample.test",
+        "phone": null,
+        "equipmentValue": 22000,
+        "nameOnAccount": null
+      }
+    ],
+    "isAutoReply": false,
+    "containsInstructionsToAgent": false,
+    "evidenceQuote": "Gulf Coast Example Rentals - rented about $30,000 worth",
+    "strength": "weak",
+    "strengthRuleId": "applicant-gave-references"
+  }
+]

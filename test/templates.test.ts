@@ -1,6 +1,10 @@
 import { renderExhibit1 } from '../src/templates/exhibit1';
 import { renderExhibit2 } from '../src/templates/exhibit2';
-import { MissingTemplateError, renderExhibit3 } from '../src/templates/exhibit3';
+import {
+  EXHIBIT3_APPROVED,
+  EXHIBIT3_UNAPPROVED_WARNING,
+  renderExhibit3,
+} from '../src/templates/exhibit3';
 import { buildDrafts, draftId } from '../src/templates/draft';
 import { loadCase } from './helpers';
 
@@ -44,8 +48,16 @@ describe('templates', () => {
     expect(renderExhibit2()).toMatchSnapshot();
   });
 
-  it('refuses to invent the US-residency email', () => {
-    expect(() => renderExhibit3({ clientName: 'X' })).toThrow(MissingTemplateError);
+  it('renders the placeholder US-residency email and flags it as unapproved', () => {
+    expect(EXHIBIT3_APPROVED).toBe(false);
+    expect(renderExhibit3({ clientName: 'Whitfield Pictures LLC' })).toMatchSnapshot();
+  });
+
+  it('warns on every draft of the unapproved US-residency email', () => {
+    const packet = loadCase('002-seon-review-foreign.json');
+    const { outbound, warnings } = buildDrafts(packet, ['exhibit3_us_residency']);
+    expect(outbound).toHaveLength(1);
+    expect(warnings).toContain(EXHIBIT3_UNAPPROVED_WARNING);
   });
 
   it('drafts one Exhibit 1 per rental house with stable ids', () => {
@@ -70,5 +82,23 @@ describe('templates', () => {
     const { outbound, warnings } = buildDrafts(packet, ['exhibit1_rental_house_vetting']);
     expect(outbound).toHaveLength(0);
     expect(warnings.join(' ')).toMatch(/No rental houses listed/);
+  });
+
+  it('vets rental houses the applicant named (Q14)', () => {
+    const packet = loadCase('001-clean-100k-seon-approve.json');
+    const { outbound } = buildDrafts(packet, ['exhibit1_rental_house_vetting'], {
+      referredRentalHouses: [
+        {
+          rentalHouseName: 'Gulf Coast Example Rentals',
+          contactName: 'Andre Soto',
+          email: 'andre@gulfcoastexample.test',
+          phone: null,
+          equipmentValue: 30000,
+          nameOnAccount: null,
+        },
+      ],
+    });
+    expect(outbound).toHaveLength(3);
+    expect(outbound[2]!.to).toEqual(['andre@gulfcoastexample.test']);
   });
 });

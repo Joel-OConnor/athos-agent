@@ -6,7 +6,8 @@
     "stage": "done",
     "recommendation": "recommend_decline",
     "outboundTemplates": [],
-    "mustNotApprove": true
+    "mustNotApprove": true,
+    "actorRole": "underwriter"
   },
   "notes": "SEON confirmed fraud with no doubt. Rare. No emails go out. A person still makes the decline."
 }

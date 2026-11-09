@@ -45,6 +45,10 @@ export type OutboundDraft = z.infer<typeof OutboundDraft>;
 export const Strength = z.enum(['strong', 'weak', 'none', 'negative']);
 export type Strength = z.infer<typeof Strength>;
 
+/** Yes, no, or the email did not say. Never guessed. */
+export const Tri = z.enum(['yes', 'no', 'unstated']);
+export type Tri = z.infer<typeof Tri>;
+
 /**
  * Structured facts pulled out of one inbound email. This is the ONLY place a
  * model's output enters the system. Every decision downstream reads these
@@ -53,12 +57,22 @@ export type Strength = z.infer<typeof Strength>;
 export const ExtractedReply = z.object({
   correspondenceId: z.string(),
   rentalHouseId: z.string().nullable(),
-  workedWithClientBefore: z.enum(['yes', 'no', 'unstated']),
+
+  // --- Facts the model fills. Each is only what the email actually says. ---
+  workedWithClientBefore: Tri,
+  checkedReferencesOrReferred: Tri,
+  /** Did they name, or clearly refer to, a person who referred this client? */
+  referrerNamed: Tri,
+  /** Did they say they are comfortable renting to this client? */
+  comfortableRenting: Tri,
+  /** Do they know of the client without having worked with them? */
+  knowsOfClient: Tri,
+  declinesToVouch: Tri,
+  warnsAboutClient: Tri,
   history: z.string().nullable(),
-  checkedReferencesOrReferred: z.enum(['yes', 'no', 'unstated']),
   replacementCostValue: z.number().nonnegative().nullable(),
-  glRequired: z.enum(['yes', 'no', 'unstated']),
-  signedContractInPlace: z.enum(['yes', 'no', 'unstated']),
+  glRequired: Tri,
+  signedContractInPlace: Tri,
   referencesGiven: z
     .array(
       z.object({
@@ -71,14 +85,19 @@ export const ExtractedReply = z.object({
       })
     )
     .default([]),
-  /** Auto-reply, bounce, forwarded chain with no answer, etc. */
+  /** Auto-reply, bounce, forwarded chain with nothing new. */
   isAutoReply: z.boolean().default(false),
-  /** True when the reply contains text aimed at the agent. Always scored negative. */
+  /** True when the reply contains text aimed at the agent. */
   containsInstructionsToAgent: z.boolean().default(false),
-  strength: Strength,
-  /** Short quote the strength rests on, for the Work Queue. */
+  /** Short quote the grade rests on, for the Work Queue. */
   evidenceQuote: z.string().max(500).nullable(),
+
+  // --- Graded by the verification rules registry, never by the model. ---
+  strength: Strength,
+  /** Which rule in src/verification/rules.ts produced that strength. */
+  strengthRuleId: z.string(),
 });
+
 export type ExtractedReply = z.infer<typeof ExtractedReply>;
 
 export const ResearchFinding = z.object({
@@ -116,6 +135,19 @@ export const AgentResult = z.object({
   researchPacket: ResearchPacket.nullable(),
   /** When to look at this case again if nothing arrives. */
   followUpAt: IsoDateTime.nullable(),
+  /**
+   * The case reached a branch the workflow doc does not settle, or rests on an
+   * assumption pending Athos confirmation. The Work Queue should mark it.
+   */
+  needsFurtherReview: z.boolean().default(false),
+  /** Why, when needsFurtherReview is true. */
+  furtherReviewReasons: z.array(z.string()).default([]),
+  /**
+   * Who may act on this recommendation. Q10: anyone on staff can send emails;
+   * approve, escalate and decline are underwriters only. The Work Queue
+   * enforces this - the agent only states it.
+   */
+  actorRole: z.enum(['any_staff', 'underwriter']),
   /** Anything a person must know that is not a reason: missing SEON signals, etc. */
   warnings: z.array(z.string()).default([]),
 });

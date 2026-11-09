@@ -24,6 +24,8 @@ async function evalCase(fx: CaseFixture): Promise<Row> {
   let templates: string[] = [];
   let total = 0;
   let warnings: string[] = [];
+  let needsFurtherReview: boolean | null = null;
+  let actorRole = '';
 
   try {
     const result = await runCase(fx.packet, { extractor });
@@ -32,6 +34,8 @@ async function evalCase(fx: CaseFixture): Promise<Row> {
     templates = result.outbound.map((o) => o.template);
     total = result.verifiedEquipmentTotal;
     warnings = result.warnings;
+    needsFurtherReview = result.needsFurtherReview;
+    actorRole = result.actorRole;
   } catch (err) {
     detail.push(`threw: ${err instanceof Error ? err.message : String(err)}`);
   }
@@ -57,6 +61,14 @@ async function evalCase(fx: CaseFixture): Promise<Row> {
   if (e.verifiedEquipmentTotal !== undefined && e.verifiedEquipmentTotal !== total) {
     pass = false;
     detail.push(`equipment total expected ${e.verifiedEquipmentTotal}, got ${total}`);
+  }
+  if (e.needsFurtherReview !== undefined && e.needsFurtherReview !== needsFurtherReview) {
+    pass = false;
+    detail.push(`needsFurtherReview expected ${e.needsFurtherReview}, got ${needsFurtherReview}`);
+  }
+  if (e.actorRole && e.actorRole !== actorRole) {
+    pass = false;
+    detail.push(`actorRole expected ${e.actorRole}, got ${actorRole}`);
   }
   for (const needle of e.expectedWarningsInclude ?? []) {
     if (!warnings.some((w) => w.includes(needle))) {

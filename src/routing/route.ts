@@ -47,6 +47,30 @@ function looksForeign(packet: CasePacket): boolean {
  * reads the replies.
  */
 export function route(packet: CasePacket): RouteDecision {
+  const decision = routeInner(packet);
+
+  // Q13: nobody to vet. Ask the applicant for references instead.
+  if (
+    decision.path === 'vet_rental_houses' &&
+    packet.rentalHouses.length === 0 &&
+    thresholds.routing.noRentalHousesSendsExhibit2 &&
+    decision.templates.includes('exhibit1_rental_house_vetting')
+  ) {
+    decision.templates = decision.templates.map((t) =>
+      t === 'exhibit1_rental_house_vetting' ? 'exhibit2_applicant_references' : t
+    );
+    decision.reasons.push({
+      code: 'NO_RENTAL_HOUSES_LISTED',
+      message:
+        'No rental houses are listed on this application, so we ask the applicant for two previous references instead.',
+      evidence: [{ field: 'rentalHouses' }],
+    });
+  }
+
+  return decision;
+}
+
+function routeInner(packet: CasePacket): RouteDecision {
   const reasons: Reason[] = [];
   const warnings: string[] = [];
   const templates: TemplateId[] = [];

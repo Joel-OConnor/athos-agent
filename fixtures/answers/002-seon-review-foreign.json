@@ -1,13 +1,17 @@
 {
   "caseId": "CASE-002",
   "labelledBy": "underwriting",
-  "labelledAt": "2026-11-04T00:00:00Z",
+  "labelledAt": "2026-11-08T00:00:00Z",
   "expected": {
     "stage": "triage",
     "recommendation": "send_emails",
-    "outboundTemplates": ["exhibit1_rental_house_vetting"],
-    "expectedWarningsInclude": ["US-residency email"],
+    "outboundTemplates": [
+      "exhibit1_rental_house_vetting",
+      "exhibit3_us_residency"
+    ],
+    "expectedWarningsInclude": ["placeholder wording pending business approval"],
+    "actorRole": "any_staff",
     "mustNotApprove": true
   },
-  "notes": "Foreign IP: Exhibit 1 to the rental house AND the US-residency email. Exhibit 3 has no approved wording yet (OPEN Q2), so the agent must warn instead of inventing one."
+  "notes": "Foreign IP: Exhibit 1 to the rental house AND the US-residency email. Exhibit 3 uses placeholder wording (Q2), so every draft of it carries a warning."
 }

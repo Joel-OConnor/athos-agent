@@ -1,0 +1,13 @@
+{
+  "caseId": "CASE-009",
+  "labelledBy": "underwriting",
+  "labelledAt": "2026-11-08T00:00:00Z",
+  "expected": {
+    "stage": "triage",
+    "recommendation": "send_emails",
+    "outboundTemplates": ["exhibit2_applicant_references"],
+    "actorRole": "any_staff",
+    "mustNotApprove": true
+  },
+  "notes": "Q13: $100K+ so it needs vetting, but no rental houses are listed. Go straight to Exhibit 2 and ask the applicant for two previous references."
+}

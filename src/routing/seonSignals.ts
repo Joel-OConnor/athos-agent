@@ -67,35 +67,31 @@ export function assessSeonSignals(packet: CasePacket): SignalAssessment {
 
   let ipLocation: SignalVerdict = 'unknown';
   const addr = packet.applicant.address;
-  const haveIpGeo = s.ipCountry !== null || s.ipDistanceMilesFromAddress !== null;
-  if (!haveIpGeo) {
+  if (s.ipCountry === null) {
     warnings.push('SEON IP geolocation not available on this case.');
   } else {
-    const farByMiles =
-      s.ipDistanceMilesFromAddress !== null &&
-      s.ipDistanceMilesFromAddress > thresholds.seon.ipFarAwayMiles;
+    // Q3: anywhere in the USA is fine. Only an IP outside the US is a flag, so
+    // an applicant working away from home does not trip this.
     const differentCountry =
-      thresholds.seon.ipDifferentCountryIsFlag &&
-      s.ipCountry !== null &&
-      addr.country !== null &&
-      s.ipCountry !== addr.country;
+      thresholds.seon.ipDifferentCountryIsFlag && s.ipCountry !== 'US';
     const differentState =
       thresholds.seon.ipDifferentStateIsFlag &&
       s.ipRegion !== null &&
       addr.state !== null &&
       s.ipRegion !== addr.state;
+    const farByMiles =
+      thresholds.seon.ipFarAwayMiles !== null &&
+      s.ipDistanceMilesFromAddress !== null &&
+      s.ipDistanceMilesFromAddress > thresholds.seon.ipFarAwayMiles;
 
-    const flagged = farByMiles || differentCountry || differentState;
+    const flagged = differentCountry || differentState || farByMiles;
     ipLocation = flagged ? 'flag' : 'pass';
     reasons.push({
-      code: flagged ? 'SEON_IP_LOCATION_MISMATCH' : 'SEON_IP_LOCATION_OK',
+      code: flagged ? 'SEON_IP_OUTSIDE_US' : 'SEON_IP_LOCATION_OK',
       message: flagged
-        ? `IP geolocation (${s.ipCity ?? '?'}, ${s.ipRegion ?? '?'}, ${s.ipCountry ?? '?'}) does not match the applicant address.`
-        : 'IP geolocation is consistent with the applicant address.',
-      evidence: [
-        { field: 'seon.signals.ipCountry' },
-        { field: 'applicant.address' },
-      ],
+        ? `IP geolocation (${s.ipCity ?? '?'}, ${s.ipRegion ?? '?'}, ${s.ipCountry}) places the customer outside the US.`
+        : `IP geolocation is inside the US (${s.ipCity ?? '?'}, ${s.ipRegion ?? '?'}).`,
+      evidence: [{ field: 'seon.signals.ipCountry' }, { field: 'applicant.address' }],
     });
   }
 
@@ -122,9 +118,9 @@ export function assessSeonSignals(packet: CasePacket): SignalAssessment {
     }
   }
 
-  if (knowns < 3 && overall === 'looks_real') {
+  if (knowns < 3 && thresholds.seon.combineRule === 'all_must_pass') {
     warnings.push(
-      `"Looks real" rests on ${knowns} of 3 SEON signals; the rest were unavailable.`
+      `Only ${knowns} of 3 SEON signals were available. All three must pass (Q11), so this case cannot resolve on signals alone.`
     );
   }
 

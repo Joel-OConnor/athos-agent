@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 0,
+  "caseId": "CASE-009",
+  "product": "im_short_term",
+  "applicant": {
+    "name": "Priya Raman",
+    "businessName": "Raman Motion",
+    "email": "priya@ramanmotion.example",
+    "phone": "+1-555-0155",
+    "address": {
+      "line1": "55 Example Ct", "city": "Chicago", "state": "IL",
+      "postalCode": "60601", "country": "US"
+    },
+    "websites": [],
+    "socialLinks": [],
+    "hasPriorAthosPolicy": false
+  },
+  "rentedEquipmentLimit": 120000,
+  "underwritingGates": {
+    "ofac": false, "mexico": false, "rcvOver150k": false,
+    "claims": false, "trailers": false, "tib": false
+  },
+  "seon": {
+    "state": "approve", "fraudScore": 8.0, "blackboxScore": 4.0,
+    "fraudReasons": [], "confirmedFraud": false,
+    "signals": {
+      "emailAccountCount": 8, "phoneAccountCount": 3,
+      "ipCountry": "US", "ipRegion": "IL", "ipCity": "Chicago",
+      "ipDistanceMilesFromAddress": 1
+    }
+  },
+  "rentalHouses": [],
+  "correspondence": [],
+  "now": "2026-11-04T17:00:00Z"
+}

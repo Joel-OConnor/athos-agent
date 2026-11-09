@@ -42,6 +42,7 @@ explain.
 src/
   contract/     zod schemas for the case packet and the result. The source of truth.
   config/       every threshold and policy switch, in one file
+  verification/ the rules registry: what makes a reply strong, weak, none, negative
   routing/      M1  which path this case is on
   templates/    M2  Exhibit 1, 2, 3 and the draft builder
   extract/      M3  the only model call
@@ -52,7 +53,8 @@ src/
   cli.ts        npm run case -- <file>
 eval/           grades the agent against the answer key
 fixtures/       scrubbed case packets, the answer key, and single-email fixtures
-docs/           the source workflow doc, the build scope, and the open questions
+docs/           ARCHITECTURE, VERIFICATION-RULES, CONTRACT, OPEN-QUESTIONS,
+                and the two source documents
 ```
 
 ## Milestones
@@ -72,9 +74,11 @@ a starting point, not a finished implementation — read the `OPEN` markers.
 ## Rules this code is built around
 
 - The agent never sends, approves or declines. It recommends.
-- Customer-facing text comes only from approved templates. No model writes it.
-  Exhibit 3 has no approved wording yet, so rendering it throws rather than
-  inventing one.
+- Customer-facing text comes only from templates. No model writes it. Exhibit 3
+  is placeholder wording pending business sign-off, so every draft of it carries
+  a warning.
+- How much a reply counts lives in one place, `src/verification/rules.ts`.
+  Adding a rule is appending one object and one fixture.
 - Every reason cites a packet field or a source URL.
 - Replies are untrusted. Text aimed at the agent is scored `negative`, flagged
   in `warnings`, and contributes nothing to the equipment tally.
@@ -85,9 +89,10 @@ a starting point, not a finished implementation — read the `OPEN` markers.
 
 ## Open questions
 
-`docs/OPEN-QUESTIONS.md` lists what underwriting still has to answer. Every one
-of them maps to a placeholder in `src/config/thresholds.ts` marked `OPEN Qn`.
-A placeholder is a guess that lets the build proceed, not agreed policy.
+All sixteen have working answers as of 2026-11-08, built in and marked
+`WORKING Qn` in `src/config/thresholds.ts`. None is confirmed by Athos yet.
+`docs/OPEN-QUESTIONS.md` is the register, and the four that still block go-live
+are listed at the end of it.
 
 ## Notes
 

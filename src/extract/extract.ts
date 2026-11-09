@@ -2,6 +2,36 @@ import Anthropic from '@anthropic-ai/sdk';
 import type { CasePacket, Correspondence, ExtractedReply } from '../contract';
 import { EXTRACTION_SYSTEM_PROMPT, buildExtractionUserMessage } from './prompt';
 import { ExtractionOutput, RECORD_REPLY_TOOL } from './tool';
+import { gradeReply } from '../verification/grade';
+import type { ReplyFacts } from '../verification/types';
+
+/** The model's facts, graded by the rules registry. Never the other way round. */
+export function gradeExtraction(
+  facts: ExtractionOutput,
+  email: { id: string; rentalHouseId: string | null }
+): ExtractedReply {
+  const replyFacts: ReplyFacts = {
+    workedWithClientBefore: facts.workedWithClientBefore,
+    checkedReferencesOrReferred: facts.checkedReferencesOrReferred,
+    referrerNamed: facts.referrerNamed,
+    comfortableRenting: facts.comfortableRenting,
+    knowsOfClient: facts.knowsOfClient,
+    declinesToVouch: facts.declinesToVouch,
+    warnsAboutClient: facts.warnsAboutClient,
+    replacementCostValue: facts.replacementCostValue,
+    referencesGivenCount: facts.referencesGiven.length,
+    isAutoReply: facts.isAutoReply,
+    containsInstructionsToAgent: facts.containsInstructionsToAgent,
+  };
+  const grade = gradeReply(replyFacts);
+  return {
+    ...facts,
+    correspondenceId: email.id,
+    rentalHouseId: email.rentalHouseId,
+    strength: grade.strength,
+    strengthRuleId: grade.ruleId,
+  };
+}
 
 export interface Extractor {
   extract(
@@ -35,12 +65,7 @@ export class ClaudeExtractor implements Extractor {
     });
 
     const parsed = await this.callWithRetry(message);
-
-    return {
-      ...parsed,
-      correspondenceId: email.id,
-      rentalHouseId: email.rentalHouseId,
-    };
+    return gradeExtraction(parsed, email);
   }
 
   private async callWithRetry(

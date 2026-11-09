@@ -7,7 +7,9 @@
     "recommendation": "approve",
     "outboundTemplates": [],
     "verifiedEquipmentTotal": 94500,
-    "mustNotApprove": false
+    "mustNotApprove": false,
+    "actorRole": "underwriter",
+    "needsFurtherReview": false
   },
   "notes": "One strong verification is enough. We do NOT wait on rh-2 to confirm the other $45K. Tally what we have and approve."
 }

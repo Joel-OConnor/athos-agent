@@ -2,10 +2,15 @@ import { z } from 'zod';
 import { ExtractedReply } from '../contract';
 import zodToJsonSchema from './zodToJsonSchema';
 
-/** The model fills this and nothing else. Validated with zod on the way back. */
+/**
+ * The model fills facts only. `strength` and `strengthRuleId` are left out on
+ * purpose: they come from the verification rules registry, not from the model.
+ */
 export const ExtractionOutput = ExtractedReply.omit({
   correspondenceId: true,
   rentalHouseId: true,
+  strength: true,
+  strengthRuleId: true,
 });
 export type ExtractionOutput = z.infer<typeof ExtractionOutput>;
 

@@ -1,0 +1,74 @@
+{
+  "schemaVersion": 0,
+  "caseId": "CASE-010",
+  "product": "im_annual",
+  "applicant": {
+    "name": "Victor Hale",
+    "businessName": "Hale Media Group",
+    "email": "vhale@halemediagroup.example",
+    "phone": "+1-555-0188",
+    "address": {
+      "line1": "7 Example Row", "city": "Miami", "state": "FL",
+      "postalCode": "33101", "country": "US"
+    },
+    "websites": ["https://halemediagroup.example"],
+    "socialLinks": ["https://www.instagram.com/example_halemedia"],
+    "hasPriorAthosPolicy": false
+  },
+  "rentedEquipmentLimit": 105000,
+  "underwritingGates": {
+    "ofac": false, "mexico": false, "rcvOver150k": false,
+    "claims": false, "trailers": false, "tib": false
+  },
+  "seon": {
+    "state": "review", "fraudScore": 44.0, "blackboxScore": 29.0,
+    "fraudReasons": ["Email not found on social networks"], "confirmedFraud": false,
+    "signals": {
+      "emailAccountCount": 1, "phoneAccountCount": 0,
+      "ipCountry": "US", "ipRegion": "FL", "ipCity": "Miami",
+      "ipDistanceMilesFromAddress": 3
+    }
+  },
+  "rentalHouses": [
+    {
+      "id": "rh-1", "name": "Biscayne Example Grip & Lighting", "type": "business",
+      "contacts": [{ "name": "Rosa Lim", "email": "rosa@biscayneexample.test", "phone": null }],
+      "statedEquipmentValue": 105000
+    }
+  ],
+  "correspondence": [
+    {
+      "id": "out-1", "direction": "outbound", "party": "rental_house",
+      "rentalHouseId": "rh-1", "template": "exhibit1_rental_house_vetting",
+      "from": "service@athosinsurance.com", "to": ["rosa@biscayneexample.test"],
+      "subject": "Client verification request – Athos Insurance",
+      "body": "Hello,\n\nWe have a mutual client named Hale Media Group...",
+      "sentAt": "2026-11-02T18:00:00Z"
+    },
+    {
+      "id": "in-1", "direction": "inbound", "party": "rental_house",
+      "rentalHouseId": "rh-1", "template": null,
+      "from": "rosa@biscayneexample.test", "to": ["service@athosinsurance.com"],
+      "subject": "Re: Client verification request – Athos Insurance",
+      "body": "Never heard of them. We don't have any account under that name and nobody here recognizes it. Sorry.\n\nRosa",
+      "sentAt": "2026-11-03T14:00:00Z"
+    },
+    {
+      "id": "out-2", "direction": "outbound", "party": "applicant",
+      "rentalHouseId": null, "template": "exhibit2_applicant_references",
+      "from": "service@athosinsurance.com", "to": ["vhale@halemediagroup.example"],
+      "subject": "Final verification step – previous rental house references",
+      "body": "Hello,\n\nThank you for submitting your application...",
+      "sentAt": "2026-11-03T15:00:00Z"
+    },
+    {
+      "id": "in-2", "direction": "inbound", "party": "applicant",
+      "rentalHouseId": null, "template": null,
+      "from": "vhale@halemediagroup.example", "to": ["service@athosinsurance.com"],
+      "subject": "Re: Final verification step – previous rental house references",
+      "body": "Sure, here are two:\n\n1. Gulf Coast Example Rentals - rented about $30,000 worth, contact is Andre Soto, 555-0144, andre@gulfcoastexample.test. Account is under Hale Media Group.\n2. Sunshine Example Camera - about $22,000, contact Mia Chen, mia@sunshineexample.test.\n\nThanks,\nVictor",
+      "sentAt": "2026-11-04T10:00:00Z"
+    }
+  ],
+  "now": "2026-11-05T17:00:00Z"
+}

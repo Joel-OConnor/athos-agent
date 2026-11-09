@@ -7,18 +7,9 @@ import type {
 } from '../contract';
 import { SCHEMA_VERSION } from '../contract';
 import { thresholds } from '../config/thresholds';
+import { addBusinessDays, businessDaysBetween } from '../config/businessDays';
 import { buildDrafts } from '../templates/draft';
 import type { RouteDecision } from '../routing/route';
-
-const DAY_MS = 24 * 60 * 60 * 1000;
-
-function addDays(iso: string, days: number): string {
-  return new Date(new Date(iso).getTime() + days * DAY_MS).toISOString();
-}
-
-function daysSince(iso: string, now: string): number {
-  return (new Date(now).getTime() - new Date(iso).getTime()) / DAY_MS;
-}
 
 function lastOutboundAt(packet: CasePacket, template: TemplateId): string | null {
   const sent = packet.correspondence
@@ -33,12 +24,20 @@ function hasSent(packet: CasePacket, template: TemplateId): boolean {
 }
 
 /**
- * Tally from replies. The workflow is explicit that this does not hold up an
- * account: once one rental house gives a strong verification we add up what we
- * have and move on.
+ * Tally from replies. Q9: we bind at the requested limit, so this number is
+ * reported for the file and never blocks an approval.
  */
 function tallyEquipment(extracted: readonly ExtractedReply[]): number {
-  return extracted.reduce((sum, e) => sum + (e.replacementCostValue ?? 0), 0);
+  return extracted
+    .filter((e) => e.strength !== 'negative')
+    .reduce((sum, e) => sum + (e.replacementCostValue ?? 0), 0);
+}
+
+/** Q10. Sending is open to any staff; the outcomes are underwriters only. */
+function actorFor(recommendation: AgentResult['recommendation']): AgentResult['actorRole'] {
+  return recommendation === 'send_emails' || recommendation === 'wait'
+    ? thresholds.authority.sendEmails
+    : thresholds.authority.approveEscalateDecline;
 }
 
 export interface DecideInput {
@@ -48,6 +47,15 @@ export interface DecideInput {
   extracted: readonly ExtractedReply[];
 }
 
+interface Draft {
+  stage: AgentResult['stage'];
+  recommendation: AgentResult['recommendation'];
+  reasons: Reason[];
+  outbound?: AgentResult['outbound'];
+  followUpAt?: string | null;
+  furtherReview?: string[];
+}
+
 /**
  * Deterministic. Reads the route and the extracted facts and says what a person
  * should do. No model call happens here, which is what makes every
@@ -55,91 +63,99 @@ export interface DecideInput {
  */
 export function decide(input: DecideInput): AgentResult {
   const { packet, routeDecision } = input;
-  const reasons: Reason[] = [...routeDecision.reasons];
   const warnings: string[] = [...routeDecision.warnings];
+  const furtherReview: string[] = [];
 
   // An email that tries to instruct the agent is never evidence of anything.
-  const extracted = input.extracted.map((e) => {
-    if (!e.containsInstructionsToAgent) return e;
-    warnings.push(
-      `Reply ${e.correspondenceId} contains text aimed at the agent; scored negative and ignored as evidence.`
-    );
-    return { ...e, strength: 'negative' as const };
-  });
+  // The verification rules already grade it negative; this surfaces it.
+  const extracted = [...input.extracted];
+  for (const e of extracted) {
+    if (e.containsInstructionsToAgent) {
+      warnings.push(
+        `Reply ${e.correspondenceId} contains text aimed at the agent; scored negative and ignored as evidence.`
+      );
+    }
+  }
 
-  const base = {
+  const draft = plan({ packet, routeDecision, extracted, warnings, furtherReview });
+
+  const recommendation = draft.recommendation;
+  return {
     schemaVersion: SCHEMA_VERSION,
     caseId: packet.caseId,
+    stage: draft.stage,
+    recommendation,
+    reasons: [...routeDecision.reasons, ...draft.reasons],
+    outbound: draft.outbound ?? [],
     extracted,
     verifiedEquipmentTotal: tallyEquipment(extracted),
     researchPacket: null,
-    followUpAt: null as string | null,
+    followUpAt: draft.followUpAt ?? null,
+    needsFurtherReview: furtherReview.length > 0,
+    furtherReviewReasons: furtherReview,
+    actorRole: actorFor(recommendation),
+    warnings,
   };
-
-  switch (routeDecision.path) {
-    case 'out_of_scope':
-      return { ...base, stage: 'done', recommendation: 'continue', reasons, outbound: [], warnings };
-
-    case 'underwriting_gate':
-      return {
-        ...base,
-        stage: 'done',
-        recommendation: 'route_to_underwriting',
-        reasons,
-        outbound: [],
-        warnings,
-      };
-
-    case 'no_review_needed':
-      return { ...base, stage: 'done', recommendation: 'continue', reasons, outbound: [], warnings };
-
-    case 'confirmed_fraud':
-      return {
-        ...base,
-        stage: 'done',
-        recommendation: 'recommend_decline',
-        reasons,
-        outbound: [],
-        warnings,
-      };
-
-    case 'signals_look_real':
-      reasons.push({
-        code: 'SEON_SIGNALS_LOOK_REAL',
-        message:
-          'Under $100K with a SEON flag, but the account, phone and IP signals are consistent with a real person.',
-        evidence: [{ field: 'seon.signals' }],
-      });
-      return {
-        ...base,
-        stage: 'verified',
-        recommendation: 'approve',
-        reasons,
-        outbound: [],
-        warnings,
-      };
-
-    case 'vet_rental_houses':
-      return vetting({ packet, routeDecision, extracted, reasons, warnings, base });
-  }
 }
 
-interface VettingArgs {
+interface PlanInput {
   packet: CasePacket;
   routeDecision: RouteDecision;
   extracted: ExtractedReply[];
-  reasons: Reason[];
   warnings: string[];
-  base: Omit<AgentResult, 'stage' | 'recommendation' | 'reasons' | 'outbound' | 'warnings'>;
+  furtherReview: string[];
 }
 
-function vetting(args: VettingArgs): AgentResult {
-  const { packet, routeDecision, extracted, reasons, warnings, base } = args;
-  const now = packet.now;
+function plan(input: PlanInput): Draft {
+  const { packet, routeDecision, furtherReview } = input;
 
-  // Applicant said outright they are not a US resident or entity.
+  switch (routeDecision.path) {
+    case 'out_of_scope':
+      return { stage: 'done', recommendation: 'continue', reasons: [] };
+
+    case 'underwriting_gate':
+      return { stage: 'done', recommendation: 'route_to_underwriting', reasons: [] };
+
+    case 'no_review_needed':
+      return { stage: 'done', recommendation: 'continue', reasons: [] };
+
+    case 'confirmed_fraud':
+      return { stage: 'done', recommendation: 'recommend_decline', reasons: [] };
+
+    case 'signals_look_real':
+      return {
+        stage: 'verified',
+        recommendation: 'approve',
+        reasons: [
+          {
+            code: 'SEON_SIGNALS_LOOK_REAL',
+            message:
+              'Under $100K with a SEON flag, but all three signals pass: the account counts and the IP location are consistent with a real US person.',
+            evidence: [{ field: 'seon.signals' }],
+          },
+        ],
+      };
+
+    case 'vet_rental_houses':
+      if (routeDecision.signals?.overall === 'looks_fake') {
+        if (thresholds.routing.underLimitLooksFakeNeedsFurtherReview) {
+          furtherReview.push(
+            'Under $100K, SEON flagged, and the signals do not pass. The workflow doc does not settle this branch (Q4).'
+          );
+        }
+      }
+      return vetting(input);
+  }
+}
+
+function vetting(input: PlanInput): Draft {
+  const { packet, routeDecision, extracted, warnings, furtherReview } = input;
+  const now = packet.now;
+  const reasons: Reason[] = [];
+
+  // The applicant answered the US-residency email saying they are not US.
   const nonUs = extracted.some(
-    (e) => e.rentalHouseId === null && e.strength === 'negative' && e.history?.toLowerCase().includes('not a us')
+    (e) => e.rentalHouseId === null && e.history?.toLowerCase().includes('not a us')
   );
   if (nonUs && thresholds.routing.nonUsApplicantRecommendsDecline) {
     reasons.push({
@@ -147,7 +163,12 @@ function vetting(args: VettingArgs): AgentResult {
       message: 'Applicant confirmed they are not a US resident or entity.',
       evidence: [{ field: 'correspondence' }],
     });
-    return { ...base, stage: 'done', recommendation: 'recommend_decline', reasons, outbound: [], warnings };
+    if (thresholds.routing.nonUsApplicantNeedsFurtherReview) {
+      furtherReview.push(
+        'Recommending decline because the applicant is not a US resident or entity. Athos has not confirmed whether international business is ever supported (Q7).'
+      );
+    }
+    return { stage: 'done', recommendation: 'recommend_decline', reasons };
   }
 
   const rhReplies = extracted.filter((e) => e.rentalHouseId !== null);
@@ -156,7 +177,7 @@ function vetting(args: VettingArgs): AgentResult {
 
   for (const n of negative) {
     warnings.push(
-      `Rental house reply ${n.correspondenceId} was negative: ${n.evidenceQuote ?? 'no quote captured'}`
+      `Rental house reply ${n.correspondenceId} was negative (rule: ${n.strengthRuleId}): ${n.evidenceQuote ?? 'no quote captured'}`
     );
   }
 
@@ -174,11 +195,50 @@ function vetting(args: VettingArgs): AgentResult {
       })),
     });
     reasons.push({
-      code: 'EQUIPMENT_TALLIED_NOT_BLOCKING',
-      message: `Equipment value from replies totals $${base.verifiedEquipmentTotal.toLocaleString('en-US')}. This does not hold up the account.`,
-      evidence: [{ field: 'rentalHouses' }],
+      code: 'BIND_AT_REQUESTED_LIMIT',
+      message: `Binding at the requested $${packet.rentedEquipmentLimit.toLocaleString('en-US')}; replies account for $${tallyEquipment(extracted).toLocaleString('en-US')} and do not hold up the account.`,
+      evidence: [{ field: 'rentedEquipmentLimit' }],
     });
-    return { ...base, stage: 'verified', recommendation: 'approve', reasons, outbound: [], warnings };
+    return { stage: 'verified', recommendation: 'approve', reasons };
+  }
+
+  // Q14: the applicant named rental houses we have not written to yet.
+  const applicantReplies = extracted.filter((e) => e.rentalHouseId === null);
+  const referred = applicantReplies.flatMap((e) => e.referencesGiven);
+  if (referred.length > 0 && thresholds.routing.applicantReferencesGetExhibit1) {
+    const drafts = buildDrafts(packet, ['exhibit1_rental_house_vetting'], {
+      referredRentalHouses: referred,
+    });
+    warnings.push(...drafts.warnings);
+    if (drafts.outbound.length > 0) {
+      reasons.push({
+        code: 'VETTING_APPLICANT_REFERENCES',
+        message: `Applicant supplied ${referred.length} reference(s); vetting them with Exhibit 1.`,
+        evidence: [{ field: 'correspondence' }],
+      });
+      if (thresholds.routing.applicantReferencesNeedFurtherReview) {
+        furtherReview.push(
+          'Verifying the applicant\'s own references. The workflow doc only covers the questionable-references branch, so this path is our reading of it (Q14).'
+        );
+      }
+      return {
+        stage: 'awaiting_rental_houses',
+        recommendation: 'send_emails',
+        reasons,
+        outbound: drafts.outbound,
+        followUpAt: addBusinessDays(now, thresholds.timing.rentalHouseWaitBusinessDays),
+      };
+    }
+    // References with no email to write to: a person has to look.
+    reasons.push({
+      code: 'APPLICANT_REFERENCES_UNREACHABLE',
+      message: `Applicant supplied ${referred.length} reference(s), but none can be contacted by email.`,
+      evidence: [{ field: 'correspondence' }],
+    });
+    furtherReview.push(
+      'Applicant references could not be vetted automatically (Q14).'
+    );
+    return { stage: 'escalated', recommendation: 'escalate_to_service', reasons };
   }
 
   // Nothing sent yet: draft what triage asked for.
@@ -190,14 +250,20 @@ function vetting(args: VettingArgs): AgentResult {
       message: `Drafted ${pending.outbound.length} verification email(s) for a person to send.`,
       evidence: [{ field: 'rentalHouses' }],
     });
+    const awaitingApplicant = pending.outbound.every(
+      (d) => d.template !== 'exhibit1_rental_house_vetting'
+    );
     return {
-      ...base,
       stage: 'triage',
       recommendation: 'send_emails',
       reasons,
       outbound: pending.outbound,
-      followUpAt: addDays(now, thresholds.timing.rentalHouseWaitDays),
-      warnings,
+      followUpAt: addBusinessDays(
+        now,
+        awaitingApplicant
+          ? thresholds.timing.applicantReferenceWaitBusinessDays
+          : thresholds.timing.rentalHouseWaitBusinessDays
+      ),
     };
   }
 
@@ -205,13 +271,11 @@ function vetting(args: VettingArgs): AgentResult {
   const exhibit2Sent = hasSent(packet, 'exhibit2_applicant_references');
   const waitedOnRentalHouses =
     exhibit1SentAt !== null &&
-    daysSince(exhibit1SentAt, now) >= thresholds.timing.rentalHouseWaitDays;
+    businessDaysBetween(exhibit1SentAt, now) >=
+      thresholds.timing.rentalHouseWaitBusinessDays;
+  const rentalHousesUnhelpful = rhReplies.length > 0 && strong.length === 0;
 
-  const rentalHousesUnhelpful =
-    rhReplies.length > 0 && strong.length === 0;
-
-  // Rental houses cannot help, or have not answered in time: ask the applicant
-  // for two previous rental-house references.
+  // Rental houses cannot help, or have not answered in time.
   if (!exhibit2Sent && (rentalHousesUnhelpful || waitedOnRentalHouses)) {
     const drafts = buildDrafts(packet, ['exhibit2_applicant_references']);
     warnings.push(...drafts.warnings);
@@ -221,69 +285,57 @@ function vetting(args: VettingArgs): AgentResult {
         : 'RENTAL_HOUSES_NO_REPLY',
       message: rentalHousesUnhelpful
         ? 'No rental house could verify this client; asking the applicant for two previous references.'
-        : `No reply from the rental houses after ${thresholds.timing.rentalHouseWaitDays} day(s); asking the applicant for two previous references.`,
+        : `No reply from the rental houses after ${thresholds.timing.rentalHouseWaitBusinessDays} business day(s); asking the applicant for two previous references.`,
       evidence: [{ field: 'correspondence' }],
     });
     return {
-      ...base,
       stage: 'awaiting_applicant',
       recommendation: 'send_emails',
       reasons,
       outbound: drafts.outbound,
-      followUpAt: addDays(now, thresholds.timing.applicantReferenceWaitDays),
-      warnings,
+      followUpAt: addBusinessDays(
+        now,
+        thresholds.timing.applicantReferenceWaitBusinessDays
+      ),
     };
   }
 
-  // Applicant sent references. The workflow routes questionable references to
-  // service@ with everything found, to choose decline vs Stripe Selfie ID.
-  const applicantReplies = extracted.filter((e) => e.rentalHouseId === null);
-  const referencesGiven = applicantReplies.flatMap((e) => e.referencesGiven);
+  // Applicant replied to Exhibit 2 with nothing we can use.
   if (exhibit2Sent && applicantReplies.length > 0) {
     reasons.push({
-      code: 'APPLICANT_REFERENCES_RECEIVED',
-      message: `Applicant supplied ${referencesGiven.length} reference(s); no strong rental-house verification on file.`,
+      code: 'APPLICANT_REFERENCES_UNUSABLE',
+      message:
+        'Applicant replied but gave no usable rental-house references, and no rental house could verify them.',
       evidence: [{ field: 'correspondence' }],
     });
-    // OPEN Q14: good-looking references are not covered by the workflow doc.
-    // Escalating is the conservative default - the agent never approves on
-    // unverified references.
-    return {
-      ...base,
-      stage: 'escalated',
-      recommendation: 'escalate_to_service',
-      reasons,
-      outbound: [],
-      warnings,
-    };
+    return { stage: 'escalated', recommendation: 'escalate_to_service', reasons };
   }
 
-  const caseAge = exhibit1SentAt !== null ? daysSince(exhibit1SentAt, now) : 0;
-  if (caseAge >= thresholds.timing.maxCaseAgeDays) {
+  const oldest = exhibit1SentAt ?? lastOutboundAt(packet, 'exhibit2_applicant_references');
+  const caseAge = oldest !== null ? businessDaysBetween(oldest, now) : 0;
+  if (caseAge >= thresholds.timing.maxCaseAgeBusinessDays) {
     reasons.push({
       code: 'CASE_AGED_OUT',
-      message: `Nothing usable after ${Math.floor(caseAge)} day(s); sending to service@ to decide.`,
+      message: `Nothing usable after ${caseAge} business day(s); sending to service@ to decide.`,
       evidence: [{ field: 'now' }],
     });
-    return { ...base, stage: 'escalated', recommendation: 'escalate_to_service', reasons, outbound: [], warnings };
+    return { stage: 'escalated', recommendation: 'escalate_to_service', reasons };
   }
 
-  // Emails are out, nothing useful back yet.
   reasons.push({
     code: 'AWAITING_REPLIES',
     message: 'Verification emails are out; waiting on replies.',
     evidence: [{ field: 'correspondence' }],
   });
   return {
-    ...base,
     stage: exhibit2Sent ? 'awaiting_applicant' : 'awaiting_rental_houses',
     recommendation: 'wait',
     reasons,
-    outbound: [],
-    followUpAt: addDays(
-      exhibit1SentAt ?? now,
-      thresholds.timing.rentalHouseWaitDays
+    followUpAt: addBusinessDays(
+      oldest ?? now,
+      exhibit2Sent
+        ? thresholds.timing.applicantReferenceWaitBusinessDays
+        : thresholds.timing.rentalHouseWaitBusinessDays
     ),
-    warnings,
   };
 }

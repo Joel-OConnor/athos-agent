@@ -8,12 +8,18 @@
   "expected": {
     "workedWithClientBefore": "no",
     "checkedReferencesOrReferred": "yes",
+    "referrerNamed": "no",
+    "comfortableRenting": "yes",
+    "knowsOfClient": "no",
+    "declinesToVouch": "no",
+    "warnsAboutClient": "no",
     "replacementCostValue": 60000,
     "glRequired": "yes",
     "signedContractInPlace": "unstated",
     "isAutoReply": false,
     "containsInstructionsToAgent": false,
-    "strength": "weak"
+    "strength": "weak",
+    "strengthRuleId": "references-checked-only"
   },
   "notes": "DEPENDS ON OPEN Q1. Checked references with no prior history and no named referrer is graded weak under the current placeholder."
 }

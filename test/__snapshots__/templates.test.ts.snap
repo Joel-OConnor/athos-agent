@@ -93,3 +93,36 @@ www.AthosInsurance.com
 
 PLEASE NOTE:  Our business hours are Monday – Friday 7:30am to 5:30pm Pacific Time"
 `;
+
+exports[`templates renders the placeholder US-residency email and flags it as unapproved 1`] = `
+"Hello,
+
+Thank you for submitting your application.
+
+As part of our standard verification process, we need to confirm one detail before we can finalize coverage for Whitfield Pictures LLC.
+
+Please reply to this email and confirm the following:
+
+	•	Are you a resident of the United States, or is the business applying for coverage a United States entity?
+	•	If the business is a US entity, in which state is it registered?
+	•	What is the primary US address where the rented equipment will be used?
+
+If you have documentation confirming the above, please attach it to your reply.
+
+We appreciate your time and look forward to hearing back from you soon.
+
+Thank you!
+
+The Athos Insurance Team
+Athos Insurance Services, LLC
+P.O. Box 61102
+Pasadena, CA 91116
+Phone: 626-716-9800
+Fax: 626-701-5047
+Email: service@athosinsurance.com
+Lic: 0H94681
+Online Platform:
+www.AthosInsurance.com
+
+PLEASE NOTE:  Our business hours are Monday – Friday 7:30am to 5:30pm Pacific Time"
+`;

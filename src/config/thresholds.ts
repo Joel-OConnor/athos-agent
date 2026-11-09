@@ -2,9 +2,14 @@
  * Every number and every policy switch the workflow depends on lives here, and
  * nowhere else. Changing underwriting policy should mean editing this file.
  *
- * Entries marked OPEN Qn are not yet answered by underwriting. The value is a
- * placeholder chosen so the build can proceed; see docs/OPEN-QUESTIONS.md.
- * Do not treat a placeholder as agreed policy.
+ * Status of each entry:
+ *   WORKING Qn  - answered by Athos-side review on 2026-11-08, pending Athos
+ *                 confirmation. See docs/OPEN-QUESTIONS.md.
+ *   OPEN Qn     - still unanswered; the value is a placeholder.
+ *
+ * How a reply is graded is NOT here. That lives in the verification rules
+ * registry, src/verification/rules.ts, so rules can be added over time without
+ * touching this file. See docs/VERIFICATION-RULES.md.
  */
 
 export const thresholds = {
@@ -22,39 +27,34 @@ export const thresholds = {
   underwritingRcvLimitUsd: 150_000,
 
   seon: {
-    /**
-     * Workflow: "as long as there are over 5, this appears to be a real person".
-     * OPEN Q3: does "over 5" mean >= 6? Placeholder reads it strictly as > 5.
-     */
+    /** WORKING Q3. Workflow: "over 5" email accounts, read strictly as > 5. */
     minEmailAccounts: 5,
     emailAccountsComparison: 'greater_than' as const,
 
-    /**
-     * Workflow: "as long as there are over 2".
-     * OPEN Q3: >= 3? Placeholder reads it strictly as > 2.
-     */
+    /** WORKING Q3. Workflow: "over 2" phone accounts, read strictly as > 2. */
     minPhoneAccounts: 2,
     phoneAccountsComparison: 'greater_than' as const,
 
     /**
-     * Workflow: IP geo "different and far away" from the applicant address is
-     * a red flag.
-     * OPEN Q3: miles, different state, or different country? Placeholder uses
-     * all three, any of which trips the flag.
+     * WORKING Q3. Anywhere in the USA is fine; outside the US is a flag.
+     * Distance and a different state are explicitly NOT flags, so a Burbank
+     * applicant working out of Atlanta does not trip this.
      */
-    ipFarAwayMiles: 500,
-    ipDifferentStateIsFlag: true,
     ipDifferentCountryIsFlag: true,
+    ipDifferentStateIsFlag: false,
+    ipFarAwayMiles: null as number | null,
 
     /**
-     * How the three signals combine into "looks real" vs "looks fake".
-     * NOT SPECIFIED ANYWHERE in the workflow doc. This is the single biggest
-     * hole in M1 routing.
-     * OPEN Q11. Placeholder: a case looks real only when no signal is a flag
-     * and at least one is affirmative; any flag makes it look fake.
-     * Alternatives: 'all_must_pass' | 'majority' | 'any_flag_fails'.
+     * WORKING Q11. All three signals must pass for a flagged under-$100K case
+     * to be treated as a real person.
+     *
+     * Consequence worth knowing: a signal we could not retrieve does not pass,
+     * so until the SEON raw-response work lands, most flagged under-$100K cases
+     * will fall through to rental-house vetting rather than resolving here.
+     * That is the safe direction, but it is more email than the workflow doc
+     * implies.
      */
-    combineRule: 'any_flag_fails' as
+    combineRule: 'all_must_pass' as
       | 'all_must_pass'
       | 'majority'
       | 'any_flag_fails',
@@ -62,65 +62,84 @@ export const thresholds = {
 
   verification: {
     /**
-     * How many strong rental-house verifications end the chase.
+     * How many strong verifications end the chase.
      * Workflow: "Since we got one strong vet, tally up the totals ... and approve."
      */
     strongVerificationsNeeded: 1,
 
     /**
-     * OPEN Q12: does one "never heard of them" cancel one strong verification?
-     * Placeholder: a negative does not cancel a strong one, but it is always
-     * surfaced as a warning for the person approving.
+     * WORKING Q12. A negative reply does not cancel a strong one, but it is
+     * always surfaced to whoever approves.
      */
     negativeCancelsStrong: false,
-
-    /**
-     * OPEN Q1: is "we checked references" on its own strong or weak?
-     * Placeholder: weak. Strong requires prior rental history, or a referral
-     * from someone the rental house knows plus stated comfort renting.
-     */
-    checkedReferencesAloneIsStrong: false,
   },
 
   timing: {
-    /**
-     * OPEN Q6: how long to wait on rental houses before sending Exhibit 2,
-     * and whether a reminder goes out in between. Placeholders.
-     */
-    rentalHouseWaitDays: 3,
-    rentalHouseReminderDays: null as number | null,
-    applicantReferenceWaitDays: 3,
-    /** After this, a case with nothing back goes to service@ either way. */
-    maxCaseAgeDays: 10,
+    /** WORKING Q6. Three business days on the rental houses, no reminder. */
+    rentalHouseWaitBusinessDays: 3,
+    rentalHouseReminderBusinessDays: null as number | null,
+    applicantReferenceWaitBusinessDays: 3,
+    /** After this, a case with nothing usable goes to service@ either way. */
+    maxCaseAgeBusinessDays: 10,
   },
 
   routing: {
     /**
-     * OPEN Q4: under $100K, SEON flagged, signals say "looks fake" - is the
-     * next step Exhibit 1 to the rental houses, same as the $100K+ path?
-     * Placeholder: yes, send Exhibit 1.
+     * WORKING Q4. Under $100K, flagged, signals say "looks fake": send
+     * Exhibit 1, and flag the case for further review. The workflow doc does
+     * not settle this branch, so a person should look at it.
      */
     underLimitLooksFakeSendsExhibit1: true,
+    underLimitLooksFakeNeedsFurtherReview: true,
 
     /**
-     * OPEN Q7: applicant confirms they are NOT a US resident or entity.
-     * Placeholder: recommend decline.
+     * WORKING Q7. An applicant who confirms they are not a US resident or
+     * entity is a decline, unless Athos supports international business.
+     * Flagged for further review until Athos confirms.
      */
     nonUsApplicantRecommendsDecline: true,
+    nonUsApplicantNeedsFurtherReview: true,
+
+    /** WORKING Q8. Inland Marine annual and short-term only. */
+    productsInScope: ['im_annual', 'im_short_term'] as const,
 
     /**
-     * OPEN Q8: which products enter this workflow.
-     * Placeholder: Inland Marine only, per the scope doc.
+     * WORKING Q13. An application with no rental houses listed goes straight
+     * to Exhibit 2, asking the applicant for two previous references.
      */
-    productsInScope: ['im_annual', 'im_short_term'] as const,
+    noRentalHousesSendsExhibit2: true,
+
+    /**
+     * WORKING Q14. References the applicant supplies are vetted the normal
+     * way - Exhibit 1 to each one with a contact email - and the case is
+     * flagged for further review. The workflow doc only covers the
+     * questionable-references branch, so this is our reading of it.
+     */
+    applicantReferencesGetExhibit1: true,
+    applicantReferencesNeedFurtherReview: true,
+  },
+
+  binding: {
+    /**
+     * WORKING Q9. After one strong verification we bind at the requested
+     * limit, not the verified total. The tally is reported, never a blocker.
+     */
+    bindAt: 'requested_limit' as 'requested_limit' | 'verified_total',
+  },
+
+  authority: {
+    /**
+     * WORKING Q10. Anyone on staff may send drafted emails. Approve, escalate
+     * and decline are underwriters only. The Work Queue enforces it.
+     */
+    sendEmails: 'any_staff' as const,
+    approveEscalateDecline: 'underwriter' as const,
   },
 
   exhibit1: {
     /**
-     * OPEN Q5: when is Exhibit 1 "first time working with this client" vs
-     * "the client is requesting higher limits"?
-     * Placeholder: higher-limits wording when the applicant has a prior Athos
-     * policy, first-time wording otherwise.
+     * WORKING Q5. Higher-limits wording when the applicant has an active Athos
+     * policy; first-time wording otherwise.
      */
     higherLimitsWhenPriorPolicy: true,
   },

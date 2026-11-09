@@ -148,18 +148,58 @@
               "unstated"
             ]
           },
-          "history": {
-            "type": [
-              "string",
-              "null"
-            ]
-          },
           "checkedReferencesOrReferred": {
             "type": "string",
             "enum": [
               "yes",
               "no",
               "unstated"
+            ]
+          },
+          "referrerNamed": {
+            "type": "string",
+            "enum": [
+              "yes",
+              "no",
+              "unstated"
+            ]
+          },
+          "comfortableRenting": {
+            "type": "string",
+            "enum": [
+              "yes",
+              "no",
+              "unstated"
+            ]
+          },
+          "knowsOfClient": {
+            "type": "string",
+            "enum": [
+              "yes",
+              "no",
+              "unstated"
+            ]
+          },
+          "declinesToVouch": {
+            "type": "string",
+            "enum": [
+              "yes",
+              "no",
+              "unstated"
+            ]
+          },
+          "warnsAboutClient": {
+            "type": "string",
+            "enum": [
+              "yes",
+              "no",
+              "unstated"
+            ]
+          },
+          "history": {
+            "type": [
+              "string",
+              "null"
             ]
           },
           "replacementCostValue": {
@@ -253,15 +293,6 @@
             "default": false,
             "type": "boolean"
           },
-          "strength": {
-            "type": "string",
-            "enum": [
-              "strong",
-              "weak",
-              "none",
-              "negative"
-            ]
-          },
           "evidenceQuote": {
             "anyOf": [
               {
@@ -272,22 +303,40 @@
                 "type": "null"
               }
             ]
+          },
+          "strength": {
+            "type": "string",
+            "enum": [
+              "strong",
+              "weak",
+              "none",
+              "negative"
+            ]
+          },
+          "strengthRuleId": {
+            "type": "string"
           }
         },
         "required": [
           "correspondenceId",
           "rentalHouseId",
           "workedWithClientBefore",
-          "history",
           "checkedReferencesOrReferred",
+          "referrerNamed",
+          "comfortableRenting",
+          "knowsOfClient",
+          "declinesToVouch",
+          "warnsAboutClient",
+          "history",
           "replacementCostValue",
           "glRequired",
           "signedContractInPlace",
           "referencesGiven",
           "isAutoReply",
           "containsInstructionsToAgent",
+          "evidenceQuote",
           "strength",
-          "evidenceQuote"
+          "strengthRuleId"
         ],
         "additionalProperties": false
       }
@@ -377,6 +426,24 @@
         }
       ]
     },
+    "needsFurtherReview": {
+      "default": false,
+      "type": "boolean"
+    },
+    "furtherReviewReasons": {
+      "default": [],
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "actorRole": {
+      "type": "string",
+      "enum": [
+        "any_staff",
+        "underwriter"
+      ]
+    },
     "warnings": {
       "default": [],
       "type": "array",
@@ -396,6 +463,9 @@
     "verifiedEquipmentTotal",
     "researchPacket",
     "followUpAt",
+    "needsFurtherReview",
+    "furtherReviewReasons",
+    "actorRole",
     "warnings"
   ],
   "additionalProperties": false

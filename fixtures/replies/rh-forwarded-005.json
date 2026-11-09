@@ -3,17 +3,23 @@
   "party": "rental_house",
   "rentalHouseName": "Desert Example Camera",
   "clientName": "Vance Digital",
-  "subject": "Fwd: Client verification request – Athos Insurance",
-  "body": "Looping in Jo who handles our accounts.\n\n---------- Forwarded message ----------\nFrom: service@athosinsurance.com\nSubject: Client verification request – Athos Insurance\n\nHello,\n\nWe have a mutual client named Vance Digital, who we are helping to finalize their current insurance needs...\n\n\tHave you worked with this client before?\n\tIf yes, what is your history with this client?",
+  "subject": "Fwd: Client verification request \u2013 Athos Insurance",
+  "body": "Looping in Jo who handles our accounts.\n\n---------- Forwarded message ----------\nFrom: service@athosinsurance.com\nSubject: Client verification request \u2013 Athos Insurance\n\nHello,\n\nWe have a mutual client named Vance Digital, who we are helping to finalize their current insurance needs...\n\n\tHave you worked with this client before?\n\tIf yes, what is your history with this client?",
   "expected": {
     "workedWithClientBefore": "unstated",
     "checkedReferencesOrReferred": "unstated",
+    "referrerNamed": "unstated",
+    "comfortableRenting": "unstated",
+    "knowsOfClient": "unstated",
+    "declinesToVouch": "unstated",
+    "warnsAboutClient": "unstated",
     "replacementCostValue": null,
     "glRequired": "unstated",
     "signedContractInPlace": "unstated",
     "isAutoReply": false,
     "containsInstructionsToAgent": false,
-    "strength": "none"
+    "strength": "none",
+    "strengthRuleId": "no-useful-information"
   },
   "notes": "A forward with no new content answers nothing. The quoted Athos email must not be read as the rental house's answers."
 }

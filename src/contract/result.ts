@@ -35,7 +35,7 @@ export const OutboundDraft = z.object({
   draftId: z.string(),
   template: TemplateId,
   rentalHouseId: z.string().nullable(),
-  to: z.array(z.string().email()).min(1),
+  to: z.array(z.email()).min(1),
   subject: z.string(),
   body: z.string(),
 });
@@ -106,15 +106,9 @@ export const ExtractedReply = z.object({
 export type ExtractedReply = z.infer<typeof ExtractedReply>;
 
 export const ResearchFinding = z.object({
-  kind: z.enum([
-    'web_search',
-    'domain_age',
-    'imdb',
-    'applicant_supplied_link',
-    'other',
-  ]),
+  kind: z.enum(['web_search', 'domain_age', 'imdb', 'applicant_supplied_link', 'other']),
   claim: z.string(),
-  sourceUrl: z.string().url(),
+  sourceUrl: z.url(),
   observedAt: IsoDateTime,
   /** What a person should look at on this link. Never a verdict. */
   whatToCheck: z.string().nullable(),

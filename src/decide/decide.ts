@@ -16,7 +16,7 @@ function lastOutboundAt(packet: CasePacket, template: TemplateId): string | null
     .filter((c) => c.direction === 'outbound' && c.template === template)
     .map((c) => c.sentAt)
     .sort();
-  return sent.length > 0 ? sent[sent.length - 1]! : null;
+  return sent.at(-1) ?? null;
 }
 
 function hasSent(packet: CasePacket, template: TemplateId): boolean {
@@ -34,7 +34,9 @@ function tallyEquipment(extracted: readonly ExtractedReply[]): number {
 }
 
 /** Q10. Sending is open to any staff; the outcomes are underwriters only. */
-function actorFor(recommendation: AgentResult['recommendation']): AgentResult['actorRole'] {
+function actorFor(
+  recommendation: AgentResult['recommendation']
+): AgentResult['actorRole'] {
   return recommendation === 'send_emails' || recommendation === 'wait'
     ? thresholds.authority.sendEmails
     : thresholds.authority.approveEscalateDecline;
@@ -53,7 +55,6 @@ interface Draft {
   reasons: Reason[];
   outbound?: AgentResult['outbound'];
   followUpAt?: string | null;
-  furtherReview?: string[];
 }
 
 /**
@@ -107,7 +108,7 @@ interface PlanInput {
 }
 
 function plan(input: PlanInput): Draft {
-  const { packet, routeDecision, furtherReview } = input;
+  const { routeDecision, furtherReview } = input;
 
   switch (routeDecision.path) {
     case 'out_of_scope':
@@ -130,7 +131,7 @@ function plan(input: PlanInput): Draft {
           {
             code: 'SEON_SIGNALS_LOOK_REAL',
             message:
-              'Under $100K with a SEON flag, but all three signals pass: the account counts and the IP location are consistent with a real US person.',
+              'Under $100K with a SEON flag, but the SEON signals are consistent with a real US person: an account count passes and the IP is inside the US.',
             evidence: [{ field: 'seon.signals' }],
           },
         ],
@@ -218,7 +219,7 @@ function vetting(input: PlanInput): Draft {
       });
       if (thresholds.routing.applicantReferencesNeedFurtherReview) {
         furtherReview.push(
-          'Verifying the applicant\'s own references. The workflow doc only covers the questionable-references branch, so this path is our reading of it (Q14).'
+          "Verifying the applicant's own references. The workflow doc only covers the questionable-references branch, so this path is our reading of it (Q14)."
         );
       }
       return {
@@ -235,9 +236,7 @@ function vetting(input: PlanInput): Draft {
       message: `Applicant supplied ${referred.length} reference(s), but none can be contacted by email.`,
       evidence: [{ field: 'correspondence' }],
     });
-    furtherReview.push(
-      'Applicant references could not be vetted automatically (Q14).'
-    );
+    furtherReview.push('Applicant references could not be vetted automatically (Q14).');
     return { stage: 'escalated', recommendation: 'escalate_to_service', reasons };
   }
 
@@ -311,7 +310,8 @@ function vetting(input: PlanInput): Draft {
     return { stage: 'escalated', recommendation: 'escalate_to_service', reasons };
   }
 
-  const oldest = exhibit1SentAt ?? lastOutboundAt(packet, 'exhibit2_applicant_references');
+  const oldest =
+    exhibit1SentAt ?? lastOutboundAt(packet, 'exhibit2_applicant_references');
   const caseAge = oldest !== null ? businessDaysBetween(oldest, now) : 0;
   if (caseAge >= thresholds.timing.maxCaseAgeBusinessDays) {
     reasons.push({

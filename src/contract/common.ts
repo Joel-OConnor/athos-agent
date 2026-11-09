@@ -6,7 +6,7 @@ import { z } from 'zod';
  */
 export const SCHEMA_VERSION = 0;
 
-export const IsoDateTime = z.string().datetime({ offset: true });
+export const IsoDateTime = z.iso.datetime({ offset: true });
 
 export const Product = z.enum(['im_annual', 'im_short_term']);
 export type Product = z.infer<typeof Product>;
@@ -28,7 +28,7 @@ export type TemplateId = z.infer<typeof TemplateId>;
  */
 export const Evidence = z.object({
   field: z.string().optional(), // dot path into the case packet, e.g. "seon.signals.emailAccountCount"
-  sourceUrl: z.string().url().optional(),
+  sourceUrl: z.url().optional(),
   quote: z.string().max(500).optional(),
 });
 export type Evidence = z.infer<typeof Evidence>;

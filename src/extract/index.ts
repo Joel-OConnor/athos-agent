@@ -1,7 +1,7 @@
 export * from './types';
 export * from './prompt';
 export * from './tool';
-export * from './grade';
+export * from './gradeExtraction';
 export * from './createExtractor';
 export { BaseExtractor } from './providers/base';
 export { AnthropicExtractor } from './providers/anthropic';

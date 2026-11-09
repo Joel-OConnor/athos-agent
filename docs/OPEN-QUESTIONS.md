@@ -1,147 +1,116 @@
-# Open questions for underwriting
+# Questions for Athos
 
-Sixteen questions. Ten came from the build scope; six surfaced while writing the
-routing code.
+Sixteen places where the Needs Review workflow doc does not give code enough to
+go on. Each has a **POC choice** — what the agent does today — so the build
+could proceed. **None is confirmed by Athos.** The sample cases are labelled
+with these choices, so the agent's test results mean "it does what we think the
+doc says" until Athos has been through this list.
 
-All sixteen now have a **working answer**, agreed Athos-side on 2026-11-08 and
-built into the agent. None has been confirmed by Athos underwriting yet.
+Every choice is one value in `src/config/thresholds.ts` (marked `WORKING Qn`)
+or one rule in `src/verification/rules.ts`. Correcting one is a one-line change.
 
-A working answer is a guess that lets the build proceed. Each one is a single
-named value in `src/config/thresholds.ts` marked `WORKING Qn`, or a single rule
-in `src/verification/rules.ts`, so correcting one is a one-line change.
+| #   | Question                                     | POC choice                                                          | Athos                              |
+| --- | -------------------------------------------- | ------------------------------------------------------------------- | ---------------------------------- |
+| 1   | What is a strong verification?               | Prior rental history, or a named referrer plus stated comfort       | Confirm                            |
+| 2   | What does the US-residency email say?        | A draft in Athos's voice; flagged unapproved on every send          | **Supply wording**                 |
+| 3   | The three SEON thresholds?                   | Over 5 email accounts, over 2 phone; IP flags only outside the US   | Confirm                            |
+| 4   | Under $100K, flagged, looks fake?            | Exhibit 1 to the rental houses, and flag the case                   | Confirm                            |
+| 5   | Exhibit 1: first time, or higher limits?     | Higher limits when there is an existing Athos policy                | Confirm                            |
+| 6   | How long before Exhibit 2?                   | Three business days, no reminder                                    | Confirm                            |
+| 7   | Applicant is not a US resident or entity?    | Recommend decline, and flag the case                                | **Is international ever written?** |
+| 8   | Which products?                              | Inland Marine annual and short-term only                            | Confirm                            |
+| 9   | Bind at the requested or the verified limit? | Requested                                                           | Confirm                            |
+| 10  | Who acts on a recommendation?                | Anyone sends emails; underwriters approve, escalate, decline        | Confirm                            |
+| 11  | How do the three SEON signals combine?       | At least one account count passes, and the IP is not outside the US | Confirm                            |
+| 12  | Does a negative cancel a strong?             | No; the strong stands, the negative is shown to the approver        | Confirm                            |
+| 13  | No rental houses listed?                     | Straight to Exhibit 2                                               | Confirm                            |
+| 14  | Good references from the applicant?          | Vet them with Exhibit 1, and flag the case                          | **Decide**                         |
+| 15  | Who owns "already sent"?                     | The Work Queue; the adapter must put every sent email in the packet | Confirm (engineering)              |
+| 16  | Who uses the GL and contract answers?        | Captured and shown on the Work Queue item                           | Confirm                            |
 
-The shareable version of this register, for Athos to review and comment on, is
-the *Needs Review Agent — Decisions for Athos Review* doc.
-
----
+A "yes" is enough where the POC choice is right.
 
 ## Verification
 
-**Q1. What counts as a strong verification?**
-Prior rental history, **or** a named referrer the rental house knows plus stated
-comfort renting to them. "We checked their references" alone is weak.
-*Built as:* the verification rules registry, `src/verification/rules.ts`. Rules
-can be added over time without touching the rest of the code; see
-`docs/VERIFICATION-RULES.md` and the diagram in `docs/ARCHITECTURE.md`.
+**Q1 — strong verification.** Prior rental history, or someone the rental house
+knows referred the client _and_ they say they are comfortable renting. "We
+checked their references" alone is weak. Two refinements from testing: an
+applicant cannot vouch for themselves, and a rental house citing a blanket
+policy ("we don't give references") is not refusing to vouch for _this_ client.
+`verification/rules.ts`.
 
-**Q9. Bind at the requested limit or the verified total?**
-The requested limit. The tally is reported, never a blocker.
-*Built as:* `thresholds.binding.bindAt`.
+**Q9 — which limit.** The requested limit. The tally from replies is on the
+file and never blocks. `binding.bindAt`.
 
-**Q12. Does one "never heard of them" cancel one strong verification?**
-No. The strong one stands; the negative is surfaced to whoever approves.
-*Built as:* `thresholds.verification.negativeCancelsStrong`.
-
----
+**Q12 — negative versus strong.** One "never heard of them" does not cancel one
+strong vet. It is surfaced to whoever approves. `verification.negativeCancelsStrong`.
 
 ## SEON signals (under $100K, flagged)
 
-**Q3. What exactly are the three thresholds?**
-Strictly over 5 email accounts, strictly over 2 phone accounts. For IP:
-anywhere in the USA is fine, outside the US is a flag. Distance and a different
-state are explicitly not flags.
-*Built as:* `thresholds.seon.*`.
+**Q3 — thresholds.** Strictly over 5 email accounts, strictly over 2 phone
+accounts. Anywhere in the USA is fine; outside the US is a flag. Distance and a
+different state are not flags. `seon.*`.
 
-**Q11. How do the three signals combine?**
-At least one positive, and no red flag.
+**Q11 — how they combine.** The doc says of each account count on its own
+"this appears to be a real person" — positive evidence. Of the IP it says only
+that a mismatch "is a red flag". So: at least one positive and no red flag. A
+signal we could not retrieve is not evidence either way. `seon.combineRule`;
+`all_must_pass` and `majority` are still selectable.
 
-The workflow doc does not weigh the three equally. It says of the email count
-and the phone count, each on its own, that "this appears to be a real person" —
-so either is positive evidence. Of the IP location it says only that a mismatch
-"is a red flag" — a negative, not a third vote.
-
-So: an account count that passes is evidence the client is real; an IP outside
-the US overrides it; a signal we could not retrieve is not evidence either way,
-which means a partial SEON record can still resolve a case.
-*Built as:* `thresholds.seon.combineRule`. `all_must_pass` and `majority` are
-still available if Athos wants either.
-
-**Q4. Under $100K, flagged, looks fake — what next?**
-Exhibit 1 to the rental houses, and the case carries a needs-further-review
-flag because the workflow doc does not settle this branch.
-*Built as:* `thresholds.routing.underLimitLooksFake*`.
-
----
+**Q4 — looks fake.** Exhibit 1 to the rental houses, and the case carries
+`needsFurtherReview` because the doc does not settle this branch.
+`routing.underLimitLooksFake*`.
 
 ## Emails
 
-**Q2. What does the US-residency email say?**
-A draft is now in `src/templates/exhibit3.ts`, written to match the voice and
-structure of Exhibits 1 and 2. **It has not been approved by the business.**
-Every result that drafts it carries a warning, and `EXHIBIT3_APPROVED` stays
-false until Athos signs off.
+**Q2 — US-residency email.** The doc says to send one and gives no text. A
+draft in the voice of Exhibits 1 and 2 is in `templates/exhibit3.ts`. It asks
+whether they are a US resident or entity, where the business is registered and
+under what name, and the US address where the equipment will be used. It does
+not ask for identity documents — Stripe Selfie ID already covers that. Every
+draft of it carries a warning until `EXHIBIT3_APPROVED` is set.
 
-It asks three things: whether the applicant is a US resident or the business a
-US entity, what state it is registered in and under what name, and the primary
-US address where the equipment will be used. It deliberately does not ask for
-personal identity documents — the workflow already routes that through
-service@ and Stripe Selfie ID, and asking for a licence or passport by email is
-both worse security and a heavier ask.
+**Q5 — Exhibit 1 wording.** "Requesting higher limits" when the applicant holds
+an Athos policy, "first time working with this client" otherwise. This picks a
+sentence and nothing else. `exhibit1.higherLimitsWhenPriorPolicy`.
 
-**Q5. Exhibit 1: "first time" or "higher limits"?**
-Higher-limits wording when the applicant has an active Athos policy, first-time
-otherwise.
-*Built as:* `thresholds.exhibit1.higherLimitsWhenPriorPolicy`. This picks the
-sentence in the email and nothing else — it does not affect whether a case is
-approved.
+**Q6 — timing.** Three business days on the rental houses before Exhibit 2, no
+reminder. A Friday email is not chased on Monday. `timing.*`.
 
-**Q6. How long before Exhibit 2, and is there a reminder?**
-Three business days, no reminder. Counted in business days so a Friday email is
-not chased on Monday.
-*Built as:* `thresholds.timing.*`, `src/config/businessDays.ts`.
-
-**Q16. Who uses the GL and signed-contract answers?**
-Captured in `extracted` and shown on the Work Queue item for underwriting.
-Nothing in v1 reads them — they do not speak to "is the client real".
-
----
+**Q16 — GL and signed-contract answers.** Captured in `extracted` and shown on
+the Work Queue item. Nothing in v1 reads them.
 
 ## Outcomes
 
-**Q7. The applicant is not a US resident or entity. Decline?**
-Recommend decline, and flag for further review until Athos confirms that no
-international business is supported.
-*Built as:* `thresholds.routing.nonUsApplicant*`.
+**Q7 — not US.** Recommend decline, flagged until Athos says whether
+international business is ever written. `routing.nonUsApplicant*`.
 
-**Q13. No rental houses listed at all?**
-Straight to Exhibit 2, asking the applicant for two previous references.
-*Built as:* `thresholds.routing.noRentalHousesSendsExhibit2`.
+**Q13 — no rental houses.** Straight to Exhibit 2. `routing.noRentalHousesSendsExhibit2`.
 
-**Q14. References that look good rather than questionable?**
-Vet them with Exhibit 1 the normal way, and flag the case.
-
-**This is a proof-of-concept decision, not an answer.** The workflow doc only
-covers the questionable-references branch and says nothing about this one.
-Athos has been asked to make the call; until they do, the agent takes the route
-that keeps the POC complete and never approves on an unverified claim.
-*Built as:* `thresholds.routing.applicantReferences*`.
-
----
+**Q14 — good references.** The doc covers _questionable_ references (send to
+service@) and nothing else. The POC vets the named houses with Exhibit 1 and
+flags the case, because approving on the applicant's own unverified claim would
+contradict the workflow. **This is a placeholder, not an answer.**
+`routing.applicantReferences*`.
 
 ## Scope and ownership
 
-**Q8. Which products?**
-Inland Marine annual and short-term only.
-*Built as:* `thresholds.routing.productsInScope`.
+**Q8 — products.** Inland Marine annual and short-term. `routing.productsInScope`.
 
-**Q10. Who acts on a recommendation?**
-Anyone on staff sends emails. Approve, escalate and decline are underwriters
-only. The agent states this in `actorRole`; the Work Queue enforces it.
-*Built as:* `thresholds.authority.*`.
+**Q10 — who acts.** Every result carries `actorRole`: `any_staff` to send,
+`underwriter` to approve, escalate or decline. The Work Queue enforces it.
+`authority.*`.
 
-**Q15. Who owns "this email already went out"?**
-The Work Queue. The adapter must include every sent email in `correspondence`,
-or the agent will re-draft one that already went.
-*Built as:* deterministic `draftId`, `src/templates/draft.ts`.
+**Q15 — already sent.** The agent keeps no state and de-duplicates drafts by a
+stable id. If the adapter leaves a sent email out of `correspondence`, that
+email is drafted again. `templates/draft.ts`.
 
----
+## What blocks go-live
 
-## Still blocking
-
-| What | Who | Blocks |
-|---|---|---|
-| Sign-off on the Exhibit 3 draft (Q2) | Athos business | Sending any US-residency email for real |
-| Whether international business is ever supported (Q7) | Athos | Confirming the decline path |
-| Sign-off on all sixteen | Athos underwriting | Finishing the answer key, and M1 acceptance |
-| A call on Q14 | Athos underwriting | Replacing the POC behaviour with a decision |
-| The full SEON response in the packet | Athos engineering (.NET) | Most flagged under-$100K cases resolving on signals |
+| What                                           | Who                      | Blocks                                              |
+| ---------------------------------------------- | ------------------------ | --------------------------------------------------- |
+| A yes or a correction on each of the sixteen   | Athos underwriting       | Finishing the answer key; M1 acceptance             |
+| Exhibit 3 wording (Q2)                         | Athos business           | Sending any US-residency email for real             |
+| Whether international business is written (Q7) | Athos                    | The decline path                                    |
+| A decision on Q14                              | Athos underwriting       | Replacing the placeholder                           |
+| The full SEON response in the case packet      | Athos engineering (.NET) | Most flagged under-$100K cases resolving on signals |

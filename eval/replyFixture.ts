@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import { ExtractedReply, Strength, TemplateId } from '../contract';
-import type { ReplyFacts } from '../verification';
+import { ExtractedReply, Strength, TemplateId } from '../src/contract';
+import type { ReplyFacts } from '../src/verification';
 
 /**
  * One inbound email plus the facts underwriting says it contains.
@@ -54,14 +54,20 @@ export const BLANK_FACTS: ReplyFacts = {
 export function factsOf(fixture: ReplyFixture): ReplyFacts {
   const e = fixture.expected;
   return {
-    ...BLANK_FACTS,
     party: fixture.party,
-    ...(Object.fromEntries(
-      Object.entries(e).filter(
-        ([k, v]) => v !== undefined && k in BLANK_FACTS
-      )
-    ) as Partial<ReplyFacts>),
-    referencesGivenCount:
-      e.referencesGivenCount ?? e.referencesGiven?.length ?? 0,
+    workedWithClientBefore:
+      e.workedWithClientBefore ?? BLANK_FACTS.workedWithClientBefore,
+    checkedReferencesOrReferred:
+      e.checkedReferencesOrReferred ?? BLANK_FACTS.checkedReferencesOrReferred,
+    referrerNamed: e.referrerNamed ?? BLANK_FACTS.referrerNamed,
+    comfortableRenting: e.comfortableRenting ?? BLANK_FACTS.comfortableRenting,
+    knowsOfClient: e.knowsOfClient ?? BLANK_FACTS.knowsOfClient,
+    declinesToVouch: e.declinesToVouch ?? BLANK_FACTS.declinesToVouch,
+    warnsAboutClient: e.warnsAboutClient ?? BLANK_FACTS.warnsAboutClient,
+    usResidentOrEntity: e.usResidentOrEntity ?? BLANK_FACTS.usResidentOrEntity,
+    replacementCostValue: e.replacementCostValue ?? null,
+    referencesGivenCount: e.referencesGivenCount ?? e.referencesGiven?.length ?? 0,
+    isAutoReply: e.isAutoReply ?? false,
+    containsInstructionsToAgent: e.containsInstructionsToAgent ?? false,
   };
 }

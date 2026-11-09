@@ -1,136 +1,84 @@
 # Architecture
 
-One JSON case packet in, one JSON result out. No state between calls.
-
-## The pipeline
-
 ```mermaid
 flowchart TB
-    subgraph athos["Athos systems (not the developer's)"]
-        db[("Athos DB + SEON")]
-        adapter["Adapter<br/>builds the case packet"]
-        queue["Work Queue item<br/>a person clicks Send or Approve"]
-        mail["service@ sends the email<br/>replies go back into the packet"]
+    subgraph athos["Athos systems"]
+        adapter["Adapter builds the case packet"]
+        queue["Work Queue · a person clicks Send or Approve"]
     end
-
     subgraph agent["Needs Review agent"]
-        direction TB
-        route["<b>route()</b> · deterministic<br/>which path of the workflow<br/><i>src/routing/</i>"]
+        route["<b>route()</b> · deterministic<br/><i>src/routing/</i>"]
         extract["<b>extract()</b> · Claude<br/>one email → facts<br/><i>src/extract/</i>"]
         grade["<b>gradeReply()</b> · deterministic<br/>facts → strength<br/><i>src/verification/</i>"]
-        decide["<b>decide()</b> · deterministic<br/>facts → recommendation<br/><i>src/decide/</i>"]
-        drafts["<b>buildDrafts()</b> · deterministic<br/>approved templates only<br/><i>src/templates/</i>"]
-        research["<b>research()</b> · tools<br/>only on escalation<br/><i>src/research/</i>"]
+        decide["<b>decide()</b> · deterministic<br/><i>src/decide/</i>"]
+        research["<b>research()</b> · only on escalation<br/><i>src/research/</i>"]
     end
-
-    subgraph config["Where the policy lives"]
-        thresholds[/"<b>thresholds.ts</b><br/>every number and switch<br/>$100K, SEON thresholds,<br/>wait times, who may act"/]
-        rules[/"<b>verification/rules.ts</b><br/>THE RULES REGISTRY<br/>what makes a reply<br/>strong, weak, none, negative"/]
+    subgraph policy["Where the policy lives"]
+        thresholds[/"<b>config/thresholds.ts</b><br/>numbers and switches"/]
+        rules[/"<b>verification/rules.ts</b><br/>what a reply is worth"/]
     end
-
-    db --> adapter --> route
-    route --> extract --> grade --> decide
-    route --> drafts --> decide
+    adapter --> route --> extract --> grade --> decide --> queue
     decide --> research
-    decide --> queue --> mail --> adapter
-
     thresholds -.-> route
     thresholds -.-> decide
     rules -.-> grade
     rules -.-> extract
-
+    style extract fill:#d1e7ff,stroke:#2c5aa0,stroke-width:2px
     style rules fill:#fff3cd,stroke:#b8860b,stroke-width:2px
     style thresholds fill:#fff3cd,stroke:#b8860b,stroke-width:2px
-    style extract fill:#d1e7ff,stroke:#2c5aa0,stroke-width:2px
-    style research fill:#d1e7ff,stroke:#2c5aa0,stroke-width:2px
 ```
 
 Blue is the only place a model runs. Yellow is the only place policy lives.
 
-## Why the split
+## The model never decides
 
-`extract()` turns one email into facts. It is the single point where model
-output enters the system, and it produces **facts, never a verdict**: did they
-say they have worked with this client, did they name a referrer, what number did
-they give. It does not decide anything.
+`extract()` turns one email into facts: did they say they have worked with this
+client, did they name a referrer, what number did they give. It is the only
+model call, and it produces facts, never a verdict.
 
-Everything downstream is ordinary code. `gradeReply()` turns facts into a
-strength by walking the rules registry. `decide()` turns strengths and timing
-into a recommendation. Both are deterministic: same input, same output, every
-time, with no network call.
+Everything after it is ordinary code. `gradeReply()` walks the rules registry
+to turn facts into a strength. `decide()` turns strengths and timing into a
+recommendation. Both are deterministic and make no network call.
 
-That buys three things. A recommendation can be reproduced and explained. Every
-reason cites a packet field. And a bad extraction shows up as a wrong *fact* on
-the Work Queue, which a person can see, rather than a wrong *verdict*, which
-they cannot.
+That buys three things: a recommendation can be reproduced and explained, every
+reason cites a packet field, and a bad extraction shows up on the Work Queue as
+a wrong _fact_ a person can see rather than a wrong _verdict_ they cannot.
 
-## Where verification rules reside
+## Where things live
 
-**`src/verification/rules.ts`** — the registry. Rules are tried in order and
-the first match wins, so the list runs strongest first and ends with a
-catch-all.
+| To change…                                               | Edit                                                                             |
+| -------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| the $100K line, SEON thresholds, wait times, who may act | `src/config/thresholds.ts`                                                       |
+| what makes a reply strong, weak, none or negative        | `src/verification/rules.ts` — see [VERIFICATION-RULES.md](VERIFICATION-RULES.md) |
+| customer-facing wording                                  | `src/templates/exhibit*.ts`                                                      |
+| the shape of the packet or the result                    | `src/contract/`, then `npm run schema`                                           |
 
-A rule is one object:
+Anything else is a behaviour change and needs a test.
 
-```ts
-{
-  id: 'prior-rental-history',
-  strength: 'strong',
-  description:
-    'The rental house has rented to this client before. This is the clearest signal that the client is real.',
-  source: 'Workflow doc: "Have you worked with this client before?"',
-  addedOn: '2026-11-04',
-  when: (f) => f.workedWithClientBefore === 'yes',
-}
-```
+## The contract
 
-Each rule does double duty. `when` grades the reply. `description` is fed into
-the extraction prompt, so the model knows which details matter and does not
-report "unstated" for something the email actually answered. Adding a rule
-improves both halves at once.
+`src/contract/` is the source of truth; `schema/*.schema.json` is generated from
+it for the .NET adapter and CI fails if it drifts. Two things the adapter must
+get right:
 
-`docs/VERIFICATION-RULES.md` is the authoring guide: what a rule may look at,
-how to write a description the model can use, and how to test one.
-
-## Where everything else lives
-
-| Decision | File |
-|---|---|
-| The $100K referral threshold, SEON thresholds, wait times, who may act | `src/config/thresholds.ts` |
-| What makes a reply strong, weak, none or negative | `src/verification/rules.ts` |
-| Customer-facing wording | `src/templates/exhibit*.ts` |
-| Which path a case is on | `src/routing/route.ts` |
-| What to recommend | `src/decide/decide.ts` |
-| The shape of the packet and the result | `src/contract/` |
-
-If a change touches anything outside the first three rows, it is a behaviour
-change and needs a test.
+- **`seon.signals`** — the email count, phone count and IP location the workflow
+  reads. `null` means "we could not get it", never zero. Today Athos stores only
+  four SEON values and these are not among them; until that changes, most
+  flagged under-$100K cases cannot resolve on signals.
+- **`correspondence`** must hold every email sent. The agent keeps no state and
+  de-duplicates drafts by a stable `draftId`; an email missing from the list
+  gets drafted again.
 
 ## What the extractor is not responsible for
 
-The model reads one email and reports what it says. Some risks look like its
-job and are not.
-
-**Lookalike domains.** A reply that vouches for a client and asks us to send
-future correspondence to `biscayne-example-grip.test` instead of
-`biscayneexample.test` is social engineering, but nothing in it is aimed at an
-automated system, and the extractor has no way to tell the two apart. Asking it
-to guess means flagging genuine replies on a hunch, and a flagged reply counts
-for nothing. `fixtures/replies/adversarial.json` has this case
-(`adv-010`) graded strong on purpose.
-
-What catches it: the Work Queue checking every outbound recipient against the
-addresses on the case packet, and a person seeing the address before clicking
-Send.
-
-**Recipient validation generally.** Drafts go to addresses from the case
-packet, so a reply cannot redirect an email on its own — with one exception.
-The Q14 path sends Exhibit 1 to rental houses *the applicant named in a reply*,
-which means those addresses are supplied by the person being verified. That is
-what Exhibit 2 asks for, so it is working as intended, but it does mean a
-person should look at those recipients before sending.
-
-**Whether a stated equipment value is plausible.** The extractor reports the
-number in the email. Nothing compares it to the application, the other rental
-houses or the requested limit. `verifiedEquipmentTotal` is reported for the
-file and never blocks an approval (Q9).
+- **Lookalike domains.** A reply vouching for a client and asking us to write to
+  `biscayne-example-grip.test` instead of `biscayneexample.test` is social
+  engineering, but nothing in it is aimed at a machine, and the extractor
+  cannot tell the domains apart. The Work Queue checks outbound recipients
+  against the packet.
+- **Applicant-supplied recipients.** The Q14 path sends Exhibit 1 to rental
+  houses the applicant named in a reply. That is what Exhibit 2 asks for, but
+  those addresses come from the person being verified. A person looks before
+  sending.
+- **Whether a stated value is plausible.** The tally is reported, never
+  compared, never a blocker (Q9).

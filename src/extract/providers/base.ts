@@ -5,7 +5,7 @@ import type {
   TemplateId,
 } from '../../contract';
 import { buildExtractionUserMessage } from '../prompt';
-import { gradeExtraction } from '../grade';
+import { gradeExtraction } from '../gradeExtraction';
 import { ExtractionOutput } from '../tool';
 import type { ExtractionContext, Extractor, Telemetry } from '../types';
 import { CallLog } from '../types';
@@ -65,25 +65,12 @@ export abstract class BaseExtractor implements Extractor {
     for (let attempt = 0; attempt < 2; attempt++) {
       const started = Date.now();
       let got: Attempt | null = null;
-      let ok = false;
+      let parsed: ExtractionOutput | null = null;
       try {
         got = await this.callModel(userMessage);
-        const parsed = ExtractionOutput.safeParse(got.raw);
-        if (parsed.success) {
-          ok = true;
-          this.telemetry.record({
-            provider: this.name,
-            model: got.model,
-            ms: Date.now() - started,
-            costUsd: got.costUsd,
-            inputTokens: got.inputTokens,
-            outputTokens: got.outputTokens,
-            attempt,
-            ok,
-          });
-          return parsed.data;
-        }
-        lastIssue = JSON.stringify(parsed.error.issues).slice(0, 400);
+        const result = ExtractionOutput.safeParse(got.raw);
+        if (result.success) parsed = result.data;
+        else lastIssue = JSON.stringify(result.error.issues).slice(0, 400);
       } catch (err) {
         lastIssue = err instanceof Error ? err.message : String(err);
       }
@@ -96,19 +83,17 @@ export abstract class BaseExtractor implements Extractor {
         inputTokens: got?.inputTokens ?? null,
         outputTokens: got?.outputTokens ?? null,
         attempt,
-        ok,
+        ok: parsed !== null,
       });
 
+      if (parsed !== null) return parsed;
       if (process.env.STRICT_EXTRACTION === '1') break;
     }
 
     throw new Error(`[${this.name}] extraction failed: ${lastIssue}`);
   }
 
-  async extract(
-    packet: CasePacket,
-    email: Correspondence
-  ): Promise<ExtractedReply> {
+  async extract(packet: CasePacket, email: Correspondence): Promise<ExtractedReply> {
     const rentalHouse =
       packet.rentalHouses.find((rh) => rh.id === email.rentalHouseId) ?? null;
     const facts = await this.extractFacts({

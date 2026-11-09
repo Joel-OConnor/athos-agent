@@ -5,14 +5,23 @@ import type { ResearchFinding } from '../contract';
  * the workflow doc points at. No key, no scraping, no rate limit worth worrying
  * about at our volume.
  */
+export type Fetch = (
+  url: string,
+  init?: { headers?: Record<string, string> }
+) => Promise<{
+  ok: boolean;
+  json(): Promise<unknown>;
+}>;
+
 export async function domainAge(
   domain: string,
-  now: string
+  now: string,
+  fetchImpl: Fetch = fetch
 ): Promise<ResearchFinding | null> {
   const host = normalizeDomain(domain);
   if (!host) return null;
 
-  const res = await fetch(`https://rdap.org/domain/${encodeURIComponent(host)}`, {
+  const res = await fetchImpl(`https://rdap.org/domain/${encodeURIComponent(host)}`, {
     headers: { accept: 'application/rdap+json' },
   });
   if (!res.ok) return null;

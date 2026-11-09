@@ -1,6 +1,5 @@
 import { z } from 'zod';
 import { ExtractedReply } from '../contract';
-import zodToJsonSchema from './zodToJsonSchema';
 
 /**
  * The model fills facts only. `strength` and `strengthRuleId` are left out on
@@ -14,13 +13,18 @@ export const ExtractionOutput = ExtractedReply.omit({
 });
 export type ExtractionOutput = z.infer<typeof ExtractionOutput>;
 
-/** The contract as JSON Schema, for providers that validate structurally. */
+/**
+ * The contract as JSON Schema, for providers that validate structurally.
+ * Anthropic's tool input_schema must be an object schema; zod's emitter agrees
+ * but we pin it rather than rely on it.
+ */
 export function extractionJsonSchema(): Record<string, unknown> {
-  return zodToJsonSchema(ExtractionOutput);
+  const json = z.toJSONSchema(ExtractionOutput, { target: 'draft-7', io: 'input' });
+  return { ...(json as Record<string, unknown>), type: 'object' };
 }
 
 export const RECORD_REPLY_TOOL = {
   name: 'record_reply',
   description: 'Record what the email says. Call exactly once.',
-  input_schema: zodToJsonSchema(ExtractionOutput),
+  input_schema: extractionJsonSchema(),
 } as const;

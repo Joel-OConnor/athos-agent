@@ -8,7 +8,11 @@ export function printMatrix(
   if (labels.length === 0) return;
 
   const counts = new Map<string, number>();
-  for (const r of rows) counts.set(`${r.expected}|${r.actual}`, (counts.get(`${r.expected}|${r.actual}`) ?? 0) + 1);
+  for (const r of rows)
+    counts.set(
+      `${r.expected}|${r.actual}`,
+      (counts.get(`${r.expected}|${r.actual}`) ?? 0) + 1
+    );
 
   const w = Math.max(22, ...labels.map((l) => l.length + 2));
   const cell = (s: string) => s.padEnd(w).slice(0, w);

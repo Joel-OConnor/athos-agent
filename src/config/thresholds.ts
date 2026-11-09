@@ -1,150 +1,139 @@
+import type { Product } from '../contract';
+
 /**
- * Every number and every policy switch the workflow depends on lives here, and
- * nowhere else. Changing underwriting policy should mean editing this file.
+ * Every number and every policy switch the workflow depends on, in one place.
+ * Changing underwriting policy should mean editing the values below, and the
+ * type is what says which values are allowed.
  *
  * Status of each entry:
- *   WORKING Qn  - answered by Athos-side review on 2026-11-08, pending Athos
- *                 confirmation. See docs/OPEN-QUESTIONS.md.
- *   OPEN Qn     - still unanswered; the value is a placeholder.
+ *   WORKING Qn  answered Athos-side on 2026-11-08, pending Athos confirmation.
+ *               See docs/OPEN-QUESTIONS.md.
  *
  * How a reply is graded is NOT here. That lives in the verification rules
  * registry, src/verification/rules.ts, so rules can be added over time without
- * touching this file. See docs/VERIFICATION-RULES.md.
+ * touching this file.
  */
 
-export const thresholds = {
-  /**
-   * At or above this requested rented-equipment limit, the case is an
-   * automatic referral to review regardless of SEON state.
-   * Workflow: "$100K or higher". Treated as >= 100000.
-   */
-  referralLimitUsd: 100_000,
+export type Comparison = 'greater_than' | 'at_least';
+export type CombineRule = 'positive_unless_flagged' | 'all_must_pass' | 'majority';
+export type BindAt = 'requested_limit' | 'verified_total';
+export type ActorRole = 'any_staff' | 'underwriter';
 
-  /**
-   * Underwriting gate, passed through untouched. Here for reference only -
-   * the agent reads underwritingGates.rcvOver150k, it does not compute it.
-   */
+export interface Thresholds {
+  /** At or above this requested limit the case is referred to review whatever SEON said. */
+  referralLimitUsd: number;
+  /** Reference only. The agent reads underwritingGates.rcvOver150k; it never computes it. */
+  underwritingRcvLimitUsd: number;
+
+  seon: {
+    minEmailAccounts: number;
+    emailAccountsComparison: Comparison;
+    minPhoneAccounts: number;
+    phoneAccountsComparison: Comparison;
+    ipDifferentCountryIsFlag: boolean;
+    ipDifferentStateIsFlag: boolean;
+    ipFarAwayMiles: number | null;
+    combineRule: CombineRule;
+  };
+
+  verification: {
+    strongVerificationsNeeded: number;
+    negativeCancelsStrong: boolean;
+  };
+
+  timing: {
+    rentalHouseWaitBusinessDays: number;
+    rentalHouseReminderBusinessDays: number | null;
+    applicantReferenceWaitBusinessDays: number;
+    maxCaseAgeBusinessDays: number;
+  };
+
+  routing: {
+    underLimitLooksFakeSendsExhibit1: boolean;
+    underLimitLooksFakeNeedsFurtherReview: boolean;
+    nonUsApplicantRecommendsDecline: boolean;
+    nonUsApplicantNeedsFurtherReview: boolean;
+    productsInScope: readonly Product[];
+    noRentalHousesSendsExhibit2: boolean;
+    applicantReferencesGetExhibit1: boolean;
+    applicantReferencesNeedFurtherReview: boolean;
+  };
+
+  binding: { bindAt: BindAt };
+
+  authority: {
+    sendEmails: ActorRole;
+    approveEscalateDecline: ActorRole;
+  };
+
+  exhibit1: { higherLimitsWhenPriorPolicy: boolean };
+}
+
+export const thresholds: Thresholds = {
+  // Workflow: "$100K or higher". Treated as >= 100000.
+  referralLimitUsd: 100_000,
   underwritingRcvLimitUsd: 150_000,
 
   seon: {
-    /** WORKING Q3. Workflow: "over 5" email accounts, read strictly as > 5. */
+    // WORKING Q3. "over 5" email accounts and "over 2" phone accounts, read strictly.
     minEmailAccounts: 5,
-    emailAccountsComparison: 'greater_than' as const,
-
-    /** WORKING Q3. Workflow: "over 2" phone accounts, read strictly as > 2. */
+    emailAccountsComparison: 'greater_than',
     minPhoneAccounts: 2,
-    phoneAccountsComparison: 'greater_than' as const,
+    phoneAccountsComparison: 'greater_than',
 
-    /**
-     * WORKING Q3. Anywhere in the USA is fine; outside the US is a flag.
-     * Distance and a different state are explicitly NOT flags, so a Burbank
-     * applicant working out of Atlanta does not trip this.
-     */
+    // WORKING Q3. Anywhere in the USA is fine; outside the US is a flag.
+    // Distance and a different state are explicitly not flags.
     ipDifferentCountryIsFlag: true,
     ipDifferentStateIsFlag: false,
-    ipFarAwayMiles: null as number | null,
+    ipFarAwayMiles: null,
 
-    /**
-     * WORKING Q11, revised 2026-11-08 to follow the workflow doc more closely.
-     *
-     * The doc does not weigh the three signals equally. It says of the email
-     * count and the phone count, each on its own, that "this appears to be a
-     * real person" - so either is positive evidence. Of the IP location it says
-     * only that a mismatch "is a red flag" - a negative, not a third vote.
-     *
-     * So: at least one positive, and no red flag, means the client looks real.
-     * A signal we could not retrieve is simply not evidence either way, which
-     * also means a partial SEON record can still resolve a case.
-     */
-    combineRule: 'positive_unless_flagged' as
-      | 'positive_unless_flagged'
-      | 'all_must_pass'
-      | 'majority',
+    // WORKING Q11. The doc treats each account count on its own as positive
+    // evidence ("this appears to be a real person") and the IP location only
+    // as a red flag. So: at least one positive and no red flag. A signal we
+    // could not retrieve is not evidence either way.
+    combineRule: 'positive_unless_flagged',
   },
 
   verification: {
-    /**
-     * How many strong verifications end the chase.
-     * Workflow: "Since we got one strong vet, tally up the totals ... and approve."
-     */
+    // Workflow: "Since we got one strong vet, tally up the totals ... and approve."
     strongVerificationsNeeded: 1,
-
-    /**
-     * WORKING Q12. A negative reply does not cancel a strong one, but it is
-     * always surfaced to whoever approves.
-     */
+    // WORKING Q12. A negative reply does not cancel a strong one; it is surfaced.
     negativeCancelsStrong: false,
   },
 
   timing: {
-    /** WORKING Q6. Three business days on the rental houses, no reminder. */
+    // WORKING Q6. Three business days on the rental houses, no reminder.
     rentalHouseWaitBusinessDays: 3,
-    rentalHouseReminderBusinessDays: null as number | null,
+    rentalHouseReminderBusinessDays: null,
     applicantReferenceWaitBusinessDays: 3,
-    /** After this, a case with nothing usable goes to service@ either way. */
+    // After this, a case with nothing usable goes to service@ either way.
     maxCaseAgeBusinessDays: 10,
   },
 
   routing: {
-    /**
-     * WORKING Q4. Under $100K, flagged, signals say "looks fake": send
-     * Exhibit 1, and flag the case for further review. The workflow doc does
-     * not settle this branch, so a person should look at it.
-     */
+    // WORKING Q4. Looks fake under $100K: Exhibit 1, and flag for a person.
     underLimitLooksFakeSendsExhibit1: true,
     underLimitLooksFakeNeedsFurtherReview: true,
-
-    /**
-     * WORKING Q7. An applicant who confirms they are not a US resident or
-     * entity is a decline, unless Athos supports international business.
-     * Flagged for further review until Athos confirms.
-     */
+    // WORKING Q7. Not a US resident or entity: recommend decline, flagged until
+    // Athos confirms international business is never written.
     nonUsApplicantRecommendsDecline: true,
     nonUsApplicantNeedsFurtherReview: true,
-
-    /** WORKING Q8. Inland Marine annual and short-term only. */
-    productsInScope: ['im_annual', 'im_short_term'] as const,
-
-    /**
-     * WORKING Q13. An application with no rental houses listed goes straight
-     * to Exhibit 2, asking the applicant for two previous references.
-     */
+    // WORKING Q8.
+    productsInScope: ['im_annual', 'im_short_term'],
+    // WORKING Q13. Nobody to vet: ask the applicant for references.
     noRentalHousesSendsExhibit2: true,
-
-    /**
-     * WORKING Q14. References the applicant supplies are vetted the normal
-     * way - Exhibit 1 to each one with a contact email - and the case is
-     * flagged for further review. The workflow doc only covers the
-     * questionable-references branch, so this is our reading of it.
-     */
+    // WORKING Q14. POC behaviour pending Athos: vet applicant references with
+    // Exhibit 1 and flag the case.
     applicantReferencesGetExhibit1: true,
     applicantReferencesNeedFurtherReview: true,
   },
 
-  binding: {
-    /**
-     * WORKING Q9. After one strong verification we bind at the requested
-     * limit, not the verified total. The tally is reported, never a blocker.
-     */
-    bindAt: 'requested_limit' as 'requested_limit' | 'verified_total',
-  },
+  // WORKING Q9. Bind at the requested limit; the tally never blocks.
+  binding: { bindAt: 'requested_limit' },
 
-  authority: {
-    /**
-     * WORKING Q10. Anyone on staff may send drafted emails. Approve, escalate
-     * and decline are underwriters only. The Work Queue enforces it.
-     */
-    sendEmails: 'any_staff' as const,
-    approveEscalateDecline: 'underwriter' as const,
-  },
+  // WORKING Q10. Anyone sends; underwriters approve, escalate, decline.
+  authority: { sendEmails: 'any_staff', approveEscalateDecline: 'underwriter' },
 
-  exhibit1: {
-    /**
-     * WORKING Q5. Higher-limits wording when the applicant has an active Athos
-     * policy; first-time wording otherwise.
-     */
-    higherLimitsWhenPriorPolicy: true,
-  },
-} as const;
-
-export type Thresholds = typeof thresholds;
+  // WORKING Q5. Higher-limits wording when they already hold an Athos policy.
+  exhibit1: { higherLimitsWhenPriorPolicy: true },
+};

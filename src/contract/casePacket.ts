@@ -1,10 +1,10 @@
 import { z } from 'zod';
-import { Evidence, IsoDateTime, Party, Product, TemplateId } from './common';
+import { IsoDateTime, Party, Product, TemplateId } from './common';
 
 export const Applicant = z.object({
   name: z.string(),
   businessName: z.string().nullable(),
-  email: z.string().email(),
+  email: z.email(),
   phone: z.string().nullable(),
   address: z.object({
     line1: z.string().nullable(),
@@ -66,7 +66,7 @@ export type Seon = z.infer<typeof Seon>;
 
 export const RentalHouseContact = z.object({
   name: z.string().nullable(),
-  email: z.string().email(),
+  email: z.email(),
   phone: z.string().nullable(),
 });
 
@@ -112,5 +112,3 @@ export const CasePacket = z.object({
   now: IsoDateTime,
 });
 export type CasePacket = z.infer<typeof CasePacket>;
-
-export { Evidence };

@@ -14,12 +14,12 @@ async function main(): Promise<void> {
     console.error('usage: npm run case -- <path-to-case.json>');
     process.exit(2);
   }
-  const packet = JSON.parse(readFileSync(file, 'utf8'));
+  const packet: unknown = JSON.parse(readFileSync(file, 'utf8'));
   const result = await runCase(packet);
   console.log(JSON.stringify(result, null, 2));
 }
 
-main().catch((err) => {
+main().catch((err: unknown) => {
   console.error(err instanceof Error ? err.message : err);
   process.exit(1);
 });

@@ -8,7 +8,14 @@ import { extractionJsonSchema } from '../tool';
 import type { Telemetry } from '../types';
 import { BaseExtractor, type Attempt } from './base';
 
-const run = promisify(execFile);
+/** Runs a binary with arguments and resolves with its stdout. Injectable for tests. */
+export type ProcessRunner = (
+  bin: string,
+  args: readonly string[],
+  options: { cwd: string; timeout: number; maxBuffer: number }
+) => Promise<{ stdout: string }>;
+
+const defaultRunner: ProcessRunner = promisify(execFile);
 
 /**
  * Local development and end-to-end testing. Shells out to the Claude Code CLI,
@@ -37,7 +44,10 @@ export class ClaudeCodeExtractor extends BaseExtractor {
   private readonly timeoutMs = Number(process.env.EXTRACT_TIMEOUT_MS ?? 120_000);
   private readonly sandbox: string;
 
-  constructor(telemetry?: Telemetry) {
+  constructor(
+    telemetry?: Telemetry,
+    private readonly runner: ProcessRunner = defaultRunner
+  ) {
     super(telemetry);
     this.sandbox = mkdtempSync(join(tmpdir(), 'needs-review-extract-'));
   }
@@ -66,7 +76,7 @@ export class ClaudeCodeExtractor extends BaseExtractor {
 
     let stdout: string;
     try {
-      ({ stdout } = await run(this.bin, args, {
+      ({ stdout } = await this.runner(this.bin, args, {
         cwd: this.sandbox,
         timeout: this.timeoutMs,
         maxBuffer: 8 * 1024 * 1024,
@@ -75,11 +85,13 @@ export class ClaudeCodeExtractor extends BaseExtractor {
       const e = err as { code?: string; stderr?: string; message?: string };
       if (e.code === 'ENOENT') {
         throw new Error(
-          `Claude Code CLI not found (tried "${this.bin}"). Install it, or set CLAUDE_CODE_BIN, or use EXTRACT_PROVIDER=anthropic.`
+          `Claude Code CLI not found (tried "${this.bin}"). Install it, or set CLAUDE_CODE_BIN, or use EXTRACT_PROVIDER=anthropic.`,
+          { cause: err }
         );
       }
       throw new Error(
-        `Claude Code CLI failed: ${e.stderr?.slice(0, 500) ?? e.message ?? 'unknown error'}`
+        `Claude Code CLI failed: ${e.stderr?.slice(0, 500) ?? e.message ?? 'unknown error'}`,
+        { cause: err }
       );
     }
 
@@ -95,7 +107,7 @@ export class ClaudeCodeExtractor extends BaseExtractor {
 
     if (envelope.is_error) {
       throw new Error(
-        `Claude Code returned an error (${envelope.subtype ?? 'unknown'}): ${String(envelope.result ?? '').slice(0, 300)}`
+        `Claude Code returned an error (${envelope.subtype ?? 'unknown'}): ${(envelope.result ?? '').slice(0, 300)}`
       );
     }
 

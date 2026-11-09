@@ -157,7 +157,8 @@ function routeInner(packet: CasePacket): RouteDecision {
       templates.push('exhibit3_us_residency');
       reasons.push({
         code: 'SEON_FOREIGN_LOCATION',
-        message: 'SEON places the customer outside the US; confirm US residency or entity.',
+        message:
+          'SEON places the customer outside the US; confirm US residency or entity.',
         evidence: [{ field: 'seon.signals.ipCountry' }],
       });
     }

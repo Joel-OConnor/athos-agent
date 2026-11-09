@@ -1,6 +1,6 @@
 import { gradeReply, verificationRules } from '../src/verification';
 import type { ReplyFacts } from '../src/verification';
-import { factsOf } from '../src/fixtures/replyFixture';
+import { factsOf } from '../eval/replyFixture';
 import { loadReplies } from '../eval/loadFixtures';
 
 const BLANK: ReplyFacts = {
@@ -102,9 +102,7 @@ describe('verification rules registry', () => {
 
   it('covers every rule in the registry with at least one fixture', () => {
     const covered = new Set(fixtures.map((f) => f.expected.strengthRuleId));
-    const uncovered = verificationRules
-      .map((r) => r.id)
-      .filter((id) => !covered.has(id));
+    const uncovered = verificationRules.map((r) => r.id).filter((id) => !covered.has(id));
     expect(uncovered).toEqual([]);
   });
 

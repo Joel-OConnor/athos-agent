@@ -16,22 +16,23 @@ export class FixtureExtractor implements Extractor {
 
   constructor(private readonly byCorrespondenceId: Map<string, ExtractedReply>) {}
 
-  async extract(
-    _packet: CasePacket,
-    email: Correspondence
-  ): Promise<ExtractedReply> {
+  extract(_packet: CasePacket, email: Correspondence): Promise<ExtractedReply> {
     const hit = this.byCorrespondenceId.get(email.id);
     if (!hit) {
-      throw new Error(
-        `No labelled extraction for email ${email.id}. Add it to fixtures/extractions/, or run with a real provider.`
+      return Promise.reject(
+        new Error(
+          `No labelled extraction for email ${email.id}. Add it to fixtures/extractions/, or run with a real provider.`
+        )
       );
     }
-    return hit;
+    return Promise.resolve(hit);
   }
 
-  async extractFacts(_context: ExtractionContext): Promise<ExtractionOutput> {
-    throw new Error(
-      'The fixture provider replays whole cases; it cannot read an arbitrary email. Use EXTRACT_PROVIDER=claude-code or anthropic.'
+  extractFacts(_context: ExtractionContext): Promise<ExtractionOutput> {
+    return Promise.reject(
+      new Error(
+        'The fixture provider replays whole cases; it cannot read an arbitrary email. Use EXTRACT_PROVIDER=claude-code or anthropic.'
+      )
     );
   }
 }

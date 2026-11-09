@@ -28,9 +28,10 @@ export function loadCases(): CaseFixture[] {
     .filter((f) => f.endsWith('.json'))
     .sort()
     .map((f) => {
-      const packet = JSON.parse(
-        readFileSync(join(ROOT, 'cases', f), 'utf8')
-      ) as Record<string, unknown>;
+      const packet = JSON.parse(readFileSync(join(ROOT, 'cases', f), 'utf8')) as Record<
+        string,
+        unknown
+      >;
       const answerPath = join(ROOT, 'answers', f);
       if (!existsSync(answerPath)) {
         throw new Error(`Case ${f} has no answer key in fixtures/answers/`);
@@ -53,8 +54,8 @@ export function loadCases(): CaseFixture[] {
     });
 }
 
-export { type ReplyFixture, factsOf } from '../src/fixtures/replyFixture';
-import { ReplyFixture } from '../src/fixtures/replyFixture';
+export { type ReplyFixture, factsOf } from './replyFixture';
+import { ReplyFixture } from './replyFixture';
 
 /**
  * Reply fixtures are grouped into one file per category, each holding an array.

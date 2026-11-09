@@ -72,11 +72,14 @@ describe('extraction providers', () => {
   it('says what is missing when a fixture extraction is not labelled', async () => {
     const extractor = new FixtureExtractor(new Map<string, ExtractedReply>());
     await expect(
-      extractor.extract({} as never, {
-        id: 'in-9',
-        rentalHouseId: null,
-        party: 'applicant',
-      } as never)
+      extractor.extract(
+        {} as never,
+        {
+          id: 'in-9',
+          rentalHouseId: null,
+          party: 'applicant',
+        } as never
+      )
     ).rejects.toThrow(/fixtures\/extractions/);
   });
 
@@ -95,5 +98,22 @@ describe('extraction providers', () => {
 
   it('needs labelled extractions to build the fixture provider', () => {
     expect(() => createExtractor({ provider: 'fixture' })).toThrow(/needs/);
+  });
+});
+
+describe('createExtractor: the factory', () => {
+  const env = { ...process.env };
+  afterEach(() => {
+    process.env = { ...env };
+  });
+
+  it('builds the API provider when asked', () => {
+    expect(createExtractor({ provider: 'anthropic' })).toBeInstanceOf(AnthropicExtractor);
+  });
+
+  it('builds the fixture provider with labelled extractions', () => {
+    expect(
+      createExtractor({ provider: 'fixture', extractions: new Map() })
+    ).toBeInstanceOf(FixtureExtractor);
   });
 });

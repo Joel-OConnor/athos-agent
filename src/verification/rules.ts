@@ -91,9 +91,7 @@ export const verificationRules: VerificationRule[] = [
       'Workflow doc: "was this client referred by someone you know and you feel comfortable renting to this customer?"',
     addedOn: '2026-11-04',
     when: (f) =>
-      fromRentalHouse(f) &&
-      f.referrerNamed === 'yes' &&
-      f.comfortableRenting === 'yes',
+      fromRentalHouse(f) && f.referrerNamed === 'yes' && f.comfortableRenting === 'yes',
   },
   {
     id: 'references-checked-only',

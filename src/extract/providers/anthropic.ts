@@ -16,7 +16,10 @@ export class AnthropicExtractor extends BaseExtractor {
   private readonly model = process.env.EXTRACT_MODEL ?? 'claude-sonnet-5-5';
   private client: Anthropic | null = null;
 
-  constructor(telemetry?: Telemetry, private readonly injected?: Anthropic) {
+  constructor(
+    telemetry?: Telemetry,
+    private readonly injected?: Anthropic
+  ) {
     super(telemetry);
   }
 

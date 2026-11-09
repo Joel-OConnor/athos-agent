@@ -65,7 +65,9 @@ async function evalCase(fx: CaseFixture): Promise<Row> {
   }
   if (e.needsFurtherReview !== undefined && e.needsFurtherReview !== needsFurtherReview) {
     pass = false;
-    detail.push(`needsFurtherReview expected ${e.needsFurtherReview}, got ${needsFurtherReview}`);
+    detail.push(
+      `needsFurtherReview expected ${e.needsFurtherReview}, got ${needsFurtherReview}`
+    );
   }
   if (e.actorRole && e.actorRole !== actorRole) {
     pass = false;
@@ -84,7 +86,14 @@ async function evalCase(fx: CaseFixture): Promise<Row> {
     detail.push('FALSE APPROVE - agent approved a case underwriting would not');
   }
 
-  return { file: fx.file, expected: e.recommendation ?? '(any)', actual, pass, falseApprove, detail };
+  return {
+    file: fx.file,
+    expected: e.recommendation ?? '(any)',
+    actual,
+    pass,
+    falseApprove,
+    detail,
+  };
 }
 
 async function runCaseEval(): Promise<number> {
@@ -120,7 +129,7 @@ async function main(): Promise<void> {
   process.exit(code);
 }
 
-main().catch((err) => {
+main().catch((err: unknown) => {
   console.error(err);
   process.exit(1);
 });

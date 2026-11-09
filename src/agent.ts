@@ -1,9 +1,4 @@
-import {
-  AgentResult,
-  CasePacket,
-  SCHEMA_VERSION,
-  type ExtractedReply,
-} from './contract';
+import { AgentResult, CasePacket, SCHEMA_VERSION, type ExtractedReply } from './contract';
 import { route } from './routing/route';
 import { decide } from './decide/decide';
 import { createExtractor, type Extractor } from './extract';
@@ -12,10 +7,13 @@ import {
   buildResearchPacket,
   type ResearchProvider,
 } from './research/research';
+import type { Fetch } from './research/rdap';
 
 export interface RunOptions {
   extractor?: Extractor;
   searchProvider?: ResearchProvider;
+  /** For RDAP lookups. Tests pass a stub so nothing touches the network. */
+  fetchImpl?: Fetch;
 }
 
 /**
@@ -54,7 +52,8 @@ export async function runCase(
   if (result.recommendation === 'escalate_to_service') {
     result.researchPacket = await buildResearchPacket(
       packet,
-      options.searchProvider ?? new NullSearchProvider()
+      options.searchProvider ?? new NullSearchProvider(),
+      options.fetchImpl
     );
   }
 

@@ -1,4 +1,5 @@
 import { route } from '../src/routing/route';
+import { combineSignals, compare, type SignalVerdict } from '../src/routing/seonSignals';
 import { thresholds } from '../src/config/thresholds';
 import { loadCase } from './helpers';
 
@@ -105,5 +106,91 @@ describe('SEON signal combination (Q11, revised)', () => {
     const d = route(packet);
     expect(d.signals?.overall).toBe('looks_fake');
     expect(d.warnings.join(' ')).toMatch(/no positive evidence either way/);
+  });
+});
+
+describe('combineSignals: every rule Athos could switch to', () => {
+  const v = (e: SignalVerdict, p: SignalVerdict, ip: SignalVerdict) => ({
+    emailAccounts: e,
+    phoneAccounts: p,
+    ipLocation: ip,
+  });
+
+  it('is undetermined with nothing known, under any rule', () => {
+    for (const rule of [
+      'positive_unless_flagged',
+      'all_must_pass',
+      'majority',
+    ] as const) {
+      expect(combineSignals(rule, v('unknown', 'unknown', 'unknown'))).toBe(
+        'undetermined'
+      );
+    }
+  });
+
+  it('positive_unless_flagged: one positive and no red flag is real', () => {
+    expect(combineSignals('positive_unless_flagged', v('pass', 'unknown', 'pass'))).toBe(
+      'looks_real'
+    );
+    expect(combineSignals('positive_unless_flagged', v('pass', 'pass', 'flag'))).toBe(
+      'looks_fake'
+    );
+    expect(combineSignals('positive_unless_flagged', v('flag', 'flag', 'pass'))).toBe(
+      'looks_fake'
+    );
+  });
+
+  it('all_must_pass: needs all three known and passing', () => {
+    expect(combineSignals('all_must_pass', v('pass', 'pass', 'pass'))).toBe('looks_real');
+    expect(combineSignals('all_must_pass', v('pass', 'unknown', 'pass'))).toBe(
+      'looks_fake'
+    );
+    expect(combineSignals('all_must_pass', v('pass', 'pass', 'flag'))).toBe('looks_fake');
+  });
+
+  it('majority: more passes than flags among what is known', () => {
+    expect(combineSignals('majority', v('pass', 'flag', 'pass'))).toBe('looks_real');
+    expect(combineSignals('majority', v('pass', 'flag', 'flag'))).toBe('looks_fake');
+    expect(combineSignals('majority', v('pass', 'flag', 'unknown'))).toBe('looks_fake');
+  });
+});
+
+describe('compare', () => {
+  it('reads "over 5" strictly and "at least 5" inclusively', () => {
+    expect(compare(5, 5, 'greater_than')).toBe(false);
+    expect(compare(6, 5, 'greater_than')).toBe(true);
+    expect(compare(5, 5, 'at_least')).toBe(true);
+  });
+});
+
+describe('route: the remaining branches', () => {
+  it('falls back to vetting, with a warning, when no SEON signal is available', () => {
+    const packet = loadCase('004-under-100k-flagged-looks-fake.json');
+    packet.seon.signals = {
+      emailAccountCount: null,
+      phoneAccountCount: null,
+      ipCountry: null,
+      ipRegion: null,
+      ipCity: null,
+      ipDistanceMilesFromAddress: null,
+    };
+    const d = route(packet);
+    expect(d.path).toBe('vet_rental_houses');
+    expect(d.signals?.overall).toBe('undetermined');
+    expect(d.warnings.join(' ')).toMatch(/No SEON signals/);
+  });
+
+  it('treats a foreign applicant address as a foreign indicator even with a US IP', () => {
+    const packet = loadCase('004-under-100k-flagged-looks-fake.json');
+    packet.applicant.address.country = 'MX';
+    const d = route(packet);
+    expect(d.foreignIndicator).toBe(true);
+    expect(d.templates).toContain('exhibit3_us_residency');
+  });
+
+  it('refuses a product outside the workflow', () => {
+    const packet = loadCase('001-clean-100k-seon-approve.json');
+    const d = route({ ...packet, product: 'stp' as never });
+    expect(d.path).toBe('out_of_scope');
   });
 });

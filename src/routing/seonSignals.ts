@@ -1,23 +1,48 @@
 import type { CasePacket, Reason } from '../contract';
-import { thresholds } from '../config/thresholds';
+import { thresholds, type CombineRule, type Comparison } from '../config/thresholds';
 
 export type SignalVerdict = 'pass' | 'flag' | 'unknown';
 
-export interface SignalAssessment {
+export type Overall = 'looks_real' | 'looks_fake' | 'undetermined';
+
+export interface SignalVerdicts {
   emailAccounts: SignalVerdict;
   phoneAccounts: SignalVerdict;
   ipLocation: SignalVerdict;
-  /** 'looks_real' | 'looks_fake' | 'undetermined' */
-  overall: 'looks_real' | 'looks_fake' | 'undetermined';
+}
+
+export interface SignalAssessment extends SignalVerdicts {
+  overall: Overall;
   reasons: Reason[];
   warnings: string[];
 }
 
-function compare(
-  value: number,
-  min: number,
-  mode: 'greater_than' | 'at_least'
-): boolean {
+/**
+ * How the three verdicts become one answer. The workflow doc treats each
+ * account count on its own as positive evidence ("this appears to be a real
+ * person") and the IP location only as a red flag; they are not three equal
+ * votes. The other two rules are kept so Athos can switch if they disagree.
+ */
+export function combineSignals(rule: CombineRule, v: SignalVerdicts): Overall {
+  const all = [v.emailAccounts, v.phoneAccounts, v.ipLocation];
+  const knowns = all.filter((x) => x !== 'unknown').length;
+  if (knowns === 0) return 'undetermined';
+
+  const positives = [v.emailAccounts, v.phoneAccounts].filter((x) => x === 'pass').length;
+  const flags = all.filter((x) => x === 'flag').length;
+  const redFlag = v.ipLocation === 'flag';
+
+  switch (rule) {
+    case 'all_must_pass':
+      return knowns === 3 && positives === 2 && !redFlag ? 'looks_real' : 'looks_fake';
+    case 'majority':
+      return knowns - flags > flags ? 'looks_real' : 'looks_fake';
+    case 'positive_unless_flagged':
+      return positives > 0 && !redFlag ? 'looks_real' : 'looks_fake';
+  }
+}
+
+export function compare(value: number, min: number, mode: Comparison): boolean {
   return mode === 'greater_than' ? value > min : value >= min;
 }
 
@@ -95,44 +120,16 @@ export function assessSeonSignals(packet: CasePacket): SignalAssessment {
     });
   }
 
-  // The doc treats the account counts as positive evidence ("this appears to
-  // be a real person") and the IP location as a red flag. They are not three
-  // equal votes.
-  const positives = [emailAccounts, phoneAccounts].filter((v) => v === 'pass').length;
-  const redFlag = ipLocation === 'flag';
-  const accountSignalsKnown = [emailAccounts, phoneAccounts].filter(
-    (v) => v !== 'unknown'
-  ).length;
-  const knowns = [emailAccounts, phoneAccounts, ipLocation].filter(
-    (v) => v !== 'unknown'
-  ).length;
-
-  let overall: SignalAssessment['overall'];
-  if (knowns === 0) {
-    overall = 'undetermined';
-  } else {
-    switch (thresholds.seon.combineRule) {
-      case 'all_must_pass':
-        overall =
-          knowns === 3 && positives === 2 && !redFlag ? 'looks_real' : 'looks_fake';
-        break;
-      case 'majority': {
-        const flags = [emailAccounts, phoneAccounts, ipLocation].filter(
-          (v) => v === 'flag'
-        ).length;
-        overall = knowns - flags > flags ? 'looks_real' : 'looks_fake';
-        break;
-      }
-      case 'positive_unless_flagged':
-      default:
-        overall = positives > 0 && !redFlag ? 'looks_real' : 'looks_fake';
-        break;
-    }
-  }
+  const overall = combineSignals(thresholds.seon.combineRule, {
+    emailAccounts,
+    phoneAccounts,
+    ipLocation,
+  });
 
   if (
     overall === 'looks_fake' &&
-    accountSignalsKnown === 0 &&
+    emailAccounts === 'unknown' &&
+    phoneAccounts === 'unknown' &&
     thresholds.seon.combineRule === 'positive_unless_flagged'
   ) {
     warnings.push(

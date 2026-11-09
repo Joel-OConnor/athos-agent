@@ -29,7 +29,8 @@ describe('fixture hygiene', () => {
     const text = readFileSync(file, 'utf8');
     const phones = text.match(/\+?1?[-\s]?\(?\d{3}\)?[-\s]?\d{3}[-\s]?\d{4}/g) ?? [];
     const offenders = phones.filter(
-      (p) => !p.includes('555') && !p.includes('626-716-9800') && !p.includes('626-701-5047')
+      (p) =>
+        !p.includes('555') && !p.includes('626-716-9800') && !p.includes('626-701-5047')
     );
     expect(offenders).toEqual([]);
   });

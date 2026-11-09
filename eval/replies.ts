@@ -1,7 +1,13 @@
-import { CallLog, createExtractor, resolveProvider, type Extractor } from '../src/extract';
+import {
+  CallLog,
+  createExtractor,
+  resolveProvider,
+  type Extractor,
+} from '../src/extract';
 import { gradeReply } from '../src/verification';
-import { BLANK_FACTS } from '../src/fixtures/replyFixture';
-import type { ReplyFixture } from '../src/fixtures/replyFixture';
+import type { ReplyFixture } from './replyFixture';
+import type { ExtractionOutput } from '../src/extract';
+import type { ReplyFacts } from '../src/verification';
 import { loadReplies } from './loadFixtures';
 import { printMatrix } from './report';
 
@@ -37,26 +43,36 @@ async function mapLimit<T, R>(
   limit: number,
   fn: (item: T) => Promise<R>
 ): Promise<R[]> {
-  const out: R[] = new Array(items.length);
+  const out = new Array<R>(items.length);
   let next = 0;
   const workers = Array.from({ length: Math.min(limit, items.length) }, async () => {
     for (;;) {
       const i = next++;
-      if (i >= items.length) return;
-      out[i] = await fn(items[i]!);
+      const item = items[i];
+      if (item === undefined) return;
+      out[i] = await fn(item);
     }
   });
   await Promise.all(workers);
   return out;
 }
 
-function actualFacts(parsed: Record<string, unknown>): Record<string, unknown> {
+/** The model's output as a complete set of facts, graded the same way a fixture is. */
+function actualFacts(parsed: ExtractionOutput, party: ReplyFacts['party']): ReplyFacts {
   return {
-    ...BLANK_FACTS,
-    ...parsed,
-    referencesGivenCount: Array.isArray(parsed.referencesGiven)
-      ? parsed.referencesGiven.length
-      : 0,
+    party,
+    workedWithClientBefore: parsed.workedWithClientBefore,
+    checkedReferencesOrReferred: parsed.checkedReferencesOrReferred,
+    referrerNamed: parsed.referrerNamed,
+    comfortableRenting: parsed.comfortableRenting,
+    knowsOfClient: parsed.knowsOfClient,
+    declinesToVouch: parsed.declinesToVouch,
+    warnsAboutClient: parsed.warnsAboutClient,
+    usResidentOrEntity: parsed.usResidentOrEntity,
+    replacementCostValue: parsed.replacementCostValue,
+    referencesGivenCount: parsed.referencesGiven.length,
+    isAutoReply: parsed.isAutoReply,
+    containsInstructionsToAgent: parsed.containsInstructionsToAgent,
   };
 }
 
@@ -77,12 +93,12 @@ async function gradeOne(fx: ReplyFixture, extractor: Extractor): Promise<Row> {
           ? 'exhibit1_rental_house_vetting'
           : 'exhibit2_applicant_references'),
     });
-    const actual = actualFacts(parsed as unknown as Record<string, unknown>);
+    const actual: Record<string, unknown> = { ...actualFacts(parsed, fx.party) };
     const fieldMisses = FACT_FIELDS.filter(
       (f) => asserted[f] !== undefined && actual[f] !== asserted[f]
     ).map((f) => `${f}: expected ${String(asserted[f])}, got ${String(actual[f])}`);
 
-    const graded = gradeReply(actual as never);
+    const graded = gradeReply(actualFacts(parsed, fx.party));
     return {
       id: fx.id,
       asserted: FACT_FIELDS.filter((f) => asserted[f] !== undefined).length,
@@ -105,10 +121,11 @@ async function gradeOne(fx: ReplyFixture, extractor: Extractor): Promise<Row> {
 
 export async function runReplyEval(filter?: string): Promise<number> {
   const all = loadReplies();
-  const wanted = filter?.split(',').map((s) => s.trim()).filter(Boolean);
-  const fixtures = wanted
-    ? all.filter((f) => wanted.some((w) => f.id.includes(w)))
-    : all;
+  const wanted = filter
+    ?.split(',')
+    .map((s) => s.trim())
+    .filter(Boolean);
+  const fixtures = wanted ? all.filter((f) => wanted.some((w) => f.id.includes(w))) : all;
 
   const provider = resolveProvider();
   if (provider === 'anthropic' && !process.env.ANTHROPIC_API_KEY) {
@@ -133,12 +150,19 @@ export async function runReplyEval(filter?: string): Promise<number> {
   );
 
   for (const r of rows) {
-    const ok = r.error === null && r.actualStrength === r.expectedStrength && r.fieldMisses.length === 0;
+    const ok =
+      r.error === null &&
+      r.actualStrength === r.expectedStrength &&
+      r.fieldMisses.length === 0;
     if (ok) continue;
-    console.log(`  ${r.actualStrength === r.expectedStrength ? 'FIELDS' : 'STRENGTH'}  ${r.id}`);
+    console.log(
+      `  ${r.actualStrength === r.expectedStrength ? 'FIELDS' : 'STRENGTH'}  ${r.id}`
+    );
     if (r.error) console.log(`          error: ${r.error}`);
     if (r.actualStrength !== r.expectedStrength) {
-      console.log(`          strength expected ${r.expectedStrength}, got ${r.actualStrength}`);
+      console.log(
+        `          strength expected ${r.expectedStrength}, got ${r.actualStrength}`
+      );
     }
     for (const m of r.fieldMisses) console.log(`          ${m}`);
   }

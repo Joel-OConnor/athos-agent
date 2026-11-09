@@ -20,7 +20,7 @@ export const EXHIBIT3_SUBJECT =
   'One more step to finalize your coverage – Athos Insurance';
 
 /** False until the business signs off on the wording. */
-export const EXHIBIT3_APPROVED = false;
+export const EXHIBIT3_APPROVED = false as boolean;
 
 export const EXHIBIT3_UNAPPROVED_WARNING =
   'The US-residency email (Exhibit 3) uses draft wording pending business approval. Review before sending. See docs/OPEN-QUESTIONS.md (Q2).';

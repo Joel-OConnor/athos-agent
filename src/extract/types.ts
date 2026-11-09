@@ -1,9 +1,4 @@
-import type {
-  CasePacket,
-  Correspondence,
-  ExtractedReply,
-  TemplateId,
-} from '../contract';
+import type { CasePacket, Correspondence, ExtractedReply, TemplateId } from '../contract';
 import type { ExtractionOutput } from './tool';
 
 /**

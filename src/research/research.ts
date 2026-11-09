@@ -1,9 +1,15 @@
 import type { CasePacket, ResearchPacket, ResearchFinding } from '../contract';
-import { domainAge, normalizeDomain } from './rdap';
+import { domainAge, normalizeDomain, type Fetch } from './rdap';
+
+export interface SearchHit {
+  title: string;
+  url: string;
+  snippet: string;
+}
 
 export interface ResearchProvider {
   /** Free-text web search. M4. Returns results with real URLs or an empty list. */
-  webSearch(query: string): Promise<{ title: string; url: string; snippet: string }[]>;
+  webSearch(query: string): Promise<SearchHit[]>;
 }
 
 /**
@@ -15,7 +21,8 @@ export interface ResearchProvider {
  */
 export async function buildResearchPacket(
   packet: CasePacket,
-  provider: ResearchProvider
+  provider: ResearchProvider,
+  fetchImpl?: Fetch
 ): Promise<ResearchPacket> {
   const findings: ResearchFinding[] = [];
   const notFound: string[] = [];
@@ -52,7 +59,7 @@ export async function buildResearchPacket(
     const host = normalizeDomain(site);
     if (!host) continue;
     try {
-      const finding = await domainAge(host, now);
+      const finding = await domainAge(host, now, fetchImpl);
       if (finding) findings.push(finding);
       else notFound.push(`No RDAP registration date for ${host}`);
     } catch {
@@ -89,7 +96,7 @@ function whatToCheckFor(link: string): string {
 
 /** Stand-in so the pipeline runs with no search provider wired up. */
 export class NullSearchProvider implements ResearchProvider {
-  async webSearch(): Promise<{ title: string; url: string; snippet: string }[]> {
-    return [];
+  webSearch(): Promise<SearchHit[]> {
+    return Promise.resolve([]);
   }
 }

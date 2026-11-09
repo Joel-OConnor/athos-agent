@@ -1,0 +1,9 @@
+dist
+coverage
+node_modules
+schema
+package-lock.json
+fixtures/**/*.json
+test/__snapshots__
+docs/*.pdf
+docs/*.docx

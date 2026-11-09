@@ -1,7 +1,7 @@
-import { readdirSync, readFileSync } from 'node:fs';
-import { join } from 'node:path';
 import { gradeReply, verificationRules } from '../src/verification';
 import type { ReplyFacts } from '../src/verification';
+import { factsOf } from '../src/fixtures/replyFixture';
+import { loadReplies } from '../eval/loadFixtures';
 
 const BLANK: ReplyFacts = {
   workedWithClientBefore: 'unstated',
@@ -11,6 +11,7 @@ const BLANK: ReplyFacts = {
   knowsOfClient: 'unstated',
   declinesToVouch: 'unstated',
   warnsAboutClient: 'unstated',
+  usResidentOrEntity: 'unstated',
   replacementCostValue: null,
   referencesGivenCount: 0,
   isAutoReply: false,
@@ -74,20 +75,40 @@ describe('verification rules registry', () => {
     expect(gradeReply(facts)).toEqual(gradeReply(facts));
   });
 
-  it('matches every reply fixture', () => {
-    const dir = join(__dirname, '..', 'fixtures', 'replies');
-    for (const f of readdirSync(dir).filter((n) => n.endsWith('.json'))) {
-      const fx = JSON.parse(readFileSync(join(dir, f), 'utf8')) as {
-        expected: Record<string, unknown>;
-      };
-      const facts: ReplyFacts = {
-        ...BLANK,
-        ...(fx.expected as Partial<ReplyFacts>),
-        referencesGivenCount: Number(fx.expected.referencesGivenCount ?? 0),
-      };
-      const g = gradeReply(facts);
-      expect([f, g.strength]).toEqual([f, fx.expected.strength]);
-      expect([f, g.ruleId]).toEqual([f, fx.expected.strengthRuleId]);
+  const fixtures = loadReplies();
+
+  it('has enough reply fixtures to measure accuracy at all', () => {
+    // M3's bar is 95% agreement. On 20 samples one miss costs 5 points, so the
+    // number means nothing below about 100.
+    expect(fixtures.length).toBeGreaterThanOrEqual(100);
+  });
+
+  it('gives every fixture a unique id', () => {
+    const ids = fixtures.map((f) => f.id);
+    expect(new Set(ids).size).toBe(ids.length);
+  });
+
+  it.each(fixtures.map((f) => [f.id, f] as const))(
+    '%s grades exactly as the fixture says',
+    (_id, fx) => {
+      const g = gradeReply(factsOf(fx));
+      expect({ strength: g.strength, rule: g.ruleId }).toEqual({
+        strength: fx.expected.strength,
+        rule: fx.expected.strengthRuleId,
+      });
     }
+  );
+
+  it('covers every rule in the registry with at least one fixture', () => {
+    const covered = new Set(fixtures.map((f) => f.expected.strengthRuleId));
+    const uncovered = verificationRules
+      .map((r) => r.id)
+      .filter((id) => !covered.has(id));
+    expect(uncovered).toEqual([]);
+  });
+
+  it('covers all four strengths', () => {
+    const seen = new Set(fixtures.map((f) => f.expected.strength));
+    expect([...seen].sort()).toEqual(['negative', 'none', 'strong', 'weak']);
   });
 });

@@ -53,21 +53,31 @@ export function loadCases(): CaseFixture[] {
     });
 }
 
-export interface ReplyFixture {
-  id: string;
-  party: 'rental_house' | 'applicant';
-  rentalHouseName: string | null;
-  clientName: string;
-  subject: string;
-  body: string;
-  expected: Record<string, unknown>;
-  notes?: string;
-}
+export { type ReplyFixture, factsOf } from '../src/fixtures/replyFixture';
+import { ReplyFixture } from '../src/fixtures/replyFixture';
 
+/**
+ * Reply fixtures are grouped into one file per category, each holding an array.
+ * Any fact left out of `expected` means "the email did not say".
+ */
 export function loadReplies(): ReplyFixture[] {
   const dir = join(ROOT, 'replies');
   return readdirSync(dir)
     .filter((f) => f.endsWith('.json'))
     .sort()
-    .map((f) => JSON.parse(readFileSync(join(dir, f), 'utf8')) as ReplyFixture);
+    .flatMap((f) => {
+      const raw = JSON.parse(readFileSync(join(dir, f), 'utf8')) as unknown[];
+      if (!Array.isArray(raw)) {
+        throw new Error(`fixtures/replies/${f} must hold an array of fixtures`);
+      }
+      return raw.map((row, i) => {
+        const parsed = ReplyFixture.safeParse(row);
+        if (!parsed.success) {
+          throw new Error(
+            `fixtures/replies/${f}[${i}] is not a valid reply fixture: ${JSON.stringify(parsed.error.issues)}`
+          );
+        }
+        return parsed.data;
+      });
+    });
 }

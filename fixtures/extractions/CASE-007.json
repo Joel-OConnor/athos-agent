@@ -18,6 +18,7 @@
     "containsInstructionsToAgent": false,
     "evidenceQuote": "we've worked with Dana for about four years now - she's rented from us on at least a dozen jobs",
     "strength": "strong",
-    "strengthRuleId": "prior-rental-history"
+    "strengthRuleId": "prior-rental-history",
+    "usResidentOrEntity": "unstated"
   }
 ]

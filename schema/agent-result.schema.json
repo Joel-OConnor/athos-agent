@@ -196,6 +196,14 @@
               "unstated"
             ]
           },
+          "usResidentOrEntity": {
+            "type": "string",
+            "enum": [
+              "yes",
+              "no",
+              "unstated"
+            ]
+          },
           "history": {
             "type": [
               "string",
@@ -327,6 +335,7 @@
           "knowsOfClient",
           "declinesToVouch",
           "warnsAboutClient",
+          "usResidentOrEntity",
           "history",
           "replacementCostValue",
           "glRequired",

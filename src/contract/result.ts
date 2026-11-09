@@ -69,6 +69,11 @@ export const ExtractedReply = z.object({
   knowsOfClient: Tri,
   declinesToVouch: Tri,
   warnsAboutClient: Tri,
+  /**
+   * Applicant replies only: did they confirm they are a US resident, or the
+   * business a US entity? "no" is what the decline path reads (Q7).
+   */
+  usResidentOrEntity: Tri,
   history: z.string().nullable(),
   replacementCostValue: z.number().nonnegative().nullable(),
   glRequired: Tri,

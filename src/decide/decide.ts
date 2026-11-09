@@ -155,7 +155,7 @@ function vetting(input: PlanInput): Draft {
 
   // The applicant answered the US-residency email saying they are not US.
   const nonUs = extracted.some(
-    (e) => e.rentalHouseId === null && e.history?.toLowerCase().includes('not a us')
+    (e) => e.rentalHouseId === null && e.usResidentOrEntity === 'no'
   );
   if (nonUs && thresholds.routing.nonUsApplicantRecommendsDecline) {
     reasons.push({

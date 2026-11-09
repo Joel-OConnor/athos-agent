@@ -1,7 +1,8 @@
 import { runCase } from '../src/agent';
 import { FixtureExtractor } from '../src/extract/extract';
 import type { ExtractedReply } from '../src/contract';
-import { loadCases, loadReplies, type CaseFixture } from './loadFixtures';
+import { loadCases, type CaseFixture } from './loadFixtures';
+import { runReplyEval } from './replies';
 import { printMatrix } from './report';
 
 interface Row {
@@ -111,24 +112,11 @@ async function runCaseEval(): Promise<number> {
   return falseApproves > 0 || passed < rows.length ? 1 : 0;
 }
 
-async function runReplyEval(): Promise<number> {
-  const replies = loadReplies();
-  if (!process.env.ANTHROPIC_API_KEY) {
-    console.error('  --replies needs ANTHROPIC_API_KEY. See .env.example.');
-    return 2;
-  }
-  console.log(`\n  REPLY EVAL  (${replies.length} emails, model calls)\n`);
-  console.log('  TODO (M3): wire ClaudeExtractor against each fixture and diff');
-  console.log('  every field in `expected`. Report per-field accuracy and a');
-  console.log('  confusion matrix on `strength`. Hard gate: no fixture whose');
-  console.log('  expected strength is negative or none may be scored strong.\n');
-  return 0;
-}
-
 async function main(): Promise<void> {
-  const code = process.argv.includes('--replies')
-    ? await runReplyEval()
-    : await runCaseEval();
+  const replies = process.argv.includes('--replies');
+  const filterFlag = process.argv.indexOf('--only');
+  const filter = filterFlag >= 0 ? process.argv[filterFlag + 1] : undefined;
+  const code = replies ? await runReplyEval(filter) : await runCaseEval();
   process.exit(code);
 }
 

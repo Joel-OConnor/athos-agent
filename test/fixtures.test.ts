@@ -11,6 +11,7 @@ describe('fixture hygiene', () => {
   const files = [
     ...readdirSync(join(ROOT, 'cases')).map((f) => join(ROOT, 'cases', f)),
     ...readdirSync(join(ROOT, 'replies')).map((f) => join(ROOT, 'replies', f)),
+    ...readdirSync(join(ROOT, 'extractions')).map((f) => join(ROOT, 'extractions', f)),
   ].filter((f) => f.endsWith('.json'));
 
   it.each(files)('%s uses only reserved email domains', (file) => {

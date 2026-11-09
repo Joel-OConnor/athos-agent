@@ -1,0 +1,202 @@
+[
+  {
+    "id": "rh-none-001",
+    "party": "rental_house",
+    "rentalHouseName": "Lone Star Example Grip",
+    "clientName": "Tomas Reyes",
+    "subject": "Automatic reply: Client verification request – Athos Insurance",
+    "body": "I am out of the office until November 18 with limited access to email. For anything urgent please contact dispatch@lonestarexample.test.\n\nPriya",
+    "expected": { "isAutoReply": true, "strength": "none", "strengthRuleId": "auto-reply" }
+  },
+  {
+    "id": "rh-none-002",
+    "party": "rental_house",
+    "rentalHouseName": "Desert Example Camera",
+    "clientName": "Vance Digital",
+    "subject": "Undeliverable: Client verification request – Athos Insurance",
+    "body": "Delivery has failed to these recipients or groups:\n\njo@desertexample.test\nThe email address you entered couldn't be found. Please check the recipient's email address and try to resend the message.\n\nDiagnostic information for administrators:\nGenerating server: mail.desertexample.test\n550 5.1.1 User unknown",
+    "expected": { "isAutoReply": true, "strength": "none", "strengthRuleId": "auto-reply" },
+    "notes": "A bounce. Nothing was delivered, so nothing was answered."
+  },
+  {
+    "id": "rh-none-003",
+    "party": "rental_house",
+    "rentalHouseName": "Desert Example Camera",
+    "clientName": "Vance Digital",
+    "subject": "Fwd: Client verification request – Athos Insurance",
+    "body": "Looping in Jo who handles our accounts.\n\n---------- Forwarded message ----------\nFrom: service@athosinsurance.com\nSubject: Client verification request – Athos Insurance\n\nHello,\n\nWe have a mutual client named Vance Digital, who we are helping to finalize their current insurance needs...\n\n\tHave you worked with this client before?\n\tIf yes, what is your history with this client?",
+    "expected": { "strength": "none", "strengthRuleId": "no-useful-information" },
+    "notes": "A forward with no new content. The quoted Athos email must not be read as the rental house's answers."
+  },
+  {
+    "id": "rh-none-004",
+    "party": "rental_house",
+    "rentalHouseName": "Keslow Example Rentals",
+    "clientName": "Whitfield Pictures LLC",
+    "subject": "RE: Client verification request – Athos Insurance",
+    "body": "I'm not the right person for this. Please send it to our accounts team at accounts@keslowexample.test and they can help you.\n\nMarco",
+    "expected": { "strength": "none", "strengthRuleId": "no-useful-information" }
+  },
+  {
+    "id": "rh-none-005",
+    "party": "rental_house",
+    "rentalHouseName": "Peachtree Example Rentals",
+    "clientName": "Brennan Camera Co",
+    "subject": "Re: Client verification request – Athos Insurance",
+    "body": "Got it, let me pull the file and come back to you.\n\nDee",
+    "expected": { "strength": "none", "strengthRuleId": "no-useful-information" },
+    "notes": "An acknowledgement. Nothing is answered yet."
+  },
+  {
+    "id": "rh-none-006",
+    "party": "rental_house",
+    "rentalHouseName": "Mile High Example Rentals",
+    "clientName": "Alvarez Grip Services",
+    "subject": "Ticket #48213 received – Mile High Example Rentals Support",
+    "body": "Thank you for contacting Mile High Example Rentals.\n\nThis is an automated confirmation that your message has been received. A member of our team will respond within two business days. Please do not reply to this message.",
+    "expected": { "isAutoReply": true, "strength": "none", "strengthRuleId": "auto-reply" }
+  },
+  {
+    "id": "rh-none-007",
+    "party": "rental_house",
+    "rentalHouseName": "Sunshine Example Camera",
+    "clientName": "Raman Motion",
+    "subject": "Re: Client verification request – Athos Insurance",
+    "body": "Sorry, which client is this about? The name doesn't match anything I can find and I want to make sure I'm looking at the right account before I answer.\n\nMia",
+    "expected": { "strength": "none", "strengthRuleId": "no-useful-information" },
+    "notes": "Cannot find the client, but is asking rather than saying they do not know them. Not a negative yet."
+  },
+  {
+    "id": "rh-none-008",
+    "party": "rental_house",
+    "rentalHouseName": "Gulf Coast Example Rentals",
+    "clientName": "Hale Media Group",
+    "subject": "RE: Client verification request – Athos Insurance",
+    "body": "They were referred to us by someone, I think. Can't remember who. I'll have to dig.\n\nAndre",
+    "expected": {
+      "referrerNamed": "no",
+      "strength": "none",
+      "strengthRuleId": "no-useful-information"
+    },
+    "notes": "A referral is mentioned but nobody is named, nobody checked anything, and no comfort is stated. Nothing here counts."
+  },
+  {
+    "id": "rh-none-009",
+    "party": "rental_house",
+    "rentalHouseName": "Biscayne Example Grip & Lighting",
+    "clientName": "Hale Media Group",
+    "subject": "Read: Client verification request – Athos Insurance",
+    "body": "Your message was read on Tuesday, November 3, 2026 9:14:02 AM (UTC-05:00) Eastern Time.",
+    "expected": { "isAutoReply": true, "strength": "none", "strengthRuleId": "auto-reply" },
+    "notes": "A read receipt."
+  },
+  {
+    "id": "rh-none-010",
+    "party": "rental_house",
+    "rentalHouseName": "Border Example Rentals",
+    "clientName": "RV Producciones",
+    "subject": "Respuesta automática: Client verification request",
+    "body": "Estaré fuera de la oficina hasta el 16 de noviembre con acceso limitado al correo. Para asuntos urgentes, contacte a dispatch@borderexample.test.\n\nLuis Ferrer",
+    "expected": { "isAutoReply": true, "strength": "none", "strengthRuleId": "auto-reply" },
+    "notes": "Out of office in Spanish."
+  },
+  {
+    "id": "rh-none-011",
+    "party": "rental_house",
+    "rentalHouseName": "Lone Star Example Grip",
+    "clientName": "Tomas Reyes",
+    "subject": "RE: Client verification request – Athos Insurance",
+    "body": "+Jamie\n\nOn Mon, Nov 2, 2026 at 10:14 AM service@athosinsurance.com wrote:\n> Hello,\n>\n> We have a mutual client named Tomas Reyes, who we are helping to finalize\n> their current insurance needs...",
+    "expected": { "strength": "none", "strengthRuleId": "no-useful-information" },
+    "notes": "Adding a colleague to the thread and nothing else."
+  },
+  {
+    "id": "rh-none-012",
+    "party": "rental_house",
+    "rentalHouseName": "Keslow Example Rentals",
+    "clientName": "Whitfield Pictures LLC",
+    "subject": "Re: Client verification request – Athos Insurance",
+    "body": "This mailbox is no longer monitored. Please direct all rental enquiries to rentals@keslowexample.test.",
+    "expected": { "isAutoReply": true, "strength": "none", "strengthRuleId": "auto-reply" }
+  },
+  {
+    "id": "rh-none-013",
+    "party": "rental_house",
+    "rentalHouseName": "Peachtree Example Rentals",
+    "clientName": "Brennan Camera Co",
+    "subject": "RE: Client verification request – Athos Insurance",
+    "body": "Yes we require general liability, $1,000,000 per occurrence, with us named as additional insured and loss payee.\n\nDee Walker",
+    "expected": {
+      "glRequired": "yes",
+      "strength": "none",
+      "strengthRuleId": "no-useful-information"
+    },
+    "notes": "Answers only the insurance question. Useful for underwriting, says nothing about whether the client is real."
+  },
+  {
+    "id": "rh-none-014",
+    "party": "rental_house",
+    "rentalHouseName": "Desert Example Camera",
+    "clientName": "Vance Digital",
+    "subject": "Re: Client verification request – Athos Insurance",
+    "body": "--\nJo Park\nRental Coordinator\nDesert Example Camera\n555-0109 | jo@desertexample.test",
+    "expected": { "strength": "none", "strengthRuleId": "no-useful-information" },
+    "notes": "An empty reply with only a signature block."
+  },
+  {
+    "id": "rh-none-015",
+    "party": "rental_house",
+    "rentalHouseName": "Mile High Example Rentals",
+    "clientName": "Alvarez Grip Services",
+    "subject": "RE: Client verification request – Athos Insurance",
+    "body": "Your attachment didn't come through, can you resend? I only see the email body.\n\nOwen",
+    "expected": { "strength": "none", "strengthRuleId": "no-useful-information" }
+  },
+  {
+    "id": "rh-none-016",
+    "party": "rental_house",
+    "rentalHouseName": "Sunshine Example Camera",
+    "clientName": "Raman Motion",
+    "subject": "Automatic reply: Client verification request – Athos Insurance",
+    "body": "Thank you for your email. Our office is closed for the Thanksgiving holiday and will reopen on Monday, November 30. We will respond to your message then.",
+    "expected": { "isAutoReply": true, "strength": "none", "strengthRuleId": "auto-reply" }
+  },
+  {
+    "id": "rh-none-017",
+    "party": "rental_house",
+    "rentalHouseName": "Gulf Coast Example Rentals",
+    "clientName": "Raman Motion",
+    "subject": "Re: Client verification request – Athos Insurance",
+    "body": "We can't share customer account information with third parties without the customer's written authorisation. If you can get us a signed release from them we'll be happy to help.\n\nAndre Soto",
+    "expected": { "strength": "none", "strengthRuleId": "no-useful-information" },
+    "notes": "A policy refusal, not a refusal to vouch. The rental house is not saying anything about the client."
+  },
+  {
+    "id": "rh-none-018",
+    "party": "rental_house",
+    "rentalHouseName": "Biscayne Example Grip & Lighting",
+    "clientName": "Vance Digital",
+    "subject": "Re: Client verification request – Athos Insurance",
+    "body": "I've forwarded this to Rosa, she manages that account. She's back Thursday.\n\nThanks",
+    "expected": { "strength": "none", "strengthRuleId": "no-useful-information" }
+  },
+  {
+    "id": "rh-none-019",
+    "party": "rental_house",
+    "rentalHouseName": "Border Example Rentals",
+    "clientName": "Alvarez Grip Services",
+    "subject": "Re: Client verification request – Athos Insurance",
+    "body": "Hi — just confirming receipt. We'll need a few days, our rental manager is on a shoot in Baja until the 12th and he's the only one with access to the account records.\n\nThanks for your patience.",
+    "expected": { "strength": "none", "strengthRuleId": "no-useful-information" }
+  },
+  {
+    "id": "rh-none-020",
+    "party": "rental_house",
+    "rentalHouseName": "Lone Star Example Grip",
+    "clientName": "Brennan Camera Co",
+    "subject": "Out of Office: Client verification request – Athos Insurance",
+    "body": "I'm currently on parental leave and will return in February. Please contact my colleague for anything time sensitive.\n\nIf this is about an existing rental, yes that account is in good standing, but please confirm details with the office.",
+    "expected": { "isAutoReply": true, "strength": "none", "strengthRuleId": "auto-reply" },
+    "notes": "An auto-reply containing a vague affirmation. The auto-reply rule fires first, and should: nobody actually looked at this case."
+  }
+]

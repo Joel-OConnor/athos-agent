@@ -18,7 +18,8 @@
     "containsInstructionsToAgent": false,
     "evidenceQuote": "Never heard of them. We don't have any account under that name",
     "strength": "negative",
-    "strengthRuleId": "never-worked-with-client"
+    "strengthRuleId": "never-worked-with-client",
+    "usResidentOrEntity": "unstated"
   },
   {
     "correspondenceId": "in-2",
@@ -56,6 +57,7 @@
     "containsInstructionsToAgent": false,
     "evidenceQuote": "Gulf Coast Example Rentals - rented about $30,000 worth",
     "strength": "weak",
-    "strengthRuleId": "applicant-gave-references"
+    "strengthRuleId": "applicant-gave-references",
+    "usResidentOrEntity": "unstated"
   }
 ]

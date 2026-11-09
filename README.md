@@ -16,6 +16,7 @@ person acts.
 npm install
 npm test          # unit tests, no API key needed
 npm run eval      # grades the agent against fixtures/answers, no API key needed
+npm run eval:replies  # grades the extractor against 112 reply fixtures (needs a key)
 npm run case -- fixtures/cases/001-clean-100k-seon-approve.json
 npm run serve     # POST /v0/case
 ```
@@ -52,7 +53,7 @@ src/
   server.ts     POST /v0/case
   cli.ts        npm run case -- <file>
 eval/           grades the agent against the answer key
-fixtures/       scrubbed case packets, the answer key, and single-email fixtures
+fixtures/       scrubbed case packets, the answer key, and 112 single-email fixtures
 docs/           ARCHITECTURE, VERIFICATION-RULES, CONTRACT, OPEN-QUESTIONS,
                 and the two source documents
 ```
@@ -64,7 +65,7 @@ docs/           ARCHITECTURE, VERIFICATION-RULES, CONTRACT, OPEN-QUESTIONS,
 | M0 | Repo, contract, fixture loader, eval runner | `npm run eval` runs and reports |
 | M1 | Routing rules, no AI | Every triage case routes correctly |
 | M2 | Email drafts from approved templates | Every variant matches its snapshot |
-| M3 | Reading replies + deciding | 95%+ agreement on reply fixtures, **zero false approves** |
+| M3 | Reading replies + deciding | 95%+ agreement across 112 reply fixtures, **zero false strongs** |
 | M4 | Research packet | Every escalation gets a packet; every finding has a source URL |
 | M5 | Hardening, Docker, HTTP + CLI | Injection case passes; runs in Docker |
 

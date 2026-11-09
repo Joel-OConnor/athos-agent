@@ -18,6 +18,7 @@ export function gradeExtraction(
     knowsOfClient: facts.knowsOfClient,
     declinesToVouch: facts.declinesToVouch,
     warnsAboutClient: facts.warnsAboutClient,
+    usResidentOrEntity: facts.usResidentOrEntity,
     replacementCostValue: facts.replacementCostValue,
     referencesGivenCount: facts.referencesGiven.length,
     isAutoReply: facts.isAutoReply,
@@ -34,10 +35,17 @@ export function gradeExtraction(
 }
 
 export interface Extractor {
-  extract(
-    packet: CasePacket,
-    email: Correspondence
-  ): Promise<ExtractedReply>;
+  extract(packet: CasePacket, email: Correspondence): Promise<ExtractedReply>;
+}
+
+/** What the model needs to read one email. Decoupled from the case packet so
+ * the reply fixtures can be graded without inventing a whole case. */
+export interface ExtractionContext {
+  party: 'rental_house' | 'applicant';
+  rentalHouseName: string | null;
+  clientName: string;
+  subject: string;
+  body: string;
 }
 
 const MODEL = process.env.EXTRACT_MODEL ?? 'claude-sonnet-5-5';
@@ -56,16 +64,19 @@ export class ClaudeExtractor implements Extractor {
     const rentalHouse =
       packet.rentalHouses.find((rh) => rh.id === email.rentalHouseId) ?? null;
 
-    const message = buildExtractionUserMessage({
+    const parsed = await this.extractFacts({
       party: email.party === 'applicant' ? 'applicant' : 'rental_house',
       rentalHouseName: rentalHouse?.name ?? null,
       clientName: packet.applicant.businessName ?? packet.applicant.name,
       subject: email.subject,
       body: email.body,
     });
-
-    const parsed = await this.callWithRetry(message);
     return gradeExtraction(parsed, email);
+  }
+
+  /** One email in, facts out. No grading, no case. Used by the reply eval. */
+  async extractFacts(context: ExtractionContext): Promise<ExtractionOutput> {
+    return this.callWithRetry(buildExtractionUserMessage(context));
   }
 
   private async callWithRetry(

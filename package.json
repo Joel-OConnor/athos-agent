@@ -12,6 +12,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "eval": "tsx eval/run.ts",
+    "eval:replies": "tsx eval/run.ts --replies",
     "case": "tsx src/cli.ts",
     "serve": "tsx src/server.ts",
     "serve:prod": "node dist/server.js",

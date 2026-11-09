@@ -13,6 +13,7 @@ export interface ReplyFacts {
   knowsOfClient: 'yes' | 'no' | 'unstated';
   declinesToVouch: 'yes' | 'no' | 'unstated';
   warnsAboutClient: 'yes' | 'no' | 'unstated';
+  usResidentOrEntity: 'yes' | 'no' | 'unstated';
   replacementCostValue: number | null;
   referencesGivenCount: number;
   isAutoReply: boolean;

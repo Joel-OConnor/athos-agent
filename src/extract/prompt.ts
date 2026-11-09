@@ -8,6 +8,8 @@ Report only what the email actually says. If the email does not answer something
 
 Handle these shapes: forwarded chains (read the newest message; ignore quoted history unless it is the only content), signature blocks and disclaimers (ignore them), out-of-office and bounce messages (set isAutoReply true), and replies that answer some questions but not others.
 
+usResidentOrEntity applies only to replies from the applicant, answering the US-residency email. "yes" means they confirmed they are a US resident or that the business is a US entity; "no" means they confirmed they are not. If the email does not address it, "unstated".
+
 replacementCostValue is the total replacement cost value in USD of equipment the sender is renting to this client, including sales tax, as a plain number. Null if not stated.
 
 evidenceQuote is a short verbatim quote (under 300 characters) from the email that best shows how much the sender vouches for this client. Null for auto-replies and for emails that say nothing on the subject.

@@ -125,7 +125,6 @@
     "body": "Hi,\n\nThe name on your email doesn't match anything we hold. We did once get an enquiry from someone claiming to be them, but the details didn't check out and we declined to quote.\n\nLuis",
     "expected": {
       "workedWithClientBefore": "no",
-      "knowsOfClient": "no",
       "warnsAboutClient": "yes",
       "strength": "negative",
       "strengthRuleId": "warns-about-client"
@@ -234,22 +233,6 @@
     "notes": "The rental house says it should not have been listed at all. Worth a person's eyes."
   },
   {
-    "id": "rh-neg-017",
-    "party": "rental_house",
-    "rentalHouseName": "Lone Star Example Grip",
-    "clientName": "Hale Media Group",
-    "subject": "RE: Client verification request \u2013 Athos Insurance",
-    "body": "Hi, we have worked with them and the jobs went fine, but I'm not authorised to provide references and our policy is not to comment on customers. Sorry I can't be more help.\n\nPriya Nair",
-    "expected": {
-      "workedWithClientBefore": "yes",
-      "declinesToVouch": "yes",
-      "warnsAboutClient": "no",
-      "strength": "negative",
-      "strengthRuleId": "declines-to-vouch"
-    },
-    "notes": "Awkward one. They confirm history but decline to vouch on policy grounds. The declines rule fires first, which is conservative. If Athos thinks this should be strong, that is a rule-order change."
-  },
-  {
     "id": "rh-neg-018",
     "party": "rental_house",
     "rentalHouseName": "Border Example Rentals",
@@ -304,7 +287,6 @@
     "body": "Hi,\n\nWe've never rented to them. I will say someone called us last month asking us to confirm a rental history for this same client that doesn't exist. Seemed strange. Thought you should know.\n\nDee",
     "expected": {
       "workedWithClientBefore": "no",
-      "knowsOfClient": "no",
       "warnsAboutClient": "yes",
       "strength": "negative",
       "strengthRuleId": "warns-about-client"

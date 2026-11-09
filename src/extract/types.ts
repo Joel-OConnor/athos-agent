@@ -1,4 +1,9 @@
-import type { CasePacket, Correspondence, ExtractedReply } from '../contract';
+import type {
+  CasePacket,
+  Correspondence,
+  ExtractedReply,
+  TemplateId,
+} from '../contract';
 import type { ExtractionOutput } from './tool';
 
 /**
@@ -7,6 +12,11 @@ import type { ExtractionOutput } from './tool';
  */
 export interface ExtractionContext {
   party: 'rental_house' | 'applicant';
+  /**
+   * Which of our templates this is a reply to. Without it a bare "Yes." cannot
+   * be attributed to anything, and the model is right to report nothing.
+   */
+  respondingTo: TemplateId | null;
   rentalHouseName: string | null;
   clientName: string;
   subject: string;

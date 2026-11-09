@@ -6,6 +6,12 @@ import type { Strength } from '../contract';
  * raw email text, so a rule can never be talked into firing by its contents.
  */
 export interface ReplyFacts {
+  /**
+   * Who wrote the reply. Most rules read a rental house vouching for someone
+   * else; applied to the applicant talking about themselves they are nonsense,
+   * so they are scoped.
+   */
+  party: 'rental_house' | 'applicant';
   workedWithClientBefore: 'yes' | 'no' | 'unstated';
   checkedReferencesOrReferred: 'yes' | 'no' | 'unstated';
   referrerNamed: 'yes' | 'no' | 'unstated';

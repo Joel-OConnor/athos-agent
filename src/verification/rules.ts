@@ -1,4 +1,11 @@
-import type { VerificationRule } from './types';
+import type { ReplyFacts, VerificationRule } from './types';
+
+/**
+ * A rental house vouching for someone else. Most rules below only make sense
+ * that way round: the applicant cannot vouch for themselves, and an applicant
+ * who says "I've never rented before" is being honest, not failing a check.
+ */
+const fromRentalHouse = (f: ReplyFacts): boolean => f.party === 'rental_house';
 
 /**
  * THE VERIFICATION RULES REGISTRY.
@@ -19,7 +26,7 @@ export const verificationRules: VerificationRule[] = [
     id: 'injection',
     strength: 'negative',
     description:
-      'The reply contains text aimed at the agent or at an automated system. It is never evidence of anything.',
+      'The reply contains text aimed at an automated system rather than at a person. It is never evidence of anything.',
     source: 'Build scope, guardrails for v1',
     addedOn: '2026-11-04',
     when: (f) => f.containsInstructionsToAgent,
@@ -30,7 +37,7 @@ export const verificationRules: VerificationRule[] = [
     description: 'The rental house warns us about this client.',
     source: 'Workflow doc, 1st layer Needs Review',
     addedOn: '2026-11-08',
-    when: (f) => f.warnsAboutClient === 'yes',
+    when: (f) => fromRentalHouse(f) && f.warnsAboutClient === 'yes',
   },
   {
     id: 'never-worked-with-client',
@@ -40,6 +47,7 @@ export const verificationRules: VerificationRule[] = [
     source: 'Workflow doc, 1st layer Needs Review',
     addedOn: '2026-11-08',
     when: (f) =>
+      fromRentalHouse(f) &&
       f.workedWithClientBefore === 'no' &&
       f.knowsOfClient !== 'yes' &&
       f.checkedReferencesOrReferred !== 'yes',
@@ -48,10 +56,12 @@ export const verificationRules: VerificationRule[] = [
     id: 'declines-to-vouch',
     strength: 'negative',
     description:
-      'The rental house declines to vouch for this client, or says they are not comfortable renting to them.',
+      'The rental house refuses to vouch for this client, or says they are not comfortable renting to them. Qualifying how far they can vouch is not refusing.',
     source: 'Workflow doc, 1st layer Needs Review',
     addedOn: '2026-11-08',
-    when: (f) => f.declinesToVouch === 'yes' || f.comfortableRenting === 'no',
+    when: (f) =>
+      fromRentalHouse(f) &&
+      (f.declinesToVouch === 'yes' || f.comfortableRenting === 'no'),
   },
   {
     id: 'auto-reply',
@@ -69,7 +79,7 @@ export const verificationRules: VerificationRule[] = [
       'The rental house has rented to this client before. This is the clearest signal that the client is real.',
     source: 'Workflow doc: "Have you worked with this client before?"',
     addedOn: '2026-11-04',
-    when: (f) => f.workedWithClientBefore === 'yes',
+    when: (f) => fromRentalHouse(f) && f.workedWithClientBefore === 'yes',
   },
   {
     id: 'known-referrer-and-comfortable',
@@ -79,25 +89,28 @@ export const verificationRules: VerificationRule[] = [
     source:
       'Workflow doc: "was this client referred by someone you know and you feel comfortable renting to this customer?"',
     addedOn: '2026-11-04',
-    when: (f) => f.referrerNamed === 'yes' && f.comfortableRenting === 'yes',
+    when: (f) =>
+      fromRentalHouse(f) &&
+      f.referrerNamed === 'yes' &&
+      f.comfortableRenting === 'yes',
   },
   {
     id: 'references-checked-only',
     strength: 'weak',
     description:
-      'The rental house checked references but has no history with this client and names no referrer. Helpful, but it is their judgement rather than first-hand knowledge.',
+      'The rental house actually checked references, or confirmed who referred the client, but has no history of their own. Helpful, but their judgement rather than first-hand knowledge.',
     source: 'Q1, confirmed 2026-11-08',
     addedOn: '2026-11-08',
-    when: (f) => f.checkedReferencesOrReferred === 'yes',
+    when: (f) => fromRentalHouse(f) && f.checkedReferencesOrReferred === 'yes',
   },
   {
     id: 'knows-of-client',
     strength: 'weak',
     description:
-      'The rental house knows of this client without having worked with them.',
+      'The rental house knows of this client by reputation without having worked with them.',
     source: 'Q1, confirmed 2026-11-08',
     addedOn: '2026-11-08',
-    when: (f) => f.knowsOfClient === 'yes',
+    when: (f) => fromRentalHouse(f) && f.knowsOfClient === 'yes',
   },
   {
     id: 'applicant-gave-references',

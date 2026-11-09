@@ -1,9 +1,37 @@
-import type { CasePacket, Correspondence, ExtractedReply } from '../../contract';
+import type {
+  CasePacket,
+  Correspondence,
+  ExtractedReply,
+  TemplateId,
+} from '../../contract';
 import { buildExtractionUserMessage } from '../prompt';
 import { gradeExtraction } from '../grade';
 import { ExtractionOutput } from '../tool';
 import type { ExtractionContext, Extractor, Telemetry } from '../types';
 import { CallLog } from '../types';
+
+/**
+ * The last template we sent down this thread. A rental house is answering the
+ * Exhibit 1 we sent them; the applicant is answering whichever of Exhibit 2 or
+ * 3 went out most recently.
+ */
+export function lastTemplateSentTo(
+  packet: CasePacket,
+  email: Correspondence
+): TemplateId | null {
+  const sentBefore = packet.correspondence
+    .filter(
+      (c) =>
+        c.direction === 'outbound' &&
+        c.template !== null &&
+        c.sentAt <= email.sentAt &&
+        (email.rentalHouseId === null
+          ? c.rentalHouseId === null
+          : c.rentalHouseId === email.rentalHouseId)
+    )
+    .sort((a, b) => a.sentAt.localeCompare(b.sentAt));
+  return sentBefore.at(-1)?.template ?? null;
+}
 
 export interface Attempt {
   /** Whatever the provider got back, before validation. */
@@ -89,7 +117,12 @@ export abstract class BaseExtractor implements Extractor {
       clientName: packet.applicant.businessName ?? packet.applicant.name,
       subject: email.subject,
       body: email.body,
+      respondingTo: lastTemplateSentTo(packet, email),
     });
-    return gradeExtraction(facts, email);
+    return gradeExtraction(facts, {
+      id: email.id,
+      rentalHouseId: email.rentalHouseId,
+      party: email.party === 'applicant' ? 'applicant' : 'rental_house',
+    });
   }
 }

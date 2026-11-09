@@ -52,6 +52,7 @@ describe('extraction providers', () => {
         clientName: 'Y',
         subject: 's',
         body: 'b',
+        respondingTo: null,
       })
     ).rejects.toThrow(/EXTRACT_PROVIDER=claude-code/);
   });
@@ -71,7 +72,11 @@ describe('extraction providers', () => {
   it('says what is missing when a fixture extraction is not labelled', async () => {
     const extractor = new FixtureExtractor(new Map<string, ExtractedReply>());
     await expect(
-      extractor.extract({} as never, { id: 'in-9', rentalHouseId: null } as never)
+      extractor.extract({} as never, {
+        id: 'in-9',
+        rentalHouseId: null,
+        party: 'applicant',
+      } as never)
     ).rejects.toThrow(/fixtures\/extractions/);
   });
 
@@ -83,6 +88,7 @@ describe('extraction providers', () => {
         clientName: 'Y',
         subject: 's',
         body: 'b',
+        respondingTo: null,
       })
     ).rejects.toThrow(/cannot read an arbitrary email/);
   });

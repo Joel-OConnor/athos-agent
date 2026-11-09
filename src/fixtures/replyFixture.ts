@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { ExtractedReply, Strength } from '../contract';
+import { ExtractedReply, Strength, TemplateId } from '../contract';
 import type { ReplyFacts } from '../verification';
 
 /**
@@ -17,6 +17,8 @@ export const ReplyFixture = z.object({
   clientName: z.string(),
   subject: z.string(),
   body: z.string(),
+  /** Which of our emails this is a reply to. Defaults by party. */
+  respondingTo: TemplateId.optional(),
   expected: ExtractedReply.omit({
     correspondenceId: true,
     rentalHouseId: true,
@@ -33,6 +35,7 @@ export const ReplyFixture = z.object({
 export type ReplyFixture = z.infer<typeof ReplyFixture>;
 
 export const BLANK_FACTS: ReplyFacts = {
+  party: 'rental_house',
   workedWithClientBefore: 'unstated',
   checkedReferencesOrReferred: 'unstated',
   referrerNamed: 'unstated',
@@ -52,6 +55,7 @@ export function factsOf(fixture: ReplyFixture): ReplyFacts {
   const e = fixture.expected;
   return {
     ...BLANK_FACTS,
+    party: fixture.party,
     ...(Object.fromEntries(
       Object.entries(e).filter(
         ([k, v]) => v !== undefined && k in BLANK_FACTS

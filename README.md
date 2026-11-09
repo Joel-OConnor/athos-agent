@@ -96,7 +96,7 @@ docs/           ARCHITECTURE, VERIFICATION-RULES, CONTRACT, OPEN-QUESTIONS,
 | M0 | Repo, contract, fixture loader, eval runner | `npm run eval` runs and reports |
 | M1 | Routing rules, no AI | Every triage case routes correctly |
 | M2 | Email drafts from approved templates | Every variant matches its snapshot |
-| M3 | Reading replies + deciding | 95%+ agreement across 112 reply fixtures, **zero false strongs** |
+| M3 | Reading replies + deciding | 95%+ agreement across 112 reply fixtures, **zero false strongs**. Standing at 98.2%, see `docs/EVAL-BASELINE.md` |
 | M4 | Research packet | Every escalation gets a packet; every finding has a source URL |
 | M5 | Hardening, Docker, HTTP + CLI | Injection case passes; runs in Docker |
 

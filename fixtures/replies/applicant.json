@@ -4,7 +4,7 @@
     "party": "applicant",
     "rentalHouseName": null,
     "clientName": "Hale Media Group",
-    "subject": "Re: Final verification step – previous rental house references",
+    "subject": "Re: Final verification step \u2013 previous rental house references",
     "body": "Sure, here are two:\n\n1. Gulf Coast Example Rentals - rented about $30,000 worth, contact is Andre Soto, 555-0144, andre@gulfcoastexample.test. Account is under Hale Media Group.\n2. My friend Danny - he lends me his kit sometimes, maybe $8k. Reach him at 555-0199.\n\nThanks,\nVictor",
     "expected": {
       "referencesGivenCount": 2,
@@ -18,8 +18,8 @@
     "party": "applicant",
     "rentalHouseName": null,
     "clientName": "Hale Media Group",
-    "subject": "Re: Final verification step – previous rental house references",
-    "body": "No problem.\n\nGulf Coast Example Rentals — Andre Soto — andre@gulfcoastexample.test — 555-0144 — approx $30,000 — account under Hale Media Group\nSunshine Example Camera — Mia Chen — mia@sunshineexample.test — 555-0177 — approx $22,000 — account under Hale Media Group\n\nLet me know if you need anything else.\n\nVictor Hale",
+    "subject": "Re: Final verification step \u2013 previous rental house references",
+    "body": "No problem.\n\nGulf Coast Example Rentals \u2014 Andre Soto \u2014 andre@gulfcoastexample.test \u2014 555-0144 \u2014 approx $30,000 \u2014 account under Hale Media Group\nSunshine Example Camera \u2014 Mia Chen \u2014 mia@sunshineexample.test \u2014 555-0177 \u2014 approx $22,000 \u2014 account under Hale Media Group\n\nLet me know if you need anything else.\n\nVictor Hale",
     "expected": {
       "referencesGiven": [
         {
@@ -49,7 +49,7 @@
     "party": "applicant",
     "rentalHouseName": null,
     "clientName": "Raman Motion",
-    "subject": "RE: Final verification step – previous rental house references",
+    "subject": "RE: Final verification step \u2013 previous rental house references",
     "body": "Here you go:\n\n| Rental house | Contact | Email | Value |\n| Mile High Example Rentals | Owen Pratt | owen@milehighexample.test | $74,000 |\n| Keslow Example Rentals | Marco Diaz | marco@keslowexample.test | $51,000 |\n\nBoth accounts are under Raman Motion.\n\nPriya",
     "expected": {
       "referencesGivenCount": 2,
@@ -63,7 +63,7 @@
     "party": "applicant",
     "rentalHouseName": null,
     "clientName": "Vance Digital",
-    "subject": "Re: Final verification step – previous rental house references",
+    "subject": "Re: Final verification step \u2013 previous rental house references",
     "body": "I can give you one - Desert Example Camera, I've rented from them a few times. Jo Park is the contact. I don't have a second one, this is still a fairly new business for me.\n\nCorey",
     "expected": {
       "referencesGivenCount": 1,
@@ -77,7 +77,7 @@
     "party": "applicant",
     "rentalHouseName": null,
     "clientName": "Vance Digital",
-    "subject": "Re: Final verification step – previous rental house references",
+    "subject": "Re: Final verification step \u2013 previous rental house references",
     "body": "I've rented from Biscayne and from a place in Tampa whose name I can't remember right now. I don't have contact details for either, sorry - it was all handled by my producer at the time.\n\nCorey",
     "expected": {
       "referencesGivenCount": 1,
@@ -91,7 +91,7 @@
     "party": "applicant",
     "rentalHouseName": null,
     "clientName": "Alvarez Grip Services",
-    "subject": "Re: Final verification step – previous rental house references",
+    "subject": "Re: Final verification step \u2013 previous rental house references",
     "body": "This is my first production and I haven't rented from anyone before. I'm buying most of my own kit and renting the rest for this job. Is there another way to verify me?\n\nNina",
     "expected": {
       "referencesGivenCount": 0,
@@ -105,63 +105,67 @@
     "party": "applicant",
     "rentalHouseName": null,
     "clientName": "Tomas Reyes",
-    "subject": "Re: One more step to finalize your coverage – Athos Insurance",
+    "subject": "Re: One more step to finalize your coverage \u2013 Athos Insurance",
     "body": "Yes, I'm a US citizen and live in Austin. The business is registered in Texas as Reyes Motion Works LLC. The gear will be used at our studio at 88 Example Ave, Austin TX 78701.\n\nI've attached the state registration.\n\nTomas",
     "expected": {
       "usResidentOrEntity": "yes",
       "strength": "none",
       "strengthRuleId": "no-useful-information"
     },
-    "notes": "A clean answer to the US-residency email. It confirms residency but says nothing about rental history, so it carries no verification strength."
+    "notes": "A clean answer to the US-residency email. It confirms residency but says nothing about rental history, so it carries no verification strength.",
+    "respondingTo": "exhibit3_us_residency"
   },
   {
     "id": "app-008",
     "party": "applicant",
     "rentalHouseName": null,
     "clientName": "Tomas Reyes",
-    "subject": "Re: One more step to finalize your coverage – Athos Insurance",
+    "subject": "Re: One more step to finalize your coverage \u2013 Athos Insurance",
     "body": "No, I'm based in Lisbon. I travel to the US for shoots but I'm not a resident and the company is Portuguese. Is that a problem?\n\nTomas",
     "expected": {
       "usResidentOrEntity": "no",
       "strength": "none",
       "strengthRuleId": "no-useful-information"
     },
-    "notes": "This is the field the decline path reads (Q7). The strength is unaffected; the routing is not."
+    "notes": "This is the field the decline path reads (Q7). The strength is unaffected; the routing is not.",
+    "respondingTo": "exhibit3_us_residency"
   },
   {
     "id": "app-009",
     "party": "applicant",
     "rentalHouseName": null,
     "clientName": "Tomas Reyes",
-    "subject": "RE: One more step to finalize your coverage – Athos Insurance",
+    "subject": "RE: One more step to finalize your coverage \u2013 Athos Insurance",
     "body": "I work internationally and split my time. The LLC is set up in Delaware though. Equipment stays in Austin.\n\nTomas",
     "expected": {
       "usResidentOrEntity": "yes",
       "strength": "none",
       "strengthRuleId": "no-useful-information"
     },
-    "notes": "Personal residency is unclear but the entity is plainly a US entity, which is what the question asks."
+    "notes": "Personal residency is unclear but the entity is plainly a US entity, which is what the question asks.",
+    "respondingTo": "exhibit3_us_residency"
   },
   {
     "id": "app-010",
     "party": "applicant",
     "rentalHouseName": null,
     "clientName": "Tomas Reyes",
-    "subject": "Re: One more step to finalize your coverage – Athos Insurance",
+    "subject": "Re: One more step to finalize your coverage \u2013 Athos Insurance",
     "body": "I travel a lot for work, I'm all over the place. The shoot is in Texas.\n\nT",
     "expected": {
       "usResidentOrEntity": "unstated",
       "strength": "none",
       "strengthRuleId": "no-useful-information"
     },
-    "notes": "Does not answer the question. 'unstated' is correct, not a guess either way."
+    "notes": "Does not answer the question. 'unstated' is correct, not a guess either way.",
+    "respondingTo": "exhibit3_us_residency"
   },
   {
     "id": "app-011",
     "party": "applicant",
     "rentalHouseName": null,
     "clientName": "Brennan Camera Co",
-    "subject": "Re: Final verification step – previous rental house references",
+    "subject": "Re: Final verification step \u2013 previous rental house references",
     "body": "Why do you need this? I already gave you everything on the application and the shoot starts Monday. This is getting ridiculous.\n\nAlicia",
     "expected": {
       "referencesGivenCount": 0,
@@ -175,7 +179,7 @@
     "party": "applicant",
     "rentalHouseName": null,
     "clientName": "Whitfield Pictures LLC",
-    "subject": "Fwd: Final verification step – previous rental house references",
+    "subject": "Fwd: Final verification step \u2013 previous rental house references",
     "body": "Hi, Dana asked me to send these over.\n\nKeslow Example Rentals, Marco Diaz, marco@keslowexample.test, around $94,500, account is Whitfield Pictures LLC\nSam Ortega (independent), sam.ortega@example.test, around $45,000, account is Whitfield Pictures\n\nBest,\nJune Castellanos\nProduction Coordinator, Whitfield Pictures LLC",
     "expected": {
       "referencesGivenCount": 2,
@@ -189,7 +193,7 @@
     "party": "applicant",
     "rentalHouseName": null,
     "clientName": "Raman Motion",
-    "subject": "Re: Final verification step – previous rental house references",
+    "subject": "Re: Final verification step \u2013 previous rental house references",
     "body": "Attached.",
     "expected": {
       "referencesGivenCount": 0,
@@ -203,7 +207,7 @@
     "party": "applicant",
     "rentalHouseName": null,
     "clientName": "Hale Media Group",
-    "subject": "Re: Final verification step – previous rental house references",
+    "subject": "Re: Final verification step \u2013 previous rental house references",
     "body": "Gulf Coast Example Rentals and Sunshine Example Camera. That's all I have time for right now, I can get you contacts later if you really need them.\n\nV",
     "expected": {
       "referencesGivenCount": 2,
@@ -217,23 +221,24 @@
     "party": "applicant",
     "rentalHouseName": null,
     "clientName": "Alvarez Grip Services",
-    "subject": "Re: One more step to finalize your coverage – Athos Insurance",
-    "body": "Yes — US citizen, Colorado. Alvarez Grip Services LLC, registered in Colorado under that name. Equipment will be at 300 Example Pkwy, Denver.\n\nAlso, while I have you: Mile High Example Rentals can confirm I've rented from them since 2024 if that helps.\n\nNina",
+    "subject": "Re: One more step to finalize your coverage \u2013 Athos Insurance",
+    "body": "Yes \u2014 US citizen, Colorado. Alvarez Grip Services LLC, registered in Colorado under that name. Equipment will be at 300 Example Pkwy, Denver.\n\nAlso, while I have you: Mile High Example Rentals can confirm I've rented from them since 2024 if that helps.\n\nNina",
     "expected": {
       "usResidentOrEntity": "yes",
       "referencesGivenCount": 1,
       "strength": "weak",
       "strengthRuleId": "applicant-gave-references"
     },
-    "notes": "Answers the residency email and volunteers a reference unprompted."
+    "notes": "Answers the residency email and volunteers a reference unprompted.",
+    "respondingTo": "exhibit3_us_residency"
   },
   {
     "id": "app-016",
     "party": "applicant",
     "rentalHouseName": null,
     "clientName": "Vance Digital",
-    "subject": "Re: Final verification step – previous rental house references",
-    "body": "Desert Example Camera (Jo Park, jo@desertexample.test, 555-0109) — around $108,000, account under Vance Digital.\nBiscayne Example Grip & Lighting (Rosa Lim, rosa@biscayneexample.test) — around $45,000, account under Corey Vance.\n\nNote the second one is under my personal name, not the company.\n\nCorey",
+    "subject": "Re: Final verification step \u2013 previous rental house references",
+    "body": "Desert Example Camera (Jo Park, jo@desertexample.test, 555-0109) \u2014 around $108,000, account under Vance Digital.\nBiscayne Example Grip & Lighting (Rosa Lim, rosa@biscayneexample.test) \u2014 around $45,000, account under Corey Vance.\n\nNote the second one is under my personal name, not the company.\n\nCorey",
     "expected": {
       "referencesGivenCount": 2,
       "strength": "weak",

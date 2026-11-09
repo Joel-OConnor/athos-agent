@@ -9,9 +9,14 @@ import type { ExtractionOutput } from './tool';
  */
 export function gradeExtraction(
   facts: ExtractionOutput,
-  email: { id: string; rentalHouseId: string | null }
+  email: {
+    id: string;
+    rentalHouseId: string | null;
+    party: 'rental_house' | 'applicant';
+  }
 ): ExtractedReply {
   const replyFacts: ReplyFacts = {
+    party: email.party,
     workedWithClientBefore: facts.workedWithClientBefore,
     checkedReferencesOrReferred: facts.checkedReferencesOrReferred,
     referrerNamed: facts.referrerNamed,

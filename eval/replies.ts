@@ -71,6 +71,11 @@ async function gradeOne(fx: ReplyFixture, extractor: Extractor): Promise<Row> {
       clientName: fx.clientName,
       subject: fx.subject,
       body: fx.body,
+      respondingTo:
+        fx.respondingTo ??
+        (fx.party === 'rental_house'
+          ? 'exhibit1_rental_house_vetting'
+          : 'exhibit2_applicant_references'),
     });
     const actual = actualFacts(parsed as unknown as Record<string, unknown>);
     const fieldMisses = FACT_FIELDS.filter(

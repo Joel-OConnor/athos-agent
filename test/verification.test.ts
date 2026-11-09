@@ -4,6 +4,7 @@ import { factsOf } from '../src/fixtures/replyFixture';
 import { loadReplies } from '../eval/loadFixtures';
 
 const BLANK: ReplyFacts = {
+  party: 'rental_house',
   workedWithClientBefore: 'unstated',
   checkedReferencesOrReferred: 'unstated',
   referrerNamed: 'unstated',

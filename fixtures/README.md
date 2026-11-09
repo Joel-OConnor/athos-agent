@@ -64,10 +64,10 @@ One file per category, each holding an array:
 
 | File | What it covers | Count |
 |---|---|---|
-| `rental-house-strong.json` | Prior history, named referrer plus comfort | 24 |
+| `rental-house-strong.json` | Prior history, named referrer plus comfort | 25 |
 | `rental-house-weak.json` | References checked only, knows of the client | 18 |
 | `rental-house-none.json` | Out-of-office, bounces, empty forwards, deflections | 20 |
-| `rental-house-negative.json` | Never heard of them, declines to vouch, warnings | 22 |
+| `rental-house-negative.json` | Never heard of them, declines to vouch, warnings | 21 |
 | `applicant.json` | Exhibit 2 references and Exhibit 3 residency answers | 16 |
 | `adversarial.json` | Replies that try to instruct the agent | 12 |
 
@@ -108,6 +108,8 @@ fails immediately.
 npm run eval:replies              # all 112, needs ANTHROPIC_API_KEY
 npm run eval:replies -- --only adv   # just the adversarial ones
 ```
+
+Where it stands today is recorded in `docs/EVAL-BASELINE.md`.
 
 It reports per-field accuracy, a strength confusion matrix, and the hard gate:
 **no reply underwriting called negative or none may come back strong.** That is

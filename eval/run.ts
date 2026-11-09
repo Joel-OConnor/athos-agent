@@ -1,5 +1,5 @@
 import { runCase } from '../src/agent';
-import { FixtureExtractor } from '../src/extract/extract';
+import { FixtureExtractor } from '../src/extract';
 import type { ExtractedReply } from '../src/contract';
 import { loadCases, type CaseFixture } from './loadFixtures';
 import { runReplyEval } from './replies';

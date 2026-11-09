@@ -16,13 +16,44 @@ person acts.
 npm install
 npm test          # unit tests, no API key needed
 npm run eval      # grades the agent against fixtures/answers, no API key needed
-npm run eval:replies  # grades the extractor against 112 reply fixtures (needs a key)
+npm run eval:replies  # grades the extractor against 112 reply fixtures
 npm run case -- fixtures/cases/001-clean-100k-seon-approve.json
 npm run serve     # POST /v0/case
 ```
 
-Copy `.env.example` to `.env` and add an Anthropic key only when you start on
-M3 (reading replies). Everything before that runs without one.
+Copy `.env.example` to `.env`. **You do not need an Anthropic API key to work
+on this.**
+
+## Who reads the emails
+
+One step in the pipeline calls a model. Three backends can be behind it, and
+they are interchangeable — same prompt, same contract, same grading.
+
+| `EXTRACT_PROVIDER` | What it is | Use it for |
+|---|---|---|
+| `claude-code` | The local Claude Code CLI, on whatever auth it already has | Development, end-to-end testing, demos. **No API key.** |
+| `anthropic` | The Anthropic API with a key | Production |
+| `fixture` | Replays labelled extractions from `fixtures/extractions/` | Tests and CI. Offline, free, deterministic. |
+
+Unset, it takes `anthropic` when `ANTHROPIC_API_KEY` is present and
+`claude-code` otherwise. A developer's machine has the CLI and no key; a
+deployment has the key.
+
+```bash
+EXTRACT_PROVIDER=claude-code npm run eval:replies
+EXTRACT_PROVIDER=claude-code npm run case -- fixtures/cases/007-strong-rental-house-reply.json
+EXTRACT_LOG=1 ...   # print provider, latency and cost per call
+```
+
+The local path shells out to `claude -p` with `--tools ""`, `--json-schema`
+(the contract itself), `--strict-mcp-config`, `--disable-slash-commands` and a
+cwd in an empty temp directory, so it reads an email and nothing else and does
+not pick up this project's `CLAUDE.md`. Reckon on roughly 15 seconds and a few
+cents a call, so a full 112-fixture run is a handful of minutes and a few
+dollars.
+
+Adding a fourth backend means one class with one method: see
+`src/extract/providers/`.
 
 ## How it is put together
 
@@ -46,7 +77,7 @@ src/
   verification/ the rules registry: what makes a reply strong, weak, none, negative
   routing/      M1  which path this case is on
   templates/    M2  Exhibit 1, 2, 3 and the draft builder
-  extract/      M3  the only model call
+  extract/      M3  the only model call, and the providers behind it
   decide/       M3  the deterministic decision
   research/     M4  escalation packet (web search, RDAP domain age)
   agent.ts      runCase(): the whole pipeline

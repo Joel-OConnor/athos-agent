@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { runCase } from '../src/agent';
-import { FixtureExtractor } from '../src/extract/extract';
+import { FixtureExtractor } from '../src/extract';
 import type { ExtractedReply } from '../src/contract';
 import { loadCase } from './helpers';
 

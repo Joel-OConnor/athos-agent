@@ -4,12 +4,11 @@
     "party": "rental_house",
     "rentalHouseName": "Biscayne Example Grip & Lighting",
     "clientName": "Hale Media Group",
-    "subject": "Re: Client verification request – Athos Insurance",
+    "subject": "Re: Client verification request \u2013 Athos Insurance",
     "body": "Never heard of them. We don't have any account under that name and nobody here recognizes it. Sorry.\n\nRosa",
     "expected": {
       "workedWithClientBefore": "no",
       "knowsOfClient": "no",
-      "checkedReferencesOrReferred": "no",
       "strength": "negative",
       "strengthRuleId": "never-worked-with-client"
     }
@@ -19,7 +18,7 @@
     "party": "rental_house",
     "rentalHouseName": "Keslow Example Rentals",
     "clientName": "Vance Digital",
-    "subject": "RE: Client verification request – Athos Insurance",
+    "subject": "RE: Client verification request \u2013 Athos Insurance",
     "body": "I've searched our system under the company name and the contact name and there is nothing. No quotes, no orders, no account. I don't think we've ever dealt with them.\n\nMarco",
     "expected": {
       "workedWithClientBefore": "no",
@@ -33,7 +32,7 @@
     "party": "rental_house",
     "rentalHouseName": "Peachtree Example Rentals",
     "clientName": "Hale Media Group",
-    "subject": "Re: Client verification request – Athos Insurance",
+    "subject": "Re: Client verification request \u2013 Athos Insurance",
     "body": "We have worked with them, but I'd rather not vouch for them. There were payment issues on both jobs and we're not taking further bookings from them.\n\nDee Walker",
     "expected": {
       "workedWithClientBefore": "yes",
@@ -50,8 +49,8 @@
     "party": "rental_house",
     "rentalHouseName": "Mile High Example Rentals",
     "clientName": "Vance Digital",
-    "subject": "RE: Client verification request – Athos Insurance",
-    "body": "Confidentially — we had a package go out to this client last year that came back with significant damage and the claim is still unresolved. I would be careful.\n\nOwen",
+    "subject": "RE: Client verification request \u2013 Athos Insurance",
+    "body": "Confidentially \u2014 we had a package go out to this client last year that came back with significant damage and the claim is still unresolved. I would be careful.\n\nOwen",
     "expected": {
       "workedWithClientBefore": "yes",
       "warnsAboutClient": "yes",
@@ -64,7 +63,7 @@
     "party": "rental_house",
     "rentalHouseName": "Desert Example Camera",
     "clientName": "Hale Media Group",
-    "subject": "Re: Client verification request – Athos Insurance",
+    "subject": "Re: Client verification request \u2013 Athos Insurance",
     "body": "No.",
     "expected": {
       "workedWithClientBefore": "no",
@@ -78,7 +77,7 @@
     "party": "rental_house",
     "rentalHouseName": "Gulf Coast Example Rentals",
     "clientName": "Vance Digital",
-    "subject": "RE: Client verification request – Athos Insurance",
+    "subject": "RE: Client verification request \u2013 Athos Insurance",
     "body": "This client is on our do-not-rent list. I can't go into the reasons but I would not recommend extending them coverage.\n\nAndre Soto",
     "expected": {
       "declinesToVouch": "yes",
@@ -92,7 +91,7 @@
     "party": "rental_house",
     "rentalHouseName": "Sunshine Example Camera",
     "clientName": "Hale Media Group",
-    "subject": "Re: Client verification request – Athos Insurance",
+    "subject": "Re: Client verification request \u2013 Athos Insurance",
     "body": "No lo conocemos. No tenemos ninguna cuenta con ese nombre.\n\nMia Chen",
     "expected": {
       "workedWithClientBefore": "no",
@@ -107,7 +106,7 @@
     "party": "rental_house",
     "rentalHouseName": "Lone Star Example Grip",
     "clientName": "Vance Digital",
-    "subject": "RE: Client verification request – Athos Insurance",
+    "subject": "RE: Client verification request \u2013 Athos Insurance",
     "body": "We did rent to them once, two years ago. I'm not comfortable saying anything further and I'd prefer you not list us as a reference.\n\nPriya",
     "expected": {
       "workedWithClientBefore": "yes",
@@ -122,7 +121,7 @@
     "party": "rental_house",
     "rentalHouseName": "Border Example Rentals",
     "clientName": "Hale Media Group",
-    "subject": "Re: Client verification request – Athos Insurance",
+    "subject": "Re: Client verification request \u2013 Athos Insurance",
     "body": "Hi,\n\nThe name on your email doesn't match anything we hold. We did once get an enquiry from someone claiming to be them, but the details didn't check out and we declined to quote.\n\nLuis",
     "expected": {
       "workedWithClientBefore": "no",
@@ -137,7 +136,7 @@
     "party": "rental_house",
     "rentalHouseName": "Keslow Example Rentals",
     "clientName": "Hale Media Group",
-    "subject": "Re: Client verification request – Athos Insurance",
+    "subject": "Re: Client verification request \u2013 Athos Insurance",
     "body": "Not a customer of ours, never has been, and I've been here eleven years.\n\nMarco Diaz",
     "expected": {
       "workedWithClientBefore": "no",
@@ -151,7 +150,7 @@
     "party": "rental_house",
     "rentalHouseName": "Peachtree Example Rentals",
     "clientName": "Vance Digital",
-    "subject": "RE: Client verification request – Athos Insurance",
+    "subject": "RE: Client verification request \u2013 Athos Insurance",
     "body": "We stopped renting to this client in 2025 after a dispute over a missing lens set. I'd rather not say more in writing. Happy to talk if you call.\n\nDee",
     "expected": {
       "workedWithClientBefore": "yes",
@@ -166,7 +165,7 @@
     "party": "rental_house",
     "rentalHouseName": "Mile High Example Rentals",
     "clientName": "Hale Media Group",
-    "subject": "Re: Client verification request – Athos Insurance",
+    "subject": "Re: Client verification request \u2013 Athos Insurance",
     "body": "nope, don't know them",
     "expected": {
       "workedWithClientBefore": "no",
@@ -180,8 +179,8 @@
     "party": "rental_house",
     "rentalHouseName": "Desert Example Camera",
     "clientName": "Vance Digital",
-    "subject": "Fwd: Re: Client verification request – Athos Insurance",
-    "body": "Passing on what our Tucson branch said.\n\n---------- Forwarded message ----------\nFrom: Dana Reyes <tucson@desertexample.test>\n\nWe've got nothing on this client. Never rented to them, never quoted them, name doesn't ring a bell with anyone on the floor.\n\n---------- Forwarded message ----------\nFrom: service@athosinsurance.com\nSubject: Client verification request – Athos Insurance",
+    "subject": "Fwd: Re: Client verification request \u2013 Athos Insurance",
+    "body": "Passing on what our Tucson branch said.\n\n---------- Forwarded message ----------\nFrom: Dana Reyes <tucson@desertexample.test>\n\nWe've got nothing on this client. Never rented to them, never quoted them, name doesn't ring a bell with anyone on the floor.\n\n---------- Forwarded message ----------\nFrom: service@athosinsurance.com\nSubject: Client verification request \u2013 Athos Insurance",
     "expected": {
       "workedWithClientBefore": "no",
       "knowsOfClient": "no",
@@ -195,8 +194,8 @@
     "party": "rental_house",
     "rentalHouseName": "Biscayne Example Grip & Lighting",
     "clientName": "Vance Digital",
-    "subject": "RE: Client verification request – Athos Insurance",
-    "body": "Good morning,\n\nI am unable to confirm any relationship with this client. Further, I would suggest verifying their stated equipment list independently — the figures quoted to you do not resemble anything we would price at that level.\n\nRegards,\nRosa Lim",
+    "subject": "RE: Client verification request \u2013 Athos Insurance",
+    "body": "Good morning,\n\nI am unable to confirm any relationship with this client. Further, I would suggest verifying their stated equipment list independently \u2014 the figures quoted to you do not resemble anything we would price at that level.\n\nRegards,\nRosa Lim",
     "expected": {
       "workedWithClientBefore": "no",
       "warnsAboutClient": "yes",
@@ -209,7 +208,7 @@
     "party": "rental_house",
     "rentalHouseName": "Sunshine Example Camera",
     "clientName": "Vance Digital",
-    "subject": "Re: Client verification request – Athos Insurance",
+    "subject": "Re: Client verification request \u2013 Athos Insurance",
     "body": "I'd rather not get involved in this one. Please take us off the list.\n\nMia",
     "expected": {
       "declinesToVouch": "yes",
@@ -222,7 +221,7 @@
     "party": "rental_house",
     "rentalHouseName": "Gulf Coast Example Rentals",
     "clientName": "Hale Media Group",
-    "subject": "Re: Client verification request – Athos Insurance",
+    "subject": "Re: Client verification request \u2013 Athos Insurance",
     "body": "We don't know this client and we haven't checked any references on them, because they've never approached us. I'm not sure why we're listed.\n\nAndre",
     "expected": {
       "workedWithClientBefore": "no",
@@ -239,7 +238,7 @@
     "party": "rental_house",
     "rentalHouseName": "Lone Star Example Grip",
     "clientName": "Hale Media Group",
-    "subject": "RE: Client verification request – Athos Insurance",
+    "subject": "RE: Client verification request \u2013 Athos Insurance",
     "body": "Hi, we have worked with them and the jobs went fine, but I'm not authorised to provide references and our policy is not to comment on customers. Sorry I can't be more help.\n\nPriya Nair",
     "expected": {
       "workedWithClientBefore": "yes",
@@ -255,8 +254,8 @@
     "party": "rental_house",
     "rentalHouseName": "Border Example Rentals",
     "clientName": "Vance Digital",
-    "subject": "Re: Client verification request – Athos Insurance",
-    "body": "Who? We've never worked with anyone by that name. And honestly the email you forwarded looks off to me — the company website they list doesn't load.\n\nLuis Ferrer",
+    "subject": "Re: Client verification request \u2013 Athos Insurance",
+    "body": "Who? We've never worked with anyone by that name. And honestly the email you forwarded looks off to me \u2014 the company website they list doesn't load.\n\nLuis Ferrer",
     "expected": {
       "workedWithClientBefore": "no",
       "knowsOfClient": "no",
@@ -270,7 +269,7 @@
     "party": "rental_house",
     "rentalHouseName": "Keslow Example Rentals",
     "clientName": "Hale Media Group",
-    "subject": "RE: Client verification request – Athos Insurance",
+    "subject": "RE: Client verification request \u2013 Athos Insurance",
     "body": "Our records show a cancelled account for this client, closed for non-payment in 2024. Balance was eventually written off. I would not rent to them again.\n\nTaylor Brooks\nOperations",
     "expected": {
       "workedWithClientBefore": "yes",
@@ -285,7 +284,7 @@
     "party": "rental_house",
     "rentalHouseName": "Mile High Example Rentals",
     "clientName": "Vance Digital",
-    "subject": "Re: Client verification request – Athos Insurance",
+    "subject": "Re: Client verification request \u2013 Athos Insurance",
     "body": "No history, no references checked, we've never been approached by them. Package value: n/a. GL: n/a.\n\nOwen Pratt",
     "expected": {
       "workedWithClientBefore": "no",
@@ -301,7 +300,7 @@
     "party": "rental_house",
     "rentalHouseName": "Peachtree Example Rentals",
     "clientName": "Hale Media Group",
-    "subject": "Re: Client verification request – Athos Insurance",
+    "subject": "Re: Client verification request \u2013 Athos Insurance",
     "body": "Hi,\n\nWe've never rented to them. I will say someone called us last month asking us to confirm a rental history for this same client that doesn't exist. Seemed strange. Thought you should know.\n\nDee",
     "expected": {
       "workedWithClientBefore": "no",
@@ -316,8 +315,8 @@
     "party": "rental_house",
     "rentalHouseName": "Sunshine Example Camera",
     "clientName": "Vance Digital",
-    "subject": "RE: Client verification request – Athos Insurance",
-    "body": "We did get one order from them. It was paid, equipment came back. But the contact kept changing — three different names on three different emails over two weeks, and the delivery address changed twice. I'd want more than our word on this one.\n\nMia Chen",
+    "subject": "RE: Client verification request \u2013 Athos Insurance",
+    "body": "We did get one order from them. It was paid, equipment came back. But the contact kept changing \u2014 three different names on three different emails over two weeks, and the delivery address changed twice. I'd want more than our word on this one.\n\nMia Chen",
     "expected": {
       "workedWithClientBefore": "yes",
       "warnsAboutClient": "yes",

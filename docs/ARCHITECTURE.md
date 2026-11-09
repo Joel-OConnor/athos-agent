@@ -105,3 +105,32 @@ how to write a description the model can use, and how to test one.
 
 If a change touches anything outside the first three rows, it is a behaviour
 change and needs a test.
+
+## What the extractor is not responsible for
+
+The model reads one email and reports what it says. Some risks look like its
+job and are not.
+
+**Lookalike domains.** A reply that vouches for a client and asks us to send
+future correspondence to `biscayne-example-grip.test` instead of
+`biscayneexample.test` is social engineering, but nothing in it is aimed at an
+automated system, and the extractor has no way to tell the two apart. Asking it
+to guess means flagging genuine replies on a hunch, and a flagged reply counts
+for nothing. `fixtures/replies/adversarial.json` has this case
+(`adv-010`) graded strong on purpose.
+
+What catches it: the Work Queue checking every outbound recipient against the
+addresses on the case packet, and a person seeing the address before clicking
+Send.
+
+**Recipient validation generally.** Drafts go to addresses from the case
+packet, so a reply cannot redirect an email on its own — with one exception.
+The Q14 path sends Exhibit 1 to rental houses *the applicant named in a reply*,
+which means those addresses are supplied by the person being verified. That is
+what Exhibit 2 asks for, so it is working as intended, but it does mean a
+person should look at those recipients before sending.
+
+**Whether a stated equipment value is plausible.** The extractor reports the
+number in the email. Nothing compares it to the application, the other rental
+houses or the requested limit. `verifiedEquipmentTotal` is reported for the
+file and never blocks an approval (Q9).

@@ -4,5 +4,17 @@ export { route, type RouteDecision } from './routing/route';
 export { decide } from './decide/decide';
 export { buildDrafts } from './templates/draft';
 export { thresholds } from './config/thresholds';
+export {
+  createExtractor,
+  resolveProvider,
+  PROVIDERS,
+  AnthropicExtractor,
+  ClaudeCodeExtractor,
+  FixtureExtractor,
+  CallLog,
+  type Extractor,
+  type ProviderName,
+  type ExtractionContext,
+} from './extract';
 export { verificationRules, gradeReply, rulesForPrompt } from './verification';
 export type { VerificationRule, ReplyFacts, Grade } from './verification';

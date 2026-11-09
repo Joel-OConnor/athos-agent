@@ -6,7 +6,7 @@ import {
 } from './contract';
 import { route } from './routing/route';
 import { decide } from './decide/decide';
-import { ClaudeExtractor, type Extractor } from './extract/extract';
+import { createExtractor, type Extractor } from './extract';
 import {
   NullSearchProvider,
   buildResearchPacket,
@@ -43,7 +43,7 @@ export async function runCase(
   const inbound = packet.correspondence.filter((c) => c.direction === 'inbound');
   let extracted: ExtractedReply[] = [];
   if (inbound.length > 0 && routeDecision.path === 'vet_rental_houses') {
-    const extractor = options.extractor ?? new ClaudeExtractor();
+    const extractor = options.extractor ?? createExtractor();
     extracted = await Promise.all(
       inbound.map((email) => extractor.extract(packet, email))
     );

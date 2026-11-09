@@ -14,6 +14,11 @@ export const ExtractionOutput = ExtractedReply.omit({
 });
 export type ExtractionOutput = z.infer<typeof ExtractionOutput>;
 
+/** The contract as JSON Schema, for providers that validate structurally. */
+export function extractionJsonSchema(): Record<string, unknown> {
+  return zodToJsonSchema(ExtractionOutput);
+}
+
 export const RECORD_REPLY_TOOL = {
   name: 'record_reply',
   description: 'Record what the email says. Call exactly once.',

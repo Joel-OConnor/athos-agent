@@ -1,6 +1,6 @@
-import { ClaudeExtractor } from '../src/extract/extract';
+import { CallLog, createExtractor, resolveProvider, type Extractor } from '../src/extract';
 import { gradeReply } from '../src/verification';
-import { BLANK_FACTS, factsOf } from '../src/fixtures/replyFixture';
+import { BLANK_FACTS } from '../src/fixtures/replyFixture';
 import type { ReplyFixture } from '../src/fixtures/replyFixture';
 import { loadReplies } from './loadFixtures';
 import { printMatrix } from './report';
@@ -25,14 +25,12 @@ const FACT_FIELDS = [
 
 interface Row {
   id: string;
+  asserted: number;
   expectedStrength: string;
   actualStrength: string;
   fieldMisses: string[];
   error: string | null;
 }
-
-/** Keep the burst small; this runs against a capped key. */
-const CONCURRENCY = 6;
 
 async function mapLimit<T, R>(
   items: readonly T[],
@@ -62,8 +60,10 @@ function actualFacts(parsed: Record<string, unknown>): Record<string, unknown> {
   };
 }
 
-async function gradeOne(fx: ReplyFixture, extractor: ClaudeExtractor): Promise<Row> {
-  const expected = factsOf(fx);
+async function gradeOne(fx: ReplyFixture, extractor: Extractor): Promise<Row> {
+  // Only what the fixture actually asserts. A field it leaves out is not an
+  // expectation, it is a fact underwriting did not bother to pin down.
+  const asserted = fx.expected as unknown as Record<string, unknown>;
   try {
     const parsed = await extractor.extractFacts({
       party: fx.party,
@@ -73,14 +73,14 @@ async function gradeOne(fx: ReplyFixture, extractor: ClaudeExtractor): Promise<R
       body: fx.body,
     });
     const actual = actualFacts(parsed as unknown as Record<string, unknown>);
-    const want = expected as unknown as Record<string, unknown>;
     const fieldMisses = FACT_FIELDS.filter(
-      (f) => want[f] !== undefined && actual[f] !== want[f]
-    ).map((f) => `${f}: expected ${String(want[f])}, got ${String(actual[f])}`);
+      (f) => asserted[f] !== undefined && actual[f] !== asserted[f]
+    ).map((f) => `${f}: expected ${String(asserted[f])}, got ${String(actual[f])}`);
 
     const graded = gradeReply(actual as never);
     return {
       id: fx.id,
+      asserted: FACT_FIELDS.filter((f) => asserted[f] !== undefined).length,
       expectedStrength: fx.expected.strength,
       actualStrength: graded.strength,
       fieldMisses,
@@ -89,6 +89,7 @@ async function gradeOne(fx: ReplyFixture, extractor: ClaudeExtractor): Promise<R
   } catch (err) {
     return {
       id: fx.id,
+      asserted: 0,
       expectedStrength: fx.expected.strength,
       actualStrength: 'ERROR',
       fieldMisses: [],
@@ -99,19 +100,32 @@ async function gradeOne(fx: ReplyFixture, extractor: ClaudeExtractor): Promise<R
 
 export async function runReplyEval(filter?: string): Promise<number> {
   const all = loadReplies();
-  const fixtures = filter ? all.filter((f) => f.id.includes(filter)) : all;
+  const wanted = filter?.split(',').map((s) => s.trim()).filter(Boolean);
+  const fixtures = wanted
+    ? all.filter((f) => wanted.some((w) => f.id.includes(w)))
+    : all;
 
-  if (!process.env.ANTHROPIC_API_KEY) {
-    console.error('\n  --replies needs ANTHROPIC_API_KEY. See .env.example.\n');
+  const provider = resolveProvider();
+  if (provider === 'anthropic' && !process.env.ANTHROPIC_API_KEY) {
+    console.error(
+      '\n  No ANTHROPIC_API_KEY. Set EXTRACT_PROVIDER=claude-code to run on the local CLI instead.\n'
+    );
+    return 2;
+  }
+  if (provider === 'fixture') {
+    console.error(
+      '\n  The fixture provider cannot read arbitrary emails. Use claude-code or anthropic.\n'
+    );
     return 2;
   }
 
-  console.log(
-    `\n  REPLY EVAL  ${fixtures.length} emails through ${process.env.EXTRACT_MODEL ?? 'claude-sonnet-5-5'}\n`
-  );
+  const log = new CallLog();
+  console.log(`\n  REPLY EVAL  ${fixtures.length} emails via ${provider}\n`);
 
-  const extractor = new ClaudeExtractor();
-  const rows = await mapLimit(fixtures, CONCURRENCY, (fx) => gradeOne(fx, extractor));
+  const extractor = createExtractor({ provider, telemetry: log });
+  const rows = await mapLimit(fixtures, extractor.concurrency, (fx) =>
+    gradeOne(fx, extractor)
+  );
 
   for (const r of rows) {
     const ok = r.error === null && r.actualStrength === r.expectedStrength && r.fieldMisses.length === 0;
@@ -130,7 +144,7 @@ export async function runReplyEval(filter?: string): Promise<number> {
   );
 
   const strengthOk = rows.filter((r) => r.actualStrength === r.expectedStrength).length;
-  const fieldTotal = rows.length * FACT_FIELDS.length;
+  const fieldTotal = rows.reduce((n, r) => n + r.asserted, 0);
   const fieldMisses = rows.reduce((n, r) => n + r.fieldMisses.length, 0);
 
   // The hard gate: nothing underwriting called negative or none may come back
@@ -142,11 +156,18 @@ export async function runReplyEval(filter?: string): Promise<number> {
   );
 
   const pct = (strengthOk / rows.length) * 100;
-  console.log(`\n  strength agreement: ${strengthOk}/${rows.length} (${pct.toFixed(1)}%)  target 95%`);
   console.log(
-    `  field accuracy:     ${fieldTotal - fieldMisses}/${fieldTotal} (${(((fieldTotal - fieldMisses) / fieldTotal) * 100).toFixed(1)}%)`
+    `\n  strength agreement: ${strengthOk}/${rows.length} (${pct.toFixed(1)}%)  target 95% - this is the acceptance bar`
+  );
+  console.log(
+    `  field accuracy:     ${fieldTotal - fieldMisses}/${fieldTotal} (${(((fieldTotal - fieldMisses) / fieldTotal) * 100).toFixed(1)}%)  diagnostic only`
   );
   console.log(`  false strongs:      ${falseStrong.length}  (must be 0)`);
+  const cost = log.totalCostUsd;
+  console.log(
+    `  ${log.calls.length} model calls, ${(log.totalMs / 1000).toFixed(1)}s total` +
+      (cost === null ? '' : `, $${cost.toFixed(2)}`)
+  );
   for (const r of falseStrong) console.log(`      ${r.id} was ${r.expectedStrength}`);
   console.log('');
 

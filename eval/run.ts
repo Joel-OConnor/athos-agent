@@ -1,4 +1,5 @@
 import { runCase } from '../src/agent';
+import { loadDotEnv } from '../src/env';
 import { FixtureExtractor } from '../src/extract';
 import type { ExtractedReply } from '../src/contract';
 import { loadCases, type CaseFixture } from './loadFixtures';
@@ -122,6 +123,7 @@ async function runCaseEval(): Promise<number> {
 }
 
 async function main(): Promise<void> {
+  loadDotEnv();
   const replies = process.argv.includes('--replies');
   const filterFlag = process.argv.indexOf('--only');
   const filter = filterFlag >= 0 ? process.argv[filterFlag + 1] : undefined;

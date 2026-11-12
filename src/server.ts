@@ -1,5 +1,6 @@
 import express from 'express';
 import { runCase } from './agent';
+import { loadDotEnv, setting } from './env';
 
 const app = express();
 app.use(express.json({ limit: '2mb' }));
@@ -24,8 +25,9 @@ app.post('/v0/case', async (req, res) => {
   }
 });
 
-const port = Number(process.env.PORT ?? 3000);
 if (require.main === module) {
+  loadDotEnv();
+  const port = Number(setting('PORT', '3000'));
   app.listen(port, () => {
     console.log(`needs-review-agent listening on :${port}`);
   });

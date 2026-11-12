@@ -93,7 +93,14 @@ async function gradeOne(fx: ReplyFixture, extractor: Extractor): Promise<Row> {
           ? 'exhibit1_rental_house_vetting'
           : 'exhibit2_applicant_references'),
     });
-    const actual: Record<string, unknown> = { ...actualFacts(parsed, fx.party) };
+    // glRequired and signedContractInPlace are asked by Exhibit 1 and reported
+    // by the model, but no rule reads them, so ReplyFacts leaves them out. The
+    // eval still checks them.
+    const actual: Record<string, unknown> = {
+      ...actualFacts(parsed, fx.party),
+      glRequired: parsed.glRequired,
+      signedContractInPlace: parsed.signedContractInPlace,
+    };
     const fieldMisses = FACT_FIELDS.filter(
       (f) => asserted[f] !== undefined && actual[f] !== asserted[f]
     ).map((f) => `${f}: expected ${String(asserted[f])}, got ${String(actual[f])}`);

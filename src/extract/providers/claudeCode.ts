@@ -3,6 +3,7 @@ import { mkdtempSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { promisify } from 'node:util';
+import { setting } from '../../env';
 import { EXTRACTION_SYSTEM_PROMPT } from '../prompt';
 import { extractionJsonSchema } from '../tool';
 import type { Telemetry } from '../types';
@@ -37,11 +38,11 @@ const defaultRunner: ProcessRunner = promisify(execFile);
 export class ClaudeCodeExtractor extends BaseExtractor {
   readonly name = 'claude-code';
   // CLI startup dominates, and these are real subprocesses. Keep it modest.
-  readonly concurrency = Number(process.env.EXTRACT_CONCURRENCY ?? 4);
+  readonly concurrency = Number(setting('EXTRACT_CONCURRENCY', '4'));
 
-  private readonly bin = process.env.CLAUDE_CODE_BIN ?? 'claude';
-  private readonly model = process.env.EXTRACT_MODEL_LOCAL ?? 'sonnet';
-  private readonly timeoutMs = Number(process.env.EXTRACT_TIMEOUT_MS ?? 120_000);
+  private readonly bin = setting('CLAUDE_CODE_BIN', 'claude');
+  private readonly model = setting('EXTRACT_MODEL_LOCAL', 'sonnet');
+  private readonly timeoutMs = Number(setting('EXTRACT_TIMEOUT_MS', '120000'));
   private readonly sandbox: string;
 
   constructor(

@@ -15,7 +15,7 @@ npm run case -- fixtures/cases/001-clean-100k-seon-approve.json
 npm run serve                 # POST /v0/case
 ```
 
-No API key needed. Copy `.env.example` to `.env` only to change a default.
+No API key needed. Copy `.env.example` to `.env` to change a default; it is read on start, and anything already in your shell wins. Giving the demo? Start with [docs/DEMO.md](docs/DEMO.md).
 
 ## Who reads the emails
 
@@ -55,6 +55,7 @@ docs/            ARCHITECTURE · VERIFICATION-RULES · EVAL-BASELINE · OPEN-QUE
 
 ## Read next
 
+- [docs/DEMO.md](docs/DEMO.md) for the demo, command by command, with what to point at
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — the pipeline, and why the model never decides anything
 - [docs/OPEN-QUESTIONS.md](docs/OPEN-QUESTIONS.md) — the sixteen policy choices, what the POC does, what Athos still has to confirm
 - [docs/VERIFICATION-RULES.md](docs/VERIFICATION-RULES.md) — adding a rule

@@ -1,14 +1,16 @@
 #!/usr/bin/env node
 import { readFileSync } from 'node:fs';
 import { runCase } from './agent';
+import { loadDotEnv } from './env';
 
 /**
  * Run one case file:
- *   npm run case -- fixtures/cases/001-clean-100k.json
+ *   npm run case -- fixtures/cases/001-clean-100k-seon-approve.json
  *
- * Add --no-ai to skip the model call entirely (triage-only paths).
+ * Settings come from the environment, and from .env when there is one.
  */
 async function main(): Promise<void> {
+  loadDotEnv();
   const file = process.argv[2];
   if (!file) {
     console.error('usage: npm run case -- <path-to-case.json>');

@@ -112,3 +112,25 @@ describe('ClaudeCodeExtractor', () => {
     await expect(x.extractFacts(CONTEXT)).rejects.toThrow(/extraction failed/);
   });
 });
+
+describe('ClaudeCodeExtractor: blank values from a copied .env.example', () => {
+  const env = { ...process.env };
+  afterEach(() => {
+    process.env = { ...env };
+  });
+
+  it('falls back to the default binary, model and timeout', async () => {
+    process.env.CLAUDE_CODE_BIN = '';
+    process.env.EXTRACT_MODEL_LOCAL = '';
+    process.env.EXTRACT_TIMEOUT_MS = '';
+    process.env.STRICT_EXTRACTION = '1';
+    const runner = jest.fn<ReturnType<ProcessRunner>, Parameters<ProcessRunner>>(() =>
+      Promise.resolve({ stdout: envelope({ structured_output: BLANK_OUTPUT }) })
+    );
+    await new ClaudeCodeExtractor(new CallLog(), runner).extractFacts(CONTEXT);
+    const [bin, args, opts] = runner.mock.calls[0]!;
+    expect(bin).toBe('claude');
+    expect(args).toEqual(expect.arrayContaining(['--model', 'sonnet']));
+    expect(opts.timeout).toBe(120_000);
+  });
+});

@@ -1,4 +1,5 @@
 import Anthropic from '@anthropic-ai/sdk';
+import { setting } from '../../env';
 import { EXTRACTION_SYSTEM_PROMPT } from '../prompt';
 import { RECORD_REPLY_TOOL } from '../tool';
 import type { Telemetry } from '../types';
@@ -12,8 +13,8 @@ import { BaseExtractor, type Attempt } from './base';
  */
 export class AnthropicExtractor extends BaseExtractor {
   readonly name = 'anthropic';
-  readonly concurrency = Number(process.env.EXTRACT_CONCURRENCY ?? 6);
-  private readonly model = process.env.EXTRACT_MODEL ?? 'claude-sonnet-5-5';
+  readonly concurrency = Number(setting('EXTRACT_CONCURRENCY', '6'));
+  private readonly model = setting('EXTRACT_MODEL', 'claude-sonnet-5-5');
   private client: Anthropic | null = null;
 
   constructor(

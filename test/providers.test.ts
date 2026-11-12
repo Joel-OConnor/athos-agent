@@ -117,3 +117,16 @@ describe('createExtractor: the factory', () => {
     ).toBeInstanceOf(FixtureExtractor);
   });
 });
+
+describe('blank values from a copied .env.example', () => {
+  const env = { ...process.env };
+  afterEach(() => {
+    process.env = { ...env };
+  });
+
+  it('treats a blank EXTRACT_CONCURRENCY as unset, not as zero', () => {
+    process.env.EXTRACT_CONCURRENCY = '';
+    expect(new AnthropicExtractor().concurrency).toBe(6);
+    expect(new ClaudeCodeExtractor().concurrency).toBe(4);
+  });
+});

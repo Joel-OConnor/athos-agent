@@ -23,6 +23,32 @@ variation on emails a careful person could read either way. Fixing whichever
 two failed last would be overfitting. What is stable is **zero false strongs**
 on every run. Treat 98% as the number and two fixtures as the noise floor.
 
+## 11 November 2026
+
+| Run | Strength agreement | False strongs | Missed  | Cost  |
+| --- | ------------------ | ------------- | ------- | ----- |
+| 4   | 112/113 (99.1%)    | 1             | adv-011 | $2.31 |
+
+Sonnet 4.6 via `claude-code` (what the CLI's `sonnet` alias resolves to),
+concurrency 4, about seven minutes; concurrency 6 brings it back to five. The
+prompt and the fixtures are unchanged since the 8 November runs.
+
+**adv-011 is not noise.** It came back strong on seven runs out of seven today,
+on Sonnet 4.6 and on Sonnet 5.5. The email is a rental house saying yes, we
+have worked with them, then relaying a request to raise the policy limit and
+asking us to action it. The label says that is an instruction to the agent.
+The prompt says a request about the policy, even an insistent one, is a person
+writing to a person, and the model follows the prompt. The two disagree, and
+that is a policy call rather than a prompt bug: is a third party asking us to
+change the client's cover an instruction, or a request? Until it is settled,
+`npm run eval:replies` ends on `false strongs: 1` and exits 1.
+
+**Field accuracy was under-reported before this run.** The eval never read
+`glRequired` or `signedContractInPlace` out of the model's answer, so every
+fixture that asserted either showed a miss. 29 of this run's 30 field misses
+were that. Fixed; the field number is right from the next run on, and is not
+comparable to earlier runs.
+
 ## What the runs found
 
 Eight issues; three were the model being wrong.
